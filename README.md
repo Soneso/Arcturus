@@ -1,2 +1,4 @@
 # Arcturus
-Arcturus is a ChatGPT Plugin that can retrieve real-time information from the Stellar Blockchain and Soroban.
+Arcturus will be a ChatGPT plugin that will be able to retrieve and combine realtime data from the Stellar Blockchain and Soroban. Once the user installs the plugin, he will be able to receive text-based, helpful real-time information from the Stellar Blockchain and Soroban via ChatGPT.
+
+In this first step I want to implement the core functionality so that the Arcturus Stellar Plugin can request and process the standard data from the Stellar Horizon and Soroban RPC servers. Furthermore it should be able to compose transactions and after external signing, it will be able to send the singed transactions to Horizon and Soroban RPC. Over time, the system will evolve to accommodate more advanced use cases by combining the data and requesting further data from other services like for example Stellar Expert or Soroban Assistant AI.
