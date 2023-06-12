@@ -1,0 +1,173 @@
+openapi: 3.0.1
+info:
+  title: Arcturus Stellar Plugin
+  description: A plugin that allows the user to request account details from the Stellar Blockchain using ChatGPT. An account is identified by it's account id. If you do not know the account id ask the user for it.
+  version: 'v1'
+servers:
+  - url: http://localhost:5003
+paths:
+  /account/details/{account_id}:
+    get:
+      operationId: getAccountDetails
+      summary: Get the current details for the given account. 
+      parameters:
+      - in: path
+        name: account_id
+        schema:
+            type: string
+        required: true
+        description: Id of the account to get the details for.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDetails'
+components:
+  schemas:
+    AccountDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier for this account.
+        account_id:
+          title: Account Id or Public Key
+          type: string
+          description: This account's public key encoded in a base32 string representation (same as id).
+        sequence:
+          title: Sequence Number
+          type: integer
+          description: This account's current sequence number. For use when submitting this account's next transaction.
+        sequence_ledger:
+          title: Sequence Ledger
+          type: integer
+          description: The unsigned 32-bit ledger number of the sequence number's age.
+        sequence_time:
+          title: Sequence Time
+          type: integer
+          description: The unsigned 64-bit UNIX timestamp of the sequence number's age.
+        subentry_count:
+          title: Subentry Count
+          type: integer
+          description: The number of subentries on this account.
+        home_domain:
+          title: Home Domain
+          type: string
+          description: The domain that hosts this account's stellar.toml file.
+        last_modified_ledger:
+          title: Last Modified Ledger
+          type: number
+          description: The ID of the last ledger that included changes to this account.
+        num_sponsoring:
+          title: Sponsoring reserves
+          type: number
+          description: The number of reserves sponsored by this account.
+        num_sponsored:
+          title: Sponsored reserves
+          type: number
+          description: The number of reserves sponsored for this account.
+        sponsor:
+          title: Sponsor
+          type: number
+          description: The account ID of the sponsor who is paying the reserves for this account. Optional.
+        thresholds:
+          $ref: "#/components/schemas/AccountThresholds"
+        flags:
+          $ref: "#/components/schemas/AccountFlags"
+        balances:
+          $ref: "#/components/schemas/AccountBalances"
+        signers:
+          $ref: "#/components/schemas/AccountSigners"
+        data:
+          title: Account Data
+          type: object
+          description: An array of account data fields. Contains key/value pairs. The values are base64 encoded.
+    AccountThresholds:
+      type: object
+      description: Transactions include Operations. Operations have varying levels of access. This object specifies thresholds for different access levels, as well as the weight of the master key.
+      properties:
+        low_threshold:
+          type: integer
+          description: The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.
+        med_threshold:
+          type: integer
+          description: The weight required for a valid transaction including the Create Account, Payment, Path Payment, Manage Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.
+        high_threshold:
+          type: integer
+          description: The weight required for a valid transaction including the Account Merge and Set Options operations.
+    AccountFlags:
+      type: object
+      description: Flags denote the enabling/disabling of certain asset issuer privileges.
+      properties:
+        auth_immutable:
+          type: boolean
+          description: If set to true, none of the following flags can be changed.
+        auth_required:
+          type: boolean
+          description: If set to true, anyone who wants to hold an asset issued by this account must first be approved by this account.
+        auth_revocable:
+          type: boolean
+          description: If set to true, this account can freeze the balance of a holder of an asset issued by this account.
+        auth_clawback_enabled:
+          type: boolean
+          description: If set to true, trustlines created for assets issued by this account have clawbacks enabled.
+    AccountBalances:
+      type: array
+      description: The balances of the assets this account holds. Contains one entry for each asset this account holds.
+      title: Balances
+      items:
+        balance:
+          title: Balance
+          type: integer
+          description: The number of units of this asset held by this account.
+        buying_liabilities:
+          title: Buying Liabilities
+          type: integer
+          description: The sum of all buy offers owned by this account for this asset. Optional.
+        selling_liabilities:
+          title: Selling Liabilities
+          type: integer
+          description: The sum of all sell offers owned by this account for this asset. Optional.
+        limit:
+          title: Limit
+          type: integer
+          description: The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline. Optional.
+        asset_type:
+          title: Asset Type
+          type: string
+          description: Either native, credit_alphanum4, credit_alphanum12, or liquidity_pool_shares.
+        asset_code:
+          title: Asset Code
+          type: string
+          description: The code for this asset. Optional. Only available if not native.
+        asset_issuer:
+          title: Asset Issuer
+          type: string
+          description: The account id of this asset's issuer. Optional. Only available if not native.
+        sponsor:
+          title: Trustline Sponsor
+          type: string
+          description: The account id of the sponsor who is paying the reserves for this trustline. Optional.
+    AccountSigners:
+      type: array
+      description: The public keys and associated weights that can be used to authorize transactions for this account. Used for multi-sig.
+      title: Signers
+      items:
+        weight:
+          title: Weight
+          type: integer
+          description: The numerical weight of a signer. Used to determine if a transaction meets the threshold requirements.
+        sponsor:
+          title: Signer Sponsor
+          type: string
+          description: The account ID of the sponsor who is paying the reserves for this signer. Optional.
+        key:
+          title: Signer Key
+          type: string
+          description: A hash of characters dependent on the signer type.
+        type:
+          title: Signer Type
+          type: string
+          description: The type of hash for this signer. Can be ed25519_public_key representing a normal Stellar public key (account ID) or sha256_hash representing the SHA256 hash of some arbitrary x. Adding a signature of the type sha256_hash allows anyone who knows x to sign a transaction from this account. Note, Once this transaction is broadcast, x will be known publicly. Or it can be preauth_tx representing the hash of a pre-authorized transaction. This signer is automatically removed from the account when a matching transaction is properly applied. 

@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "arcturus"
+version = "0.1.0"
+description = ""
+authors = ["Christian Rogobete <c.rogobete@soneso.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+quart = "^0.18.4"
+quart-cors = "^0.6.0"
+stellar-sdk = "^8.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
