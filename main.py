@@ -4,6 +4,7 @@ import quart
 import quart_cors
 from quart import request
 import arcturus.account as account
+from stellar_sdk.exceptions import NotFoundError
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -12,8 +13,12 @@ HORIZON_URL = "https://horizon-testnet.stellar.org"
 @app.get("/account/details/<string:account_id>")
 async def get_account_details(account_id):
     print("test: get account details")
-    details = await account.get_details(HORIZON_URL, account_id)
-    return quart.Response(response=json.dumps(details), status=200)
+    try:
+        details = await account.get_details(HORIZON_URL, account_id)
+    except NotFoundError:
+        return quart.Response(response="Account not found", status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
 
 @app.get("/logo.png")
 async def plugin_logo():

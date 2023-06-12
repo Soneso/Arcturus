@@ -24,6 +24,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountDetails'
+        "404":
+          description: Account was not found on the Stellar Network.
 components:
   schemas:
     AccountDetails:
@@ -35,11 +37,11 @@ components:
         account_id:
           title: Account Id or Public Key
           type: string
-          description: This account's public key encoded in a base32 string representation (same as id).
+          description: This account's public key encoded in a base32 string representation (same as id). The public key was used to create this account.
         sequence:
           title: Sequence Number
           type: integer
-          description: This account's current sequence number. For use when submitting this account's next transaction.
+          description: This account's current sequence number. Used to identify and verify the order of transactions with this account as a source account.
         sequence_ledger:
           title: Sequence Ledger
           type: integer
@@ -51,15 +53,19 @@ components:
         subentry_count:
           title: Subentry Count
           type: integer
-          description: The number of subentries on this account.
+          description: The number of subentries on this account. Subentries can be Trustlines, Offers, Additional signers or Data entries.
         home_domain:
           title: Home Domain
           type: string
-          description: The domain that hosts this account's stellar.toml file.
+          description: A fully qualified domain name (FQDN) linked to this Stellar account, used to generate an on-chain link to a Stellar Info File (stellar.toml), which holds off-chain metadata. Optional.
         last_modified_ledger:
           title: Last Modified Ledger
           type: number
           description: The ID of the last ledger that included changes to this account.
+        last_modified_time:
+          title: Last Modified Time
+          type: string
+          description: The time this account was modified the last time.
         num_sponsoring:
           title: Sponsoring reserves
           type: number
@@ -70,7 +76,7 @@ components:
           description: The number of reserves sponsored for this account.
         sponsor:
           title: Sponsor
-          type: number
+          type: string
           description: The account ID of the sponsor who is paying the reserves for this account. Optional.
         thresholds:
           $ref: "#/components/schemas/AccountThresholds"
@@ -83,7 +89,7 @@ components:
         data:
           title: Account Data
           type: object
-          description: An array of account data fields. Contains key/value pairs. The values are base64 encoded.
+          description: An array of account data fields. Contains key/value pairs. The values are base64 encoded. Try to decode the value before showing it to the user. If the decoded value is human readable show the decoded value otherwise show the encoded value.
     AccountThresholds:
       type: object
       description: Transactions include Operations. Operations have varying levels of access. This object specifies thresholds for different access levels, as well as the weight of the master key.
@@ -99,7 +105,7 @@ components:
           description: The weight required for a valid transaction including the Account Merge and Set Options operations.
     AccountFlags:
       type: object
-      description: Flags denote the enabling/disabling of certain asset issuer privileges.
+      description: This account can be an asset issuer. If this account is an asset issuer, the flags denote the enabling/disabling of certain asset issuer privileges.
       properties:
         auth_immutable:
           type: boolean
@@ -115,25 +121,29 @@ components:
           description: If set to true, trustlines created for assets issued by this account have clawbacks enabled.
     AccountBalances:
       type: array
-      description: The balances of the assets this account holds. Contains one entry for each asset this account holds.
+      description: The balances of the assets this account holds. Contains one entry for each asset this account holds. Each asset has its own balance and these balances are stored in trustlines for every asset except XLM, which is held directly by the account.
       title: Balances
       items:
         balance:
           title: Balance
-          type: integer
+          type: number
+          format: float
           description: The number of units of this asset held by this account.
         buying_liabilities:
           title: Buying Liabilities
-          type: integer
+          type: number
+          format: float
           description: The sum of all buy offers owned by this account for this asset. Optional.
         selling_liabilities:
           title: Selling Liabilities
-          type: integer
+          type: number
+          format: float
           description: The sum of all sell offers owned by this account for this asset. Optional.
         limit:
           title: Limit
-          type: integer
-          description: The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline. Optional.
+          type: number
+          format: float
+          description: The maximum amount of this asset that this account is willing to accept. Specified when opening a trustline. Optional. 
         asset_type:
           title: Asset Type
           type: string
@@ -141,7 +151,7 @@ components:
         asset_code:
           title: Asset Code
           type: string
-          description: The code for this asset. Optional. Only available if not native.
+          description: An asset's identifying code. Optional. Only available if asset type is not native.
         asset_issuer:
           title: Asset Issuer
           type: string
