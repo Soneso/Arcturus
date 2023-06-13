@@ -2,8 +2,8 @@
     "schema_version": "v1",
     "name_for_human": "Arcturus Stellar Plugin",
     "name_for_model": "arcturus",
-    "description_for_human": "Plugin for querying data from the stellar blockchain. It can also compose and send transactions to the stellar network",
-    "description_for_model": "Plugin for querying data from the stellar blockchain. It can also compose stellar transactions and send signed stellar transactions to the stellar blockchain.",
+    "description_for_human": "Plugin for querying data from the Stellar Network. It can also compose and send transactions to the Stellar Network",
+    "description_for_model": "Plugin for querying data from the Stellar Network (Blockchain). It can also compose stellar transactions and send signed stellar transactions to the stellar Network.",
     "auth": {
       "type": "none"
     },

@@ -4,6 +4,7 @@ import quart
 import quart_cors
 from quart import request
 import arcturus.account as account
+import arcturus.assets as assets
 from stellar_sdk.exceptions import NotFoundError
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
@@ -20,6 +21,16 @@ async def get_account_details(account_id):
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
+@app.get("/assets/for_issuer/<string:issuer_account_id>")
+async def get_assets_for_issuer(issuer_account_id):
+    print("test: get assets for issuer")
+    try:
+        asset_records = await assets.for_issuer(HORIZON_URL, issuer_account_id)
+    except NotFoundError:
+        return quart.Response(response="Account not found", status=404)
+    else:
+        return quart.Response(response=json.dumps(asset_records), status=200)
+    
 @app.get("/logo.png")
 async def plugin_logo():
     filename = 'logo.png'
