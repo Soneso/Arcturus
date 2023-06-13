@@ -106,6 +106,26 @@ paths:
                 $ref: '#/components/schemas/ClaimableBalance'
         "404":
           description: Claimable balance was not found on the Stellar Network.
+  /stellar_toml/{domain}:
+    get:
+      operationId: getStellarToml
+      summary: Stellar Info Data for a given domain. A stellar.toml file is used to expose info about the organization's Stellar integration. By setting the home_domain of a Stellar account to the domain that hosts the stellar.toml, organizations create a link between this info and an account.  
+      parameters:
+      - in: path
+        name: domain
+        schema:
+            type: string
+        required: true
+        description: Given the domain DOMAIN, the stellar.toml will be searched for at the following location https://DOMAIN/.well-known/stellar.toml . Please provide only the DOMAIN to this endpoint, not the complete url even if the complete url is stored in the home_domain of the account.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StellarToml'
+        "404":
+          description: No stellar.toml file was not found for the given domain.
 components:
   schemas:
     AccountDetails:
@@ -137,7 +157,7 @@ components:
         home_domain:
           title: Home Domain
           type: string
-          description: A fully qualified domain name (FQDN) linked to this Stellar account, used to generate an on-chain link to a Stellar Info File (stellar.toml), which holds off-chain metadata. Optional.
+          description: Optional. A fully qualified domain name (FQDN) linked to this Stellar account, used to generate an on-chain link to a Stellar Info File (stellar.toml), which holds off-chain metadata. You can load the metadata by using the stellar_toml endpoint.  
         last_modified_ledger:
           title: Last Modified Ledger
           type: number
@@ -447,4 +467,312 @@ components:
         relBefore:
           type: string
           description: Optional. A relative deadline for when the claimable balance can be claimed. The value represents the number of seconds since the close time of the ledger which created the claimable balance.
-        
+    StellarToml:
+      type: object
+      description: Off-chain Public Stellar Info Data related to accounts and assets and about the organization controlling them.
+      properties:
+        VERSION:
+          type: string
+          title: Version Nr.
+          description: The version of the stellar.toml format adheres to. This helps parsers know which fields to expect.
+        NETWORK_PASSPHRASE:
+          type: string
+          title: Network Passphrase
+          description: The passphrase for the specific Stellar network this infrastructure operates on.
+        FEDERATION_SERVER:
+          type: string
+          title: Federation Server
+          description: The endpoint for clients to resolve stellar addresses for users on the stellar.toml domain via Stellar SEP-0002 Federation Protocol.
+        TRANSFER_SERVER:
+          type: string
+          title: Transfer Server
+          description: The server used for Stellar SEP-0006 Anchor/Client interoperability.
+        TRANSFER_SERVER_SEP0024:
+          type: string
+          title: Transfer Server SEP-0024
+          description: The server used for the Stellar SEP-0024 Anchor/Client interoperability.
+        KYC_SERVER:
+          type: string
+          title: KYC Server
+          description: The server used for the Stellar SEP-0012 Anchor/Client customer info transfer.
+        WEB_AUTH_ENDPOINT:
+          type: string
+          title: WebAuth Endpoint
+          description: The endpoint used for the Stellar SEP-0010 Web Authentication.
+        SIGNING_KEY:
+          type: string
+          title: SEP-0010 Signing Key
+          description: The signing key is used for the Stellar SEP-0010 Authentication Protocol.
+        HORIZON_URL:
+          type: string
+          title: Horizon Url
+          description: Location of public-facing Horizon instance (if one is offered).
+        ACCOUNTS:
+          type: array
+          title: Accounts
+          description: A list of Stellar accounts that are controlled by this organization.
+          items:
+            type: string
+            description: The Id of an account controlled by this organization.
+        URI_REQUEST_SIGNING_KEY:
+          type: string
+          title: SEP-0007 Uri Request Signing Key
+          description: The signing key is used for SEP-0007 delegated signing.
+        DIRECT_PAYMENT_SERVER:
+          type: string
+          title: Direct Payment Server
+          description: The server used for receiving SEP-0031 direct fiat-to-fiat payments.
+        ANCHOR_QUOTE_SERVER:
+          type: string
+          title: Anchor Quote Server
+          description: The server used for receiving SEP-0038 requests.
+        DOCUMENTATION:
+          $ref: "#/components/schemas/StellarTomlOrganizationDocumentation"
+        PRINCIPALS:
+          type: array
+          description: Points of Contact Documentation. It contains identifying information for the primary point of contact or principal(s) of the organization.
+          items:
+            $ref: "#/components/schemas/StellarTomlPrincipal"
+        CURRENCIES:
+          type: array
+          description: List of all currencies supported by this organization. Each entry contains a set of fields representing metadata for the currency.
+          items:
+            $ref: "#/components/schemas/StellarTomlCurrency"
+        VALIDATORS:
+          type: array
+          description: List of all Stellar Nodes the organization runs. This section allows the organization to declare its node(s), and to let others know the location of any public archives it maintain.
+          items:
+            $ref: "#/components/schemas/StellarTomlValidator"
+    StellarTomlOrganizationDocumentation:
+      type: object
+      description: Public information about the organization providing this Stellar Info Data and controlling the listed accounts and assets.
+      properties:
+        ORG_NAME:
+          type: string
+          title: Name
+          description: Legal name of the organization.
+        ORG_DBA:
+          type: string
+          title: DBA
+          description: DBA (Doing Business As) of the organization if any.
+        ORG_URL:
+          type: string
+          title: URL
+          description: The organization's official URL. It's stellar.toml must be hosted on the same domain.
+        ORG_LOGO:
+          type: string
+          title: Logo
+          description: A Link to a PNG image of the organization's logo.
+        ORG_DESCRIPTION:
+          type: string
+          title: Description
+          description: Short description of the organization.
+        ORG_PHYSICAL_ADDRESS:
+          type: string
+          title: Physical Address
+          description: Physical address for your organization.
+        ORG_PHYSICAL_ADDRESS_ATTESTATION:
+          type: string
+          title: Physical Address Attestation
+          description: URL on the same domain as the ORG_URL that contains an image or pdf official document attesting to the physical address of the organization. It must list the ORG_NAME or ORG_DBA as the party at the address. Only documents from an official third party are acceptable. E.g. a utility bill, mail from a financial institution, or business license.
+        ORG_PHONE_NUMBER:
+          type: string
+          title: Phone Number
+          description: The organization's phone number in E.164 format, e.g. +14155552671.
+        ORG_PHONE_NUMBER_ATTESTATION:
+          type: string
+          title: Phone Number Attestation
+          description: URL on the same domain as the ORG_URL that contains an image or pdf of a phone bill showing both the phone number and the organization's name.
+        ORG_KEYBASE:
+          type: string
+          title: Keybase Account
+          description: The Keybase account name of the organization. The Keybase account should contain proof of ownership of any public online accounts listed here, including the organization's domain.
+        ORG_TWITTER:
+          type: string
+          title: Twitter Account
+          description: The organization's Twitter account name.
+        ORG_GITHUB:
+          type: string
+          title: GitHub Account
+          description: The organization's Github account.
+        ORG_OFFICIAL_EMAIL:
+          type: string
+          title: Email Address
+          description: An email that business partners such as wallets, exchanges, or anchors can use to contact this organization. Must be hosted at the ORG_URL domain. If not, warn the user about that.
+        ORG_SUPPORT_EMAIL:
+          type: string
+          title: Support Email Address
+          description: An email that users can use to request support regarding Stellar assets or applications of this organization.
+        ORG_LICENSING_AUTHORITY:
+          type: string
+          title: Licensing Authority
+          description: Name of the authority or agency that issued a license, registration, or authorization to this organization, if applicable.
+        ORG_LICENSE_TYPE:
+          type: string
+          title: License Type
+          description: Type of financial or other license, registration, or authorization this organization holds, if applicable.
+        ORG_LICENSE_NUMBER:
+          type: string
+          title: Licence Number
+          description: Official license, registration, or authorization number of the organization, if applicable.
+    StellarTomlPrincipal:
+      type: object
+      description: It contains public identifying information for a primary point of contact or principal of the organization.
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Full legal name of the principal.
+        email:
+          type: string
+          title: Email
+          description: Business email address of the principal.
+        keybase:
+          type: string
+          title: Keybase Account
+          description: Personal Keybase account. The Keybase account should include proof of ownership for other online accounts, as well as the organization's domain.
+        telegram:
+          type: string
+          title: Telegram Account
+          description: Personal Telegram account of the principal.
+        twitter:
+          type: string
+          title: Twitter Account
+          description: Personal Twitter account of the principal.
+        github:
+          type: string
+          title: GitHub Account
+          description: Personal Github account of the principal.
+        id_photo_hash:
+          type: string
+          title: ID Photo Hash
+          description: SHA-256 hash of a photo of the principal's government-issued photo ID.
+        verification_photo_hash:
+          type: string
+          title: Verification Photo Hash
+          description: SHA-256 hash of a verification photo of principal. The photo should be well-lit and contain principal holding ID card and signed, dated, hand-written message stating I, $NAME, am a principal of $ORG_NAME, a Stellar token issuer with address $ISSUER_ADDRESS.
+    StellarTomlCurrency:
+      type: object
+      description: Holds public metadata about a currency supported by the organization.
+      properties:
+        code:
+          type: string
+          title: Token Code
+          description: The token's code.
+        code_template:
+          type: string
+          title: Token Code Template
+          description: A pattern with ? as a single character wildcard. Allows a StellarTomlCurrency entry to apply to multiple assets that share the same info. An example is futures, where the only difference between issues is the date of the contract. E.g. CORN???????? to match codes such as CORN20180604.
+        status:
+          type: string
+          title: Token Status
+          description: Status of token. One of live, dead, test, or private. Allows issuer to mark whether token is dead/for testing/for private use or is live and should be listed in live exchanges.
+        display_decimals:
+          type: integer
+          title: Token Decimals
+          description: Preference for number of decimals to show when a client displays currency balance.
+        name:
+          type: string
+          title: Token Name
+          description: A short name for the token.
+        desc:
+          type: string
+          title: Token Description
+          description: Description of token and what it represents.
+        conditions:
+          type: string
+          title: Token Conditions
+          description: Conditions on token.
+        image:
+          type: string
+          title: Token Image
+          description: URL to a PNG image representing token.
+        fixed_number:
+          type: string
+          title: Fixed Number of Tokens
+          description: Fixed number of tokens, if the number of tokens issued will never change.
+        max_number:
+          type: string
+          title: Max Number of Tokens
+          description: Max number of tokens, if there will never be more than max_number tokens.
+        is_unlimited:
+          type: boolean
+          title: Unlimited Tokens
+          description: If true, the number of tokens is dilutable at the issuer's discretion.
+        is_asset_anchored:
+          type: boolean
+          title: Is asset anchored
+          description: true if token can be redeemed for underlying asset, otherwise false.
+        anchor_asset_type:
+          type: string
+          title: Anchor Asset Type
+          description: Type of asset anchored. Can be fiat, crypto, nft, stock, bond, commodity, realestate, or other.
+        anchor_asset:
+          type: string
+          title: Anchor Asset
+          description: If anchored token, code / symbol for asset that token is anchored to. E.g. USD, BTC, SBUX, Address of real-estate investment property.
+        attestation_of_reserve:
+          type: string
+          title: Atestation of reserve
+          description: URL to attestation or other proof, evidence, or verification of reserves, such as third-party audits.
+        redemption_instructions:
+          type: string
+          title: Redemption instructions
+          description: If anchored token, these are instructions to redeem the underlying asset from tokens.
+        collateral_addresses:
+          type: array
+          title: Collateral Addresses
+          description: If this is an anchored crypto token, lists of one or more public addresses that hold the assets for which the organization is issuing tokens.
+          items:
+            type: string
+            description: Crypto address string.
+        collateral_address_messages:
+          type: array
+          title: Collateral Address Messages
+          description: Messages stating that funds in the collateral_addresses list are reserved to back the issued asset.
+          items:
+            type: string
+            description: Message.
+        collateral_address_signatures:
+          type: array
+          title: Collateral Address Signatures
+          description: These prove that the organization controls the collateral_addresses. For each address it lists, it must sign the entry in collateral_address_messages with the address's private key and add the resulting string to this list as a base64-encoded raw signature.
+          items:
+            type: string
+            description: base64-encoded raw signature.
+        regulated:
+          type: boolean
+          title: Regulated
+          description: Indicates whether or not this is a Stellar SEP-0008 regulated asset. If missing, false is assumed.
+        approval_server:
+          type: string
+          title: Approval Server
+          description: Url of a Stellar SEP-0008 compliant approval service that signs validated transactions.
+        approval_criteria:
+          type: string
+          title: Approval Criteria
+          description: A human readable string that explains the issuer's requirements for approving transactions.
+    StellarTomlValidator:
+      type: object
+      description: Holds metadata about a Stellar validator Node the organization runs.
+      properties:
+        ALIAS:
+          type: string
+          title: Alias
+          description: A name for display in Stellar Core configs.
+        DISPLAY_NAME:
+          type: string
+          title: Display Name
+          description: A human-readable name for display in quorum explorers and other interfaces.
+        PUBLIC_KEY:
+          type: string
+          title: Public Key
+          description: The Stellar account id associated with the node.
+        HOST:
+          type: string
+          title: Host
+          description: The IP:port or domain:port peers can use to connect to the node.
+        HISTORY:
+          type: string
+          title: History
+          description: The location of the history archive published by this validator.

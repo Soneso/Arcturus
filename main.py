@@ -6,13 +6,16 @@ from quart import request
 import arcturus.account as account
 import arcturus.assets as assets
 import arcturus.claimable_balances as claimable_balances
+import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
+from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
-HORIZON_URL = "https://horizon-testnet.stellar.org"
+HORIZON_URL = "https://horizon.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
+STELLAR_TOML_NOT_FOUND = "stellar.toml not found"
 
 @app.get("/account/details/<string:account_id>")
 async def get_account_details(account_id):
@@ -61,6 +64,16 @@ async def get_claimable_balance(claimable_balance_id):
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/stellar_toml/<string:domain>")
+async def get_stellar_toml(domain):
+    print("test: get stellar toml")
+    try:
+        details = stellar_toml.fetch_stellar_toml(domain)
+    except StellarTomlNotFoundError:
+        return quart.Response(response=STELLAR_TOML_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
     
 @app.get("/logo.png")
 async def plugin_logo():
