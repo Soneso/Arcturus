@@ -1,16 +1,11 @@
 from stellar_sdk import Server
+from arcturus.utils import add_paging
 
-async def for_issuer(horizon_url, asset_issuer_id):
+async def for_issuer(horizon_url, asset_issuer_id, cursor, order, limit):
     server = Server(horizon_url=horizon_url)
-    records = []
-    assets_call_builder = (
-    server.assets().for_issuer(asset_issuer_id).order(desc=False).limit(200)
-    )
-    records += assets_call_builder.call()["_embedded"]["records"]
-    page_count = 0
-    while page_records := assets_call_builder.next()["_embedded"]["records"]:
-        records += page_records
-        print(f"Page {page_count} fetched")
-        print(f"data: {page_records}")
-        page_count += 1 
+    builder = server.assets().for_issuer(asset_issuer_id)
+    add_paging(builder, cursor, order, limit) 
+    records = builder.call()["_embedded"]["records"]
+    for x in records:
+        del x['_links']
     return records

@@ -35,7 +35,10 @@ async def assets_for_issuer():
     try:
         issuer_account_id = request.args.get('issuer_account_id')
         network = request.args.get('network')
-        records = await assets.for_issuer(horizon_url_for_network(network), issuer_account_id)
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        records = await assets.for_issuer(horizon_url_for_network(network), issuer_account_id, cursor, order, limit)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -47,7 +50,11 @@ async def claimable_balances_for_claimant():
     try:
         claimant_account_id = request.args.get('claimant_account_id')
         network = request.args.get('network')
-        records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id)
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id, cursor, order, limit)
+        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -59,7 +66,11 @@ async def claimable_balances_for_sponsor():
     try:
         sponsor_account_id = request.args.get('sponsor_account_id')
         network = request.args.get('network')
-        records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id)
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id, cursor, order, limit)
+        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
