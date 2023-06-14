@@ -1,22 +1,36 @@
 openapi: 3.0.1
 info:
   title: Arcturus Stellar Plugin
+  summary: A server to get access to Stellar Network and Soroban Data.
   description: A plugin that allows the user to request information about accounts from the Stellar Network (Blockchain) using ChatGPT. An account is identified by it's account id. If you do not know the account id ask the user for it.
-  version: 'v1'
+  version: 0.0.1
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: Arcturus Support
+    url: https://soneso.com
+    email: hi@soneso.com
 servers:
   - url: http://localhost:5003
 paths:
-  /account/details/{account_id}:
+  /account/details:
     get:
       operationId: getAccountDetails
-      summary: Get the current details for the given account. 
+      summary: Get the current details for the given account including balances, sequence number, tresholds. 
       parameters:
-      - in: path
-        name: account_id
-        schema:
+        - name: account_id
+          in: query
+          schema:
             type: string
-        required: true
-        description: Id of the account to get the details for.
+          required: true
+          description: Id of the account to get the details for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: OK
@@ -26,17 +40,23 @@ paths:
                 $ref: '#/components/schemas/AccountDetails'
         "404":
           description: Account was not found on the Stellar Network.
-  /assets/for_issuer/{issuer_account_id}:
+  /assets/for_issuer:
     get:
       operationId: getAssetsForIssuer
       summary: Get information about all assets issued by this issuer account. 
       parameters:
-      - in: path
-        name: issuer_account_id
-        schema:
+        - name: issuer_account_id
+          in: query
+          schema:
             type: string
-        required: true
-        description: Id of the account to get the information for.
+          required: true
+          description: Id of the issuer account to get the assets it controls.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: OK
@@ -46,17 +66,23 @@ paths:
                 $ref: '#/components/schemas/AssetsResponse'
         "404":
           description: Account was not found on the Stellar Network.
-  /claimable_balances/for_claimant/{claimant_account_id}:
+  /claimable_balances/for_claimant:
     get:
       operationId: getClaimableBalancesForClaimant
       summary: Get information about all claimable balances having the given account as a claimant. 
       parameters:
-      - in: path
-        name: claimant_account_id
-        schema:
+        - name: claimant_account_id
+          in: query
+          schema:
             type: string
-        required: true
-        description: Id of the account to get the information for.
+          required: true
+          description: Id of the account to get the information for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: OK
@@ -66,17 +92,23 @@ paths:
                 $ref: '#/components/schemas/ClaimableBalancesResponse'
         "404":
           description: Account was not found on the Stellar Network.
-  /claimable_balances/for_sponsor/{sponsor_account_id}:
+  /claimable_balances/for_sponsor:
     get:
       operationId: getClaimableBalancesForSponsor
       summary: Get information about all claimable balances having the given account as a sponsor. 
       parameters:
-      - in: path
-        name: sponsor_account_id
-        schema:
+        - name: sponsor_account_id
+          in: query
+          schema:
             type: string
-        required: true
-        description: Id of the account to get the information for.
+          required: true
+          description: Id of the account to get the information for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: OK
@@ -86,17 +118,23 @@ paths:
                 $ref: '#/components/schemas/ClaimableBalancesResponse'
         "404":
           description: Account was not found on the Stellar Network.
-  /claimable_balances/claimable_balance/{claimable_balance_id}:
+  /claimable_balances/claimable_balance:
     get:
       operationId: getClaimableBalancesForId
       summary: Get information about a claimable balance identified by the claimable balance id. 
       parameters:
-      - in: path
-        name: claimable_balance_id
-        schema:
+        - name: claimable_balance_id
+          in: query
+          schema:
             type: string
-        required: true
-        description: Id of the claimable balance to get the information for.
+          required: true
+          description: Id of the claimable balance to get the information for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: OK

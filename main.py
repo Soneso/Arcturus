@@ -12,54 +12,66 @@ from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
-HORIZON_URL = "https://horizon.stellar.org"
+HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
+HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
+HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
 STELLAR_TOML_NOT_FOUND = "stellar.toml not found"
 
-@app.get("/account/details/<string:account_id>")
-async def get_account_details(account_id):
+@app.get("/account/details")
+async def account_details():
     try:
-        details = await account.get_details(HORIZON_URL, account_id)
+        account_id = request.args.get('account_id')
+        network = request.args.get('network')
+        details = await account.get_details(horizon_url_for_network(network), account_id)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
-@app.get("/assets/for_issuer/<string:issuer_account_id>")
-async def get_assets_for_issuer(issuer_account_id):
+@app.get("/assets/for_issuer")
+async def assets_for_issuer():
     try:
-        records = await assets.for_issuer(HORIZON_URL, issuer_account_id)
+        issuer_account_id = request.args.get('issuer_account_id')
+        network = request.args.get('network')
+        records = await assets.for_issuer(horizon_url_for_network(network), issuer_account_id)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/claimable_balances/for_claimant/<string:claimant_account_id>")
-async def get_claimable_balances_for_claimant(claimant_account_id):
+@app.get("/claimable_balances/for_claimant")
+async def claimable_balances_for_claimant():
     print("test: get claimable balances for claimant")
     try:
-        records = await claimable_balances.for_claimant(HORIZON_URL, claimant_account_id)
+        claimant_account_id = request.args.get('claimant_account_id')
+        network = request.args.get('network')
+        records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
     
-@app.get("/claimable_balances/for_sponsor/<string:sponsor_account_id>")
-async def get_claimable_balances_for_sponsor(sponsor_account_id):
+@app.get("/claimable_balances/for_sponsor")
+async def claimable_balances_for_sponsor():
     print("test: get claimable balances for sponsor")
     try:
-        records = await claimable_balances.for_sponsor(HORIZON_URL, sponsor_account_id)
+        sponsor_account_id = request.args.get('sponsor_account_id')
+        network = request.args.get('network')
+        records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/claimable_balances/claimable_balance/<string:claimable_balance_id>")
-async def get_claimable_balance(claimable_balance_id):
+@app.get("/claimable_balances/claimable_balance")
+async def claimable_balance():
     print("test: get claimable balance for id")
     try:
-        records = await claimable_balances.claimable_balance(HORIZON_URL, claimable_balance_id)
+        claimable_balance_id = request.args.get('claimable_balance_id')
+        network = request.args.get('network')
+        records = await claimable_balances.claimable_balance(horizon_url_for_network(network), claimable_balance_id)
     except NotFoundError:
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
@@ -93,6 +105,15 @@ async def openapi_spec():
     with open("openapi.yaml") as f:
         text = f.read()
         return quart.Response(text, mimetype="text/yaml")
+
+def horizon_url_for_network(network):
+    if network == 'public':
+        return HORIZON_PUBLIC_URL
+    if network == 'testnet':
+        return HORIZON_TESTNET_URL
+    if network == 'futurenet':
+        return HORIZON_FUTURENET_URL
+    return network
 
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)
