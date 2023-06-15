@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Arcturus Stellar Plugin
   summary: A server to get access to Stellar Network and Soroban Data.
-  description: A plugin that allows the user to request information about accounts from the Stellar Network (Blockchain) using ChatGPT. An account is identified by it's account id. If you do not know the account id ask the user for it.
+  description: An API that allows the user to request information about accounts from the Stellar Network (Blockchain) using ChatGPT. An account is identified by it's account id. If you do not know the account id ask the user for it. The user can also request payments associated with an account. 
   version: 0.0.1
   license:
     name: Apache 2.0
@@ -257,6 +257,63 @@ paths:
                 $ref: '#/components/schemas/StellarToml'
         "404":
           description: No stellar.toml file was not found for the given domain.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /payments/for_account:
+    get:
+      operationId: getPaymentsForAccount
+      summary: Get a list of payments associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. The account can be the receiver or sender of the payment.
+      description: Returns a subset of payments associated with the given account. The account can be the receiver or sender of the payment. It can be a normal payment operation or a create account operation.
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Id of the account to get the information for.
+        - name: include_failed
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Must be set to true of the result should also include failed payments.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
+        - name: order
+          in: query
+          schema:
+            type: string
+          required: false
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
+        - name: limit
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
+      responses:
+        "200":
+          description: A complex object array response holding a list of payments for the account.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentEntry'
+        "404":
+          description: Account was not found on the Stellar Network.
           content:
             text/plain:
               schema:
@@ -908,3 +965,117 @@ components:
           type: string
           title: History
           description: The location of the history archive published by this validator.
+    PaymentEntry:
+      type: object
+      description: Holds details about a payment on the Stellar Network. It can be a normal payment, a create account payment or a path payment which is a payment where the asset sent is different than the asset received. Path payments cross through the SDEX and/or liquidity pools before arriving at the destination account and it can sometimes take several hops of conversion to succeed.
+      properties:
+        id:
+          type: string
+          title: Operation Id
+          description: Id of the operation representing this payment.
+        type:
+          type: string
+          title: Type
+          description: Type of the operation. Can be 'payment', 'create_account', 'path_payment_strict_send' or 'path_payment_strict_receive'. If it is 'create_account' it means that this account has been created with this transfer.
+        transaction_hash:
+          type: string
+          title: Transaction Id
+          description: A unique identifier for the transaction, the operation representing this payment belongs to.
+        transaction_successful:
+          type: boolean
+          title: Successfull
+          description: Indicates if this operation was part of a successful transaction. If true, the payment operation was successfull. If false, the payment operation failed.
+        source_account:
+          type: string
+          title: Source Account
+          description: The account that originates the operation.
+        created_at:
+          type: string
+          title: Created at
+          description: The date the operation representing this payment was created.
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset that has been sent for the types 'create_account', 'payment' and 'path_payment_strict_send'. For 'path_payment_strict_receive' it is the type of the asset that has been received. Either native, credit_alphanum4, or credit_alphanum12. If not set, than assume native (XLM).
+        asset_code:
+          type: string
+          title: Asset Code
+          description: The code for the asset that has been sent for the types 'create_account', 'payment' and 'path_payment_strict_send'. For 'path_payment_strict_receive' it is the code of the asset that has been received. Appears only if the asset_type is not native (XLM).
+        asset_issuer:
+          type: string
+          title: Asset Issuer
+          description: The account id of the issuer of the asset that has been sent for the types 'create_account', 'payment' and 'path_payment_strict_send'. For 'path_payment_strict_receive' it is the issuer of the asset that has been received. Appears only if the asset_type is not native (XLM).
+        from:
+          type: string
+          title: From
+          description: The payment sender's account id. Only available if 'type' is not 'create_account'.
+        to:
+          type: string
+          title: From
+          description: The payment recipient's account id. Only available if 'type' is not 'create_account'.
+        amount:
+          type: string
+          title: From
+          description: Amount sent. Only available if 'type' is not 'create_account'.
+        funder:
+          type: string
+          title: Funder
+          description: The account id of the account that funded the creation of the new account. Only available if 'type' is 'create_account'. 
+        account:
+          type: string
+          title: Created Account
+          description: The account id of a new account that was funded by this payment. Only available if 'type' is 'create_account'.
+        starting_balance:
+          type: string
+          title: Created Account
+          description: The amount of XLM that has beeb send to create the new account. Only available if 'type' is 'create_account'.
+        source_amount:
+          type: string
+          title: Source Amount
+          description: Amount sent designated in the source asset. Only available if 'type' is 'path_payment_strict_send' or 'path_payment_strict_receive'.
+        destination_min:
+          type: string
+          title: Destination Min
+          description: The minimum amount of destination asset expected to be received. Only available if 'type' is 'path_payment_strict_send'.
+        source_asset_type:
+          type: string
+          title: Source Asset Type
+          description: The type for the source asset. Either native, credit_alphanum4, or credit_alphanum12. Only available if 'type' is 'path_payment_strict_send' or 'path_payment_strict_receive'.
+        source_asset_code:
+          type: string
+          title: Source Asset Code
+          description: The code for the source asset. Appears if the asset_type is not native. Only available if 'type' is 'path_payment_strict_send' or 'path_payment_strict_receive'.
+        source_asset_issuer:
+          type: string
+          title: Source Asset Issuer
+          description: The Stellar account id of the source asset's issuer. Appears if the asset_type is not native. Only available if 'type' is 'path_payment_strict_send' or 'path_payment_strict_receive'.
+        source_max:
+          type: string
+          title: Source Amount
+          description: The maximum amount to be sent designated in the source asset. Only available if 'type' is 'path_payment_strict_receive'.
+        paging_token:
+          title: Paging Token
+          type: string
+          description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.
+        path:
+          type: array
+          title: Path
+          description: The hops of conversion for a path payment. Only available if 'type' is 'path_payment_strict_send' or 'path_payment_strict_receive'.
+          items:
+            $ref: "#/components/schemas/PathPaymentHop"
+    PathPaymentHop:
+      type: object
+      description: Hop for a path payment. For the path payment to succeed, there has to be a DEX offer or liquidity pool exchange path in existence. It can sometimes take several hops of conversion for the payment to succeed. Example Account A sells XLM → [buy XLM / sell ETH → buy ETH / sell BTC → buy BTC / sell USDC] → Account B receives USDC
+      properties:
+        asset_code:
+          type: string
+          title: Asset Code
+          description: The code for this intermediary asset.
+        asset_issuer:
+          type: string
+          title: Asset Issuer
+          description: The account id of the intermediary asset's issuer.
+        asset_type:
+          type: string
+          title: Asset Type
+          description: The type for the intermediary asset. Either native, credit_alphanum4, or credit_alphanum12.

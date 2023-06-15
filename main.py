@@ -6,6 +6,7 @@ from quart import request
 import arcturus.account as account
 import arcturus.assets as assets
 import arcturus.claimable_balances as claimable_balances
+import arcturus.payments as payments
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -97,6 +98,23 @@ async def get_stellar_toml(domain):
         return quart.Response(response=STELLAR_TOML_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(details), status=200)
+
+@app.get("/payments/for_account")
+async def payments_for_account():
+    print("test: get payments for account")
+    try:
+        account_id = request.args.get('account_id')
+        include_failed = request.args.get('include_failed')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
     
 @app.get("/logo.png")
 async def plugin_logo():
