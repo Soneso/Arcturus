@@ -7,6 +7,7 @@ import arcturus.account as account
 import arcturus.assets as assets
 import arcturus.claimable_balances as claimable_balances
 import arcturus.payments as payments
+import arcturus.transactions as transactions
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -115,6 +116,17 @@ async def payments_for_account():
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+    
+@app.get("/transaction/details")
+async def transaction_details():
+    try:
+        t_id = request.args.get('hash')
+        network = request.args.get('network')
+        details = await transactions.get_details(horizon_url_for_network(network), t_id)
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
     
 @app.get("/logo.png")
 async def plugin_logo():
