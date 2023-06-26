@@ -110,3 +110,54 @@ paths:
             text/plain:
               schema:
                 type: string
+  /account/directory_info:
+    get:
+      operationId: getAccountDirectoryInfo
+      summary: Returns Directory information for a given account address queried from the stellar expert service.
+      description: Queries the Stellar expert service to get directory info for the given account. Only works for publicnet. If found the directory info contains a human friendly name of the account, tags and the domain associated with the account.
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The account id of the account to get the directory infor for. Must start with the letter G.
+      responses:
+        "200":
+          description: The directory entry if found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  address:
+                    type: string
+                    title: Stellar account id
+                    description: The stellar account id.
+                  domain:
+                    type: string
+                    title: Domain
+                    description: The domain associated with the account.
+                  name:
+                    type: string
+                    title: Name
+                    description: A human friendly name of the account.
+                  tags:
+                    type: array
+                    title: Tags
+                    description: The list of stellar expert tags associated with the account.
+                    items:
+                      type: string
+                      description: Tag
+        "400":
+          description: Invalid parameter.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: No entry found for this account.
+          content:
+            text/plain:
+              schema:
+                type: string

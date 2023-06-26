@@ -18,6 +18,7 @@ HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
 HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
+NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
 STELLAR_TOML_NOT_FOUND = "stellar.toml not found"
@@ -39,7 +40,7 @@ async def account_encode_muxed():
         account_id = request.args.get('account_id')
         user_id = request.args.get('user_id')
         print(f"encode {account_id} : {user_id}")
-        muxed = await account.encodeMuxed(account_id=account_id, user_id=user_id)
+        muxed = await account.encode_muxed(account_id=account_id, user_id=user_id)
     except Exception as e:
         print("An exception occurred:", e)
         return quart.Response(response=INVALID_ARGUMENT, status=400)
@@ -50,10 +51,19 @@ async def account_encode_muxed():
 async def account_decode_muxed():
     try:
         muxed_account_id = request.args.get('muxed_account_id')
-        data = await account.decodeMuxed(muxed_account_id)
+        data = await account.decode_muxed(muxed_account_id)
     except Exception as e:
         print("An exception occurred:", e)
-        return quart.Response(response=INVALID_ARGUMENT, status=400)
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(data), status=200)
+    
+@app.get("/account/directory_info")
+async def account_directory_info():
+    account_id = request.args.get('account_id')
+    data = await account.directory_info(account_id)
+    if len(data) == 0:
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(data), status=200)
     
