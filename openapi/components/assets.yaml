@@ -1,0 +1,109 @@
+    AssetResponse:
+      type: object
+      description: Accounts on the Stellar network can be used to track, hold, and transfer any type of asset. Assets can represent many things, cryptocurrencies (such as bitcoin or ether), fiat currencies (such as dollars or pesos), other tokens of value (such as NFTs), pool shares, or even bonds and equity.
+      properties:
+        asset_type:
+          title: Asset Type
+          type: string
+          description: This asset's type. Either credit_alphanum4 or credit_alphanum12.
+        asset_code:
+          title: Asset Code
+          type: string
+          description: This asset's code. Assets on Stellar have two identifying characteristics, the asset code and the issuer. Since more than one organization can issue a credit representing the same asset, asset codes often overlap (for example, multiple companies offer a USD token on Stellar). Assets are uniquely identified by the combination of their asset code and issuer.
+        asset_issuer:
+          title: Asset Issuer
+          type: string
+          description: The Stellar account id of this asset's issuer.
+        accounts:
+          $ref: "#/components/schemas/AssetAccounts"
+        num_claimable_balances:
+          title: Nr. of claimable balances
+          type: integer
+          description: The current number of claimable balances for this asset.
+        num_liquidity_pools:
+          title: Nr. of liquidity pools
+          type: integer
+          description: The current number of liquidity pools for this asset.
+        balances:
+          $ref: "#/components/schemas/AssetBalances"
+        claimable_balances_amount:
+          title: Claimable balances amount
+          type: number
+          format: float
+          description: The number of units in claimable balances for this asset.
+        liquidity_pools_amount:
+          title: Liquidity pools amount
+          type: number
+          format: float
+          description: The number of units in liquidity pools for this asset.
+        amount:
+          title: Amount
+          type: number
+          format: float
+          description: The number of authorized units issued for this asset.
+        num_accounts:
+          title: Nr. of accounts
+          type: integer
+          description: The number of accounts that have issued a trustline to this asset. If the auth_required flag for this asset's issuer is set to true, this number only includes the accounts who have both set up a trustline to the asset and have been authorized to hold the asset. 
+        flags:
+          $ref: "#/components/schemas/AssetFlags"
+        _links:
+          $ref: "#/components/schemas/AssetExternalLinks"
+    AssetAccounts:
+      type: object
+      description: Information about the number of Stellar accounts holding this asset.
+      properties:
+        authorized:
+          type: integer
+          description: Number of accounts that have a trustline to this asset and are authorized to hold this asset.
+        authorized_to_maintain_liabilities:
+          type: integer
+          description: Number of accounts that are authorized to maintain liabilities for this asset.
+        unauthorized:
+          type: integer
+          description: Number of accounts that have a trustline to this asset but are not authorized to hold this asset.
+    AssetBalances:
+      type: object
+      description: Information about balances of this asset hold by other accounts.
+      properties:
+        authorized:
+          type: number
+          format: float
+          description: Number of units of this asset authorized to be hold by other accounts that have a trustline to this asset.
+        authorized_to_maintain_liabilities:
+          type: number
+          format: float
+          description: Number of units of this asset authorized to maintain liabilities hold by other accounts.
+        unauthorized:
+          type: number
+          format: float
+          description: Number of units of this asset unauthorized to be hold by other accounts that have a trustline to this asset.
+    AssetFlags:
+      type: object
+      description: Flags denoting the enabling/disabling of certain asset issuer privileges.
+      properties:
+        auth_required:
+          type: boolean
+          description: If set to true, anyone who wants to hold this asset must first be authorized by it's issuer account.
+        auth_revocable:
+          type: boolean
+          description: If set to true, the issuer account of this asset can freeze the asset's balance of a holder.
+        auth_clawback_enabled:
+          type: boolean
+          description: If set to true, trustlines created for this asset have clawbacks enabled.
+        auth_immutable:
+          type: boolean
+          description: If set to true, none of the other flags of this asset can be changed.
+    AssetsExternalLinks:
+      type: array
+      description: A list of links to external information about this asset. Currently only contains a link to a Stellar Info File (toml), which holds off-chain metadata about the asset and it's issuer.
+      title: Asset Links
+      items:
+        toml:
+          title: Toml
+          type: object
+          description: A link to the Stellar Info File holding off-chain metadata about the asset and the issuer of this asset.
+          properties:
+            href:
+            type: string
+            description: Contains the link target (url) to the stellar info file holding off-chain metadata about the asset and it's issuer.

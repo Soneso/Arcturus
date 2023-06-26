@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info:
+  title: Arcturus Stellar Plugin
+  summary: A server to get access to Stellar Network and Soroban Data.
+  description: An API that allows the user to request information about accounts from the Stellar Network (Blockchain) using ChatGPT. An account is identified by it's account id. If you do not know the account id ask the user for it. The user can also request payments associated with an account. 
+  version: 0.0.1
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: Arcturus Support
+    url: https://soneso.com
+    email: hi@soneso.com
+servers:
+  - url: http://localhost:5003

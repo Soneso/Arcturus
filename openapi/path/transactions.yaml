@@ -1,0 +1,34 @@
+  /transaction/details:
+    get:
+      operationId: getTransactionDetails
+      summary: Get the transaction details.
+      description: Get the details for the given transaction including fee, memo, source account, signatures, number of operations. To perform actions with an account on the Stellar network, you compose operations, bundle them into a transaction, and then sign and submit the transaction to the network.
+      externalDocs:
+        description: Fine more info about transactions here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: hash
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the transaction.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found transacion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDetails'
+        "404":
+          description: Transaction was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string

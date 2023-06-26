@@ -168,9 +168,21 @@ async def plugin_manifest():
 @app.get("/openapi.yaml")
 async def openapi_spec():
     host = request.headers['Host']
-    with open("openapi.yaml") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/yaml")
+    file_list = ['openapi/info.yaml', 
+                 'openapi/path/accounts.yaml',
+                 'openapi/path/assets.yaml',
+                 'openapi/path/claimable_balances.yaml',
+                 'openapi/path/stellar_toml.yaml', 
+                 'openapi/path/payments.yaml',
+                 'openapi/path/transactions.yaml', 
+                 'openapi/components/accounts.yaml',
+                 'openapi/components/assets.yaml',
+                 'openapi/components/claimable_balances.yaml',
+                 'openapi/components/stellar_toml.yaml',
+                 'openapi/components/payments.yaml',
+                 'openapi/components/transactions.yaml']
+    combined_text = combine_files(file_list)
+    return quart.Response(combined_text, mimetype="text/yaml")
 
 def horizon_url_for_network(network):
     if network == 'public':
@@ -180,6 +192,15 @@ def horizon_url_for_network(network):
     if network == 'futurenet':
         return HORIZON_FUTURENET_URL
     return network
+
+def combine_files(file_list):
+    combined_text = ''
+    for file_name in file_list:
+        with open(file_name, 'r') as file:
+            file_text = file.read()
+            combined_text += file_text + "\n"
+
+    return combined_text
 
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)

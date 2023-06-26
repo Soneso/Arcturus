@@ -1,0 +1,112 @@
+paths:
+  /account/details:
+    get:
+      operationId: getAccountDetails
+      summary: Get the current details for the given account including balances, sequence number, tresholds. 
+      description: Returns the details of an account. Accounts are the central data structure in Stellar- they hold balances, sign transactions, and issue assets.
+      externalDocs:
+        description: Fine more info about accounts here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/accounts
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Id of the account to get the details for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object response containing the details of the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDetails'
+          links:
+            claimableBalances:
+              operationId: getClaimableBalancesForClaimant
+              parameters:
+                claimant_account_id: $request.query.account_id
+                network: $request.query.network
+        "404":
+          description: Account was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /account/encode_muxed:
+    get:
+      operationId: getEncodedMuxedAccount
+      summary: Generates a muxed account id by combining the given stellar account id and user id (numeric). A muxed account allows a single stellar account id to be shared across many users.
+      description: A stellar account is identified by its account id. However, muxed accounts introduce an additional level of abstraction by allowing a single account to have multiple sub-accounts, each identified by a shorter muxed account id. This endpoint creates the muxed account Id by the given parameters.
+      externalDocs: 
+        description: Fine more info about accounts here
+        url: https://developers.stellar.org/docs/encyclopedia/pooled-accounts-muxed-accounts-memos
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The stellar account id to be used for creating the muxed account id. Must start with the letter G.
+        - name: user_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The user id to be used for creating the muxed account id. Must be numeric.
+      responses:
+        "200":
+          description: The generated muxed account id.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Invalid parameters.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /account/decode_muxed:
+    get:
+      operationId: getDecodedMuxedAccount
+      summary: Extracts the stellar account id and user id from a muxed stellar account id. 
+      description: Muxed accounts introduce an additional level of abstraction by allowing a single account to have multiple sub-accounts, each identified by a muxed account id. This endpoint extracts the stellar account id and user id from a muxed account id.
+      externalDocs: 
+        description: Fine more info about accounts here
+        url: https://developers.stellar.org/docs/encyclopedia/pooled-accounts-muxed-accounts-memos
+      parameters:
+        - name: muxed_account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The muxed stellar account id to decode. Must start with the letter M.
+      responses:
+        "200":
+          description: The extracted stellar account id and user id.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_id:
+                    type: string
+                    title: Stellar account id
+                    description: The stellar account id extracted from the muxed account id.
+                  user_id:
+                    type: string
+                    title: User id
+                    description: The user id extracted from the muxed account id.
+        "400":
+          description: Invalid parameter.
+          content:
+            text/plain:
+              schema:
+                type: string

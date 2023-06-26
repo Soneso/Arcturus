@@ -1,0 +1,24 @@
+  /stellar_toml/{domain}:
+    get:
+      operationId: getStellarToml
+      summary: Stellar Info Data for a given domain. A stellar.toml file is used to expose info about the organization's Stellar integration. By setting the home_domain of a Stellar account to the domain that hosts the stellar.toml, organizations create a link between this info and an account.  
+      parameters:
+      - in: path
+        name: domain
+        schema:
+            type: string
+        required: true
+        description: Given the domain DOMAIN, the stellar.toml will be searched for at the following location https://DOMAIN/.well-known/stellar.toml . Please provide only the DOMAIN to this endpoint, not the complete url even if the complete url is stored in the home_domain of the account.
+      responses:
+        "200":
+          description: A complex object response containing off-chain Stellar Info Data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StellarToml'
+        "404":
+          description: No stellar.toml file was not found for the given domain.
+          content:
+            text/plain:
+              schema:
+                type: string
