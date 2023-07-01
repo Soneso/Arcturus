@@ -31,7 +31,7 @@
         - name: limit
           in: query
           schema:
-            type: string
+            type: integer
           required: false
           description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
       responses:

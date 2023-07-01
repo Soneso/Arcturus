@@ -7,4 +7,4 @@ def add_paging(builder, cursor, order, limit):
     else:
         builder.order(desc=True)
     if limit is not None:
-        builder.limit(limit)
+        builder.limit(int(limit))

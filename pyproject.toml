@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "arcturus"
 version = "0.1.0"
-description = ""
+description = "Arcturus is a GchatGPT Plugin that can access Data from the Stellar Network."
 authors = ["Christian Rogobete <c.rogobete@soneso.com>"]
 readme = "README.md"
+license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
 python = "^3.10"
