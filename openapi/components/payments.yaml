@@ -44,8 +44,16 @@
           description: The payment sender's account id. Only available if 'type' is not 'create_account'.
         to:
           type: string
-          title: From
+          title: Recepient
           description: The payment recipient's account id. Only available if 'type' is not 'create_account'.
+        to_muxed:
+          type: string
+          title: Recepient
+          description: The payment recipient's muxed account id. If this is available it has to be prefered over the to property.
+        to_muxed_id:
+          type: string
+          title: User Id
+          description: The payment recipient's user id from the muxed account. Only avaliable if the property to_muxed is set.
         amount:
           type: string
           title: From

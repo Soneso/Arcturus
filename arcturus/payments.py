@@ -11,6 +11,10 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
         builder.include_failed(include_failed=False)
     add_paging(builder, cursor, order, limit) 
     records += builder.call()["_embedded"]["records"]
+    
     for x in records:
         del x['_links']
+        if 'to' in x and 'to_muxed' in x: #show only muxed to make it easier for ChatGPT
+            del x['to']
+            
     return records

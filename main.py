@@ -34,6 +34,7 @@ async def account_details():
         account_id = request.args.get('account_id')
         network = request.args.get('network')
         details = await account.get_details(horizon_url_for_network(network), account_id)
+        print(f"details: {details}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -44,7 +45,6 @@ async def account_encode_muxed():
     try:
         account_id = request.args.get('account_id')
         user_id = request.args.get('user_id')
-        print(f"encode {account_id} : {user_id}")
         muxed = await account.encode_muxed(account_id=account_id, user_id=user_id)
     except Exception as e:
         print("An exception occurred:", e)
@@ -107,7 +107,6 @@ async def claimable_balances_for_claimant():
     
 @app.get("/claimable_balances/for_sponsor")
 async def claimable_balances_for_sponsor():
-    print("test: get claimable balances for sponsor")
     try:
         sponsor_account_id = request.args.get('sponsor_account_id')
         network = request.args.get('network')
@@ -126,19 +125,18 @@ async def claimable_balances_for_sponsor():
 
 @app.get("/claimable_balances/claimable_balance")
 async def claimable_balance():
-    print("test: get claimable balance for id")
     try:
         claimable_balance_id = request.args.get('claimable_balance_id')
         network = request.args.get('network')
-        records = await claimable_balances.claimable_balance(horizon_url_for_network(network), claimable_balance_id)
+        details = await claimable_balances.claimable_balance(horizon_url_for_network(network), claimable_balance_id)
+        print(f"details: {details}")
     except NotFoundError:
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
-        return quart.Response(response=json.dumps(records), status=200)
+        return quart.Response(response=json.dumps(details), status=200)
 
 @app.get("/stellar_toml/<string:domain>")
 async def get_stellar_toml(domain):
-    print("test: get stellar toml")
     try:
         details = stellar_toml.fetch_stellar_toml(domain)
     except StellarTomlNotFoundError:
@@ -148,7 +146,6 @@ async def get_stellar_toml(domain):
 
 @app.get("/payments/for_account")
 async def payments_for_account():
-    print("test: get payments for account")
     try:
         account_id = request.args.get('account_id')
         include_failed = request.args.get('include_failed')
@@ -171,6 +168,7 @@ async def transaction_details():
         t_id = request.args.get('hash')
         network = request.args.get('network')
         details = await transactions.get_details(horizon_url_for_network(network), t_id)
+        print(f"details: {details}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
