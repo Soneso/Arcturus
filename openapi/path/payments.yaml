@@ -1,8 +1,8 @@
   /payments/for_account:
     get:
       operationId: getPaymentsForAccount
-      summary: Get a list of payments associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. The account can be the receiver or sender of the payment.
-      description: Returns a subset of payments associated with the given account. The account can be the receiver or sender of the payment. It can be a normal payment operation or a create account operation.
+      summary: Get a list of maximum 2 payments associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. The account can be the receiver or sender of the payment.
+      description: Returns payments associated with the given account. It can only load a maximum of 2 payments at a time. The account can be the receiver or sender of the payment. It can be a normal payment operation or a create account operation.
       parameters:
         - name: account_id
           in: query
@@ -32,14 +32,14 @@
           in: query
           schema:
             type: string
-          required: false
+          required: true
           description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
         - name: limit
           in: query
           schema:
             type: integer
-          required: false
-          description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
+          required: true
+          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of payments for the account.
@@ -49,6 +49,12 @@
                 type: array
                 items:
                   $ref: '#/components/schemas/PaymentEntry'
+        "400":
+          description: Paging limit was higher than allowed.
+          content:
+            text/plain:
+              schema:
+                type: string
         "404":
           description: Account was not found on the Stellar Network.
           content:

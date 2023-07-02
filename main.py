@@ -23,6 +23,11 @@ INVALID_ARGUMENT = "Invalid argument"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
 STELLAR_TOML_NOT_FOUND = "stellar.toml not found"
 
+# we have to limit the size of the response because it counts as a part of the context window of ChatGPT
+# it is now very limited but will expand dramatically in the future.
+MAX_PAGING_LIMIT = 2
+PAGING_LIMIT_EXCEEDED = "Paging limit too high."
+
 @app.get("/account/details")
 async def account_details():
     try:
@@ -90,6 +95,9 @@ async def claimable_balances_for_claimant():
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        
         records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:
@@ -106,6 +114,9 @@ async def claimable_balances_for_sponsor():
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        
         records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:
@@ -145,6 +156,8 @@ async def payments_for_account():
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:

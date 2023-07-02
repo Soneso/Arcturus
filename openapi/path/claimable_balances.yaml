@@ -1,8 +1,8 @@
   /claimable_balances/for_claimant:
     get:
       operationId: getClaimableBalancesForClaimant
-      summary: Get some of claimable balances having the given account as a claimant and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a subset of claimable balances having the given account as a claimant.
+      summary: Get a list of maximum 2 claimable balances having the given account as a claimant and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns claimable balances having the given account as a claimant. It can only load a maximum of 2 claimable balances at a time.
       parameters:
         - name: claimant_account_id
           in: query
@@ -26,14 +26,14 @@
           in: query
           schema:
             type: string
-          required: false
+          required: true
           description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
         - name: limit
           in: query
           schema:
             type: string
-          required: false
-          description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
+          required: true
+          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
       responses:
         "200":
           description: A complex object array response holding some claimable balances having the given account as a claimant.
@@ -43,6 +43,12 @@
                 type: array
                 items:
                   $ref: '#/components/schemas/ClaimableBalance'
+        "400":
+          description: Paging limit was higher than allowed.
+          content:
+            text/plain:
+              schema:
+                type: string
         "404":
           description: Account was not found on the Stellar Network.
           content:
@@ -52,8 +58,8 @@
   /claimable_balances/for_sponsor:
     get:
       operationId: getClaimableBalancesForSponsor
-      summary: Get some of claimable balances having the given account as a sponsor and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a subset of claimable balances having the given account as a sponsor.
+      summary: Get a list of maximum 2 claimable balances having the given account as a sponsor and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns claimable balances having the given account as a sponsor. It can only load a maximum of 2 claimable balances at a time.
       parameters:
         - name: sponsor_account_id
           in: query
@@ -77,14 +83,14 @@
           in: query
           schema:
             type: string
-          required: false
+          required: true
           description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
         - name: limit
           in: query
           schema:
             type: integer
-          required: false
-          description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
+          required: true
+          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
       responses:
         "200":
           description: A complex object array response holding some claimable balances having the given account as a sponsor.
@@ -94,6 +100,12 @@
                 type: array
                 items:
                   $ref: '#/components/schemas/ClaimableBalance'
+        "400":
+          description: Paging limit was higher than allowed.
+          content:
+            text/plain:
+              schema:
+                type: string
         "404":
           description: Account was not found on the Stellar Network.
           content:
