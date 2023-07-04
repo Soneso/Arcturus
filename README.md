@@ -37,3 +37,34 @@ Once the local server is running:
 
 The plugin should now be installed and enabled! You can start with a question like "Please display the account details of this Stellar account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55"
 
+## Implementation status
+
+Currently the plugin can fetch data related to Stellar accounts and their payments. 
+
+Please see this [example prompts](https://github.com/Soneso/Arcturus/example.md).
+
+### Account data
+
+The plugin can load, understand and display:
+- On-chain account details of the account, such as balances, sequence number, home domain, thresholds, flags, data values, signers, etc.
+- On-chain data about the assets issued by the account
+- On-chain info about claimable balances for the account as a claimant or sponsor (uses paging)
+- Off-chain directory info about an account loaded from stellar expert
+- Off-chain stellar (toml) data associated with the account's home domain
+- encode and decode muxed accounts
+- decode data values
+
+**Limitations**
+
+Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 claimable balances at a time. Therefore, paging is limited to 2 entries per request. 
+
+### Payments associated with an account
+
+The plugin can load, understand and display:
+- On-Chain payment details for all types of payments such as create_account, payment, path_payment (uses paging)
+- On-Chain transaction data associated with the payment, e.g, to be able to show the memo
+
+**Limitations**
+
+Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 payments at a time. Therefore, paging is limited to 2 entries per request.
+
