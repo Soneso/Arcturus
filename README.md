@@ -41,7 +41,7 @@ The plugin should now be installed and enabled! You can start with a question li
 
 Currently the plugin can fetch data related to Stellar accounts and their payments. 
 
-Please see this [example prompts](https://github.com/Soneso/Arcturus/blob/main/example.md).
+Please see this [example conversation](https://github.com/Soneso/Arcturus/blob/main/example.md).
 
 ### Account data
 
@@ -68,3 +68,6 @@ The plugin can load, understand and display:
 
 Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 payments at a time. Therefore, paging is limited to 2 entries per request.
 
+### Network
+
+The plugin can switch networks for its requests as given by the prompt. It can use public net, testnet and futurenet. Default is public net.

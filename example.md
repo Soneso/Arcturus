@@ -1,6 +1,6 @@
 # Example
 
-This is an example showing the current functionality:
+This is an example conversation showing the current capabilities of the arcturus plugin:
 
 > **I need the current balances for this stellar account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55**
 
