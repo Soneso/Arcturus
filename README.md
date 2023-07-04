@@ -41,7 +41,7 @@ The plugin should now be installed and enabled! You can start with a question li
 
 Currently the plugin can fetch data related to Stellar accounts and their payments. 
 
-Please see this [example prompts](https://github.com/Soneso/Arcturus/example.md).
+Please see this [example prompts](https://github.com/Soneso/Arcturus/blob/main/example.md).
 
 ### Account data
 
