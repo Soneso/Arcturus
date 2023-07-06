@@ -1,0 +1,555 @@
+    OperationEntry:
+      type: object
+      description: Each of Stellar's operations have unique response shapes. This object holds attributes that are common across individual operation objects.
+      properties:
+        id:
+          type: string
+          title: Operation Id
+          description: Id of the operation representing this operation.
+        type:
+          type: string
+          title: Type
+          description: Type of the operation.
+        transaction_hash:
+          type: string
+          title: Transaction Hash
+          description: A unique identifier for the transaction, the operation representing this operation belongs to. It is sometimes also called transaction id.
+        transaction_successful:
+          type: boolean
+          title: Successfull
+          description: Indicates if this operation was part of a successful transaction. If true, the operation was successfull. If false, the operation failed.
+        source_account:
+          type: string
+          title: Source Account
+          description: The account that originates the operation.
+        created_at:
+          type: string
+          title: Created at
+          description: The date the operation was created.
+        paging_token:
+          title: Paging Token
+          type: string
+          description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.
+    AccountMergeOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type account_merge. Extends the common operation attributes described in OperationEntry.
+      properties:
+        account:
+          type: string
+          title: Account
+          description: The id of the stellar account that has been removed.
+        into:
+          type: string
+          title: Into
+          description: The id of the stellar account that received the deleted account's stellar lumens.
+    AllowTrustOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type allow_trust. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset. Either native, credit_alphanum4, or credit_alphanum12.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset. Appears if the asset_type is not native.
+        authorize:
+          type: integer
+          title: Authorized
+          description: Flag indicating whether the trustline was authorized. 0 if the account is not authorized to transact with the asset. 1 if the account is authorized. 2 if the account is authorized to maintain orders, but not to perform other transactions.
+        trustee:
+          type: string
+          title: Trustee
+          description: The issuing asset account, or source account in this instance.
+        trustor:
+          type: string
+          title: Trustor
+          description: The trusting account, or the account being authorized or unauthorized.
+    SetTrustlineFlagsOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type set_trust_line_flags. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset. Either native, credit_alphanum4, or credit_alphanum12.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset. Appears if the asset_type is not native.
+        trustee:
+          type: string
+          title: Trustee
+          description: The issuing asset account, or source account in this instance.
+        trustor:
+          type: string
+          title: Trustor
+          description: The trusting account, holding the trust line.
+        set_flags_s:
+          type: array
+          title: Set Flags
+          description: The array of string values of flags that has been set in this operation.
+          items:
+            type: string
+            description: Flag that has been set.
+        clear_flags_s:
+          type: array
+          title: Clear Flags
+          description: The array of string values of flags that has been cleared in this operation.
+          items:
+            type: string
+            description: Flag that has been cleared / removed.
+    BumpSequenceOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type bump_sequence. Extends the common operation attributes described in OperationEntry.
+      properties:
+        bump_to:
+          type: string
+          title: Bump To
+          description: The new value for the source account's sequence number.
+    CreateAccountOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type create_account. Extends the common operation attributes described in OperationEntry.
+      properties:
+        starting_balance:
+          type: string
+          title: Starting balance
+          description: The amount of XLM (Stellar Lumens) send to create the account.
+        funder:
+          type: string
+          title: Funder
+          description: The id of the account that funded the new account.
+        account:
+          type: string
+          title: Account
+          description: The id of the stellar account that was created with this operation.
+    ChangeTrustOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type change_trust. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset. Either native, credit_alphanum4, credit_alphanum12 or liquidity_pool_shares.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset. Appears if the asset_type is not native.
+        limit:
+          type: string
+          title: Limit
+          description: Limits the amount of an asset that the source account can hold.
+        trustee:
+          type: string
+          title: Trustee
+          description: The issuing account of the asset. Only present if asset_type is not native.
+        trustor:
+          type: string
+          title: Trustor
+          description: The account holding the trustline.
+        liquidity_pool_id:
+          type: string
+          title: Liquidity Pool ID
+          description: The liquidity pool whose trustline is being modified. Only present for asset_type is liquidity_pool_shares.
+    CreateClaimableBalanceOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type create_claimable_balance. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset:
+          title: Asset
+          type: string
+          description: The asset available to be claimed. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
+        amount:
+          title: Amount
+          type: number
+          format: float
+          description: The amount of asset that can be claimed.
+        claimants:
+          type: array
+          description: The list of entries which could claim the claimable balance.
+          title: Claimants
+          items:
+            destination:
+              title: ID
+              type: string
+              description: The account ID who can claim the balance.
+            predicate:
+              $ref: "#/components/schemas/ClaimantPredicate"
+    ClaimClaimableBalanceOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type claim_claimable_balance. Extends the common operation attributes described in OperationEntry.
+      properties:
+        balance_id:
+          title: Balance ID
+          type: string
+          description: The id of the claimable balance.
+        claimant:
+          title: Claimant
+          type: string
+          description: The id of the account which claimed the balance.
+    SetOptionsOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type set_options. Extends the common operation attributes described in OperationEntry.
+      properties:
+        signer_key:
+          type: string
+          title: Signer key
+          description: The public key of the new signer.
+        signer_weight:
+          type: integer
+          title: Signer weight
+          description: The weight of the new signer. Can range from 1 to 255.
+        master_key_weight:
+          type: integer
+          title: Master Key weight
+          description: The weight of the master key. Can range from 1 to 255.
+        low_threshold:
+          type: integer
+          title: Low Threshold
+          description: The sum weight for the low threshold.
+        med_threshold:
+          type: integer
+          title: Med Threshold
+          description: The sum weight for the medium threshold.
+        high_threshold:
+          type: integer
+          title: High Threshold
+          description: The sum weight for the high threshold.
+        home_domain:
+          type: string
+          title: Home domain
+          description: The home domain used for stellar.toml file discovery.
+        set_flags_s:
+          type: array
+          title: Set Flags
+          description: The array of string values of flags that has been set in this operation. Options include AUTH_REQUIRED_FLAG, AUTH_REVOCABLE_FLAG, and AUTH_IMMUTABLE_FLAG.
+          items:
+            type: string
+            description: Flag that has been set.
+        clear_flags_s:
+          type: array
+          title: Clear Flags
+          description: The array of string values of flags that has been cleared in this operation. Options include AUTH_REQUIRED_FLAG, AUTH_REVOCABLE_FLAG, and AUTH_IMMUTABLE_FLAG.
+          items:
+            type: string
+            description: Flag that has been cleared / removed.
+    ManageDataOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type manage_data. Extends the common operation attributes described in OperationEntry.
+      properties:
+        name:
+          title: Name
+          type: string
+          description: The key for this data entry.
+        value:
+          title: Value
+          type: string
+          description: If present, then this value will has been set in the data entry. If not present, then the existing name/key has been deleted.
+    PaymentOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type payment. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset that has been sent. Either native, credit_alphanum4, or credit_alphanum12.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset that has been sent. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset that has been sent. Appears if the asset_type is not native.
+        from:
+          type: string
+          title: From
+          description: The payment sender's account id.
+        to:
+          type: string
+          title: To
+          description: The payment recipient's account id.
+        amount:
+          type: string
+          title: Amount
+          description: Amount that has been sent.
+    PathPaymentStrictReceiveOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type path_payment_strict_receive. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset that has been sent. Either native, credit_alphanum4, or credit_alphanum12.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset that has been sent. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset that has been sent. Appears if the asset_type is not native.
+        from:
+          type: string
+          title: From
+          description: The payment sender's account id.
+        to:
+          type: string
+          title: To
+          description: The payment recipient's account id.
+        amount:
+          type: string
+          title: Amount
+          description: Amount that has been sent.
+        path:
+          type: array
+          title: Path
+          description: The intermediary assets that this path hops through.
+          items:
+            $ref: "#/components/schemas/PathPaymentHop"
+        source_amount:
+          type: string
+          title: Source Amount
+          description: Amount sent designated in the source asset. 
+        source_asset_type:
+          type: string
+          title: Source Asset Type
+          description: The type for the source asset. Either native, credit_alphanum4, or credit_alphanum12.
+        source_asset_code:
+          type: string
+          title: Source Asset Code
+          description: The code for the source asset. Appears if the asset_type is not native.
+        source_asset_issuer:
+          type: string
+          title: Source Asset Issuer
+          description: The Stellar account id of the source asset's issuer. Appears if the asset_type is not native.
+        source_max:
+          type: string
+          title: Source Amount
+          description: The maximum amount to be sent designated in the source asset. Only available if 'type' is 'path_payment_strict_receive'.
+    PathPaymentStrictSendOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type path_payment_strict_send. Extends the common operation attributes described in OperationEntry.
+      properties:
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset that has been received. Either native, credit_alphanum4, or credit_alphanum12.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset that has been received. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset that has been received. Appears if the asset_type is not native.
+        from:
+          type: string
+          title: From
+          description: The payment sender's account id.
+        to:
+          type: string
+          title: To
+          description: The payment recipient's account id.
+        amount:
+          type: string
+          title: Amount
+          description: Amount that has been received designated in the destination asset.
+        path:
+          type: array
+          title: Path
+          description: The intermediary assets that this path hops through.
+          items:
+            $ref: "#/components/schemas/PathPaymentHop"
+        source_amount:
+          type: string
+          title: Source Amount
+          description: Amount sent designated in the source asset.
+        destination_min:
+          type: string
+          title: Destination Min
+          description: The minimum amount of destination asset expected to be received.
+        source_asset_type:
+          type: string
+          title: Source Asset Type
+          description: The type for the source asset. Either native, credit_alphanum4, or credit_alphanum12.
+        source_asset_code:
+          type: string
+          title: Source Asset Code
+          description: The code for the source asset. Appears if the asset_type is not native.
+        source_asset_issuer:
+          type: string
+          title: Source Asset Issuer
+          description: The Stellar account id of the source asset's issuer. Appears if the asset_type is not native.
+    ManageBuyOfferOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type manage_buy_offer. Extends the common operation attributes described in OperationEntry.
+      properties:
+        amount:
+          title: Amount
+          type: string
+          description: The amount of buying_asset that the account making this offer is willing to buy.
+        price:
+          title: Price
+          type: string
+          description: How many units of buying_asset it takes to get 1 unit of selling_asset. A number representing the decimal form of price_r.
+        price_r:
+          title: Price R
+          type: object
+          description: A precise representation of the buy and sell price of the assets on offer.
+          properties:
+            n:
+              type: integer
+              title: Numerator
+              description: The numerator.
+            d:
+              type: integer
+              title: Denominator
+              description: The denominator.
+        buying_asset_type:
+          type: string
+          title: Buying asset type
+          description: The type for the buying asset. Either native, credit_alphanum4, or credit_alphanum12.
+        buying_asset_code:
+          type: string
+          title: Buying asset code
+          description: The code for the buying asset. Appears if the buying_asset_type is not native.
+        buying_asset_issuer:
+          type: string
+          title: Buying asset issuer
+          description: The Stellar address/account id of the buying asset's issuer. Appears if the buying_asset_type is not native.
+        selling_asset_type:
+          type: string
+          title: Selling asset type
+          description: The type for the selling asset. Either native, credit_alphanum4, or credit_alphanum12.
+        selling_asset_code:
+          type: string
+          title: Selling asset code
+          description: The code for the selling asset. Appears if the selling_asset_type is not native.
+        selling_asset_issuer:
+          type: string
+          title: Selling asset issuer
+          description: The Stellar address of the selling asset's issuer. Appears if the selling_asset_type is not native.
+        offer_id:
+          type: string
+          title: Offer ID
+          description: A unique identifier for this offer. If it's value is 0 than the operation created the offer, otherwise the offer was updated by this operation.
+    ManageSellOfferOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type manage_sell_offer. Extends the common operation attributes described in OperationEntry.
+      properties:
+        amount:
+          title: Amount
+          type: string
+          description: The amount of selling_asset that the account making this offer is willing to sell.
+        price:
+          title: Price
+          type: string
+          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A number representing the decimal form of price_r.
+        price_r:
+          title: Price R
+          type: object
+          description: A precise representation of the buy and sell price of the assets on offer.
+          properties:
+            n:
+              type: integer
+              title: Numerator
+              description: The numerator.
+            d:
+              type: integer
+              title: Denominator
+              description: The denominator.
+        buying_asset_type:
+          type: string
+          title: Buying asset type
+          description: The type for the buying asset. Either native, credit_alphanum4, or credit_alphanum12.
+        buying_asset_code:
+          type: string
+          title: Buying asset code
+          description: The code for the buying asset. Appears if the buying_asset_type is not native.
+        buying_asset_issuer:
+          type: string
+          title: Buying asset issuer
+          description: The Stellar address/account id of the buying asset's issuer. Appears if the buying_asset_type is not native.
+        selling_asset_type:
+          type: string
+          title: Selling asset type
+          description: The type for the selling asset. Either native, credit_alphanum4, or credit_alphanum12.
+        selling_asset_code:
+          type: string
+          title: Selling asset code
+          description: The code for the selling asset. Appears if the selling_asset_type is not native.
+        selling_asset_issuer:
+          type: string
+          title: Selling asset issuer
+          description: The Stellar address of the selling asset's issuer. Appears if the selling_asset_type is not native.
+        offer_id:
+          type: string
+          title: Offer ID
+          description: A unique identifier for this offer. If it's value is 0 than the operation created the offer, otherwise the offer was updated by this operation.
+    CreatePassiveSellOfferOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type create_passive_sell_offer. Extends the common operation attributes described in OperationEntry.
+      properties:
+        amount:
+          title: Amount
+          type: string
+          description: The amount of selling_asset that the account making this offer is willing to sell.
+        price:
+          title: Price
+          type: string
+          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A number representing the decimal form of price_r.
+        price_r:
+          title: Price R
+          type: object
+          description: A precise representation of the buy and sell price of the assets on offer.
+          properties:
+            n:
+              type: integer
+              title: Numerator
+              description: The numerator.
+            d:
+              type: integer
+              title: Denominator
+              description: The denominator.
+        buying_asset_type:
+          type: string
+          title: Buying asset type
+          description: The type for the buying asset. Either native, credit_alphanum4, or credit_alphanum12.
+        buying_asset_code:
+          type: string
+          title: Buying asset code
+          description: The code for the buying asset. Appears if the buying_asset_type is not native.
+        buying_asset_issuer:
+          type: string
+          title: Buying asset issuer
+          description: The Stellar address/account id of the buying asset's issuer. Appears if the buying_asset_type is not native.
+        selling_asset_type:
+          type: string
+          title: Selling asset type
+          description: The type for the selling asset. Either native, credit_alphanum4, or credit_alphanum12.
+        selling_asset_code:
+          type: string
+          title: Selling asset code
+          description: The code for the selling asset. Appears if the selling_asset_type is not native.
+        selling_asset_issuer:
+          type: string
+          title: Selling asset issuer
+          description: The Stellar address of the selling asset's issuer. Appears if the selling_asset_type is not native.
+        offer_id:
+          type: string
+          title: Offer ID
+          description: A unique identifier for this offer. If it's value is 0 than the operation created the offer, otherwise the offer was updated by this operation.

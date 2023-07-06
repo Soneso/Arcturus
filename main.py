@@ -8,6 +8,7 @@ import arcturus.assets as assets
 import arcturus.claimable_balances as claimable_balances
 import arcturus.payments as payments
 import arcturus.transactions as transactions
+import arcturus.operations as operations
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -18,6 +19,8 @@ HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
 HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
+TRANSACTION_NOT_FOUND = "Transaction not found"
+OPERATION_NOT_FOUND = "Transaction not found"
 NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
@@ -170,9 +173,107 @@ async def transaction_details():
         details = await transactions.get_details(horizon_url_for_network(network), t_id)
         print(f"details: {details}")
     except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+        return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(details), status=200)
+
+@app.get("/operations/for_account")
+async def operations_for_account():
+    try:
+        account_id = request.args.get('account_id')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await operations.for_account(horizon_url_for_network(network), account_id, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/operations/for_transaction")
+async def operations_for_transaction():
+    try:
+        transaction_hash = request.args.get('transaction_hash')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await operations.for_transaction(horizon_url_for_network(network), transaction_hash, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/operation/account_merge/details")
+async def operation_account_merge_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/allow_trust/details")
+async def operation_allow_trust_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/set_trust_line_flags/details")
+async def operation_set_trust_line_flags_details():
+    return await operation_details(request=request) 
+
+@app.get("/operation/bump_sequence/details")
+async def operation_bump_sequence_details():
+    return await operation_details(request=request)  
+
+@app.get("/operation/create_account/details")
+async def operation_create_account_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/set_options/details")
+async def operation_set_options_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/manage_data/details")
+async def operation_manage_data_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/change_trust/details")
+async def operation_change_trust_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/create_claimable_balance/details")
+async def operation_create_claimable_balance_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/claim_claimable_balance/details")
+async def operation_claim_claimable_balance_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/payment/details")
+async def operation_payment_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/path_payment_strict_receive/details")
+async def operation_path_payment_strict_receive_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/path_payment_strict_send/details")
+async def operation_path_payment_strict_send_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/manage_sell_offer/details")
+async def operation_manage_sell_offer_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/manage_buy_offer/details")
+async def operation_manage_buy_offer_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/create_passive_sell_offer/details")
+async def operation_create_passive_sell_offer_details():
+    return await operation_details(request=request)
     
 @app.get("/logo.png")
 async def plugin_logo():
@@ -195,13 +296,15 @@ async def openapi_spec():
                  'openapi/path/claimable_balances.yaml',
                  'openapi/path/stellar_toml.yaml', 
                  'openapi/path/payments.yaml',
-                 'openapi/path/transactions.yaml', 
+                 'openapi/path/transactions.yaml',
+                 'openapi/path/operations.yaml',  
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/claimable_balances.yaml',
                  'openapi/components/stellar_toml.yaml',
                  'openapi/components/payments.yaml',
-                 'openapi/components/transactions.yaml']
+                 'openapi/components/transactions.yaml',
+                 'openapi/components/operations.yaml']
     combined_text = combine_files(file_list)
     return quart.Response(combined_text, mimetype="text/yaml")
 
@@ -226,5 +329,16 @@ def combine_files(file_list):
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)
 
+async def operation_details(request):
+    try:
+        o_id = request.args.get('id')
+        network = request.args.get('network')
+        details = await operations.get_details(horizon_url_for_network(network), o_id)
+        print(f"details: {details}")
+    except NotFoundError:
+        return quart.Response(response=OPERATION_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
+    
 if __name__ == "__main__":
     main()
