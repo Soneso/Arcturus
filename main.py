@@ -274,6 +274,18 @@ async def operation_manage_buy_offer_details():
 @app.get("/operation/create_passive_sell_offer/details")
 async def operation_create_passive_sell_offer_details():
     return await operation_details(request=request)
+
+@app.get("/operation/begin_sponsoring_future_reserves/details")
+async def operation_begin_sponsoring_future_reserves_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/end_sponsoring_future_reserves/details")
+async def operation_end_sponsoring_future_reserves_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/revoke_sponsorship/details")
+async def operation_revoke_sponsorship_details():
+    return await operation_details(request=request)
     
 @app.get("/logo.png")
 async def plugin_logo():

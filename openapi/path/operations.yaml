@@ -656,3 +656,105 @@
             text/plain:
               schema:
                 type: string
+  /operation/begin_sponsoring_future_reserves/details:
+    get:
+      operationId: getBeginSponsoringFutureReservesOperationDetails
+      summary: Get the operation details for an operation of type begin_sponsoring_future_reserves. A begin_sponsoring_future_reserves operation initiates a sponsorship.
+      description: Get the details for the given begin_sponsoring_future_reserves operation id. A begin_sponsoring_future_reserves operation initiates a sponsorship.
+      externalDocs:
+        description: Fine more info about operations here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the operation.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeginSponsoringFutureReservesOperationDetails'
+        "404":
+          description: Operation was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /operation/end_sponsoring_future_reserves/details:
+    get:
+      operationId: getEndSponsoringFutureReservesOperationDetails
+      summary: Get the operation details for an operation of type end_sponsoring_future_reserves. A end_sponsoring_future_reserves operation ends a sponsorship.
+      description: Get the details for the given end_sponsoring_future_reserves operation id. A end_sponsoring_future_reserves operation ends a sponsorship.
+      externalDocs:
+        description: Fine more info about operations here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the operation.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndSponsoringFutureReservesOperationDetails'
+        "404":
+          description: Operation was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /operation/revoke_sponsorship/details:
+    get:
+      operationId: getEndSponsoringFutureReservesOperationDetails
+      summary: Get the operation details for an operation of type revoke_sponsorship. A revoke_sponsorship operation revokes sponsorship of a ledger entry.
+      description: Get the details for the given revoke_sponsorship operation id. A revoke_sponsorship operation revokes sponsorship of a ledger entry.
+      externalDocs:
+        description: Fine more info about operations here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the operation.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeSponsorshipOperationDetails'
+        "404":
+          description: Operation was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string

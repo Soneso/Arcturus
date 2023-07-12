@@ -70,6 +70,62 @@
           type: string
           title: Trustor
           description: The trusting account, or the account being authorized or unauthorized.
+    BeginSponsoringFutureReservesOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type begin_sponsoring_future_reserves. Extends the common operation attributes described in OperationEntry.
+      properties:
+        sponsored_id:
+          type: string
+          title: Sponsored account
+          description: The id of the account which will be sponsored.
+    EndSponsoringFutureReservesOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type end_sponsoring_future_reserves. Extends the common operation attributes described in OperationEntry.
+      properties:
+        begin_sponsor:
+          type: string
+          title: Sponsor
+          description: The id of the account which initiated the sponsorship.
+    RevokeSponsorshipOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type revoke_sponsorship. Extends the common operation attributes described in OperationEntry.
+      properties:
+        account_id:
+          type: string
+          title: Account
+          description: Optional. The id of the account which is no longer sponsored.
+        claimable_balance_id:
+          type: string
+          title: Claimable Balance
+          description: Optional. The id of the claimable balance which is no longer sponsored.
+        data_account_id:
+          type: string
+          title: Data Account
+          description: Optional. The id of the account whose data entry is no longer sponsored.
+        data_name:
+          type: string
+          title: Data Name
+          description: Optional. The name of the data entry which is no longer sponsored.
+        offer_id:
+          type: string
+          title: Offer
+          description: Optional. The id of the offer which is no longer sponsored.
+        trustline_account_id:
+          type: string
+          title: Trustline Account
+          description: Optional. The id of the account whose trustline is no longer sponsored.
+        trustline_asset:
+          type: string
+          title: Trustline Asset
+          description: Optional. The asset of the trustline which is no longer sponsored.
+        signer_account_id:
+          type: string
+          title: Signer Account
+          description: Optional. The account id of the signer which is no longer sponsored.
+        signer_key:
+          type: string
+          title: Signer Key
+          description: Optional. The type of the signer which is no longer sponsored.
     SetTrustlineFlagsOperationDetails:
       type: object
       description: Additional details of an operation of individual type set_trust_line_flags. Extends the common operation attributes described in OperationEntry.
