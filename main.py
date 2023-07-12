@@ -20,7 +20,7 @@ HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
-OPERATION_NOT_FOUND = "Transaction not found"
+OPERATION_NOT_FOUND = "Operation not found"
 NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
@@ -286,7 +286,15 @@ async def operation_end_sponsoring_future_reserves_details():
 @app.get("/operation/revoke_sponsorship/details")
 async def operation_revoke_sponsorship_details():
     return await operation_details(request=request)
-    
+
+@app.get("/operation/liquidity_pool_deposit/details")
+async def operation_liquidity_pool_deposit_details():
+    return await operation_details(request=request)
+
+@app.get("/operation/liquidity_pool_withdraw/details")
+async def operation_liquidity_pool_withdraw_details():
+    return await operation_details(request=request)
+
 @app.get("/logo.png")
 async def plugin_logo():
     filename = 'logo.png'

@@ -726,7 +726,7 @@
                 type: string
   /operation/revoke_sponsorship/details:
     get:
-      operationId: getEndSponsoringFutureReservesOperationDetails
+      operationId: getRevokeSponsorshipOperationDetails
       summary: Get the operation details for an operation of type revoke_sponsorship. A revoke_sponsorship operation revokes sponsorship of a ledger entry.
       description: Get the details for the given revoke_sponsorship operation id. A revoke_sponsorship operation revokes sponsorship of a ledger entry.
       externalDocs:
@@ -752,6 +752,74 @@
             application/json:
               schema:
                 $ref: '#/components/schemas/RevokeSponsorshipOperationDetails'
+        "404":
+          description: Operation was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /operation/liquidity_pool_deposit/details:
+    get:
+      operationId: getLiquidityPoolDepositOperationDetails
+      summary: Get the operation details for an operation of type liquidity_pool_deposit. A liquidity_pool_deposit operation deposit asset reserves into a liquidity pool.
+      description: Get the details for the given liquidity_pool_deposit operation id. A liquidity_pool_deposit operation deposit asset reserves into a liquidity pool.
+      externalDocs:
+        description: Fine more info about operations here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the operation.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiquidityPoolDepositOperationDetails'
+        "404":
+          description: Operation was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /operation/liquidity_pool_withdraw/details:
+    get:
+      operationId: getLiquidityPoolWithdrawOperationDetails
+      summary: Get the operation details for an operation of type liquidity_pool_withdraw. A liquidity_pool_withdraw operation withdraws asset reserves from a liquidity pool by redeeming pool shares.
+      description: Get the details for the given liquidity_pool_withdraw operation id. A liquidity_pool_withdraw operation withdraws asset reserves from a liquidity pool by redeeming pool shares.
+      externalDocs:
+        description: Fine more info about operations here
+        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The unique identifier of the operation.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object holding the details of the found operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiquidityPoolWithdrawOperationDetails'
         "404":
           description: Operation was not found on the Stellar Network.
           content:

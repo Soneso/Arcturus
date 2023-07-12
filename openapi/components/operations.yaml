@@ -256,6 +256,90 @@
           title: Claimant
           type: string
           description: The id of the account which claimed the balance.
+    LiquidityPoolDepositOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type liquidity_pool_deposit. Extends the common operation attributes described in OperationEntry.
+      properties:
+        liquidity_pool_id:
+          title: Liquidity Pool
+          type: string
+          description: The liquidity pool associated with this deposit.
+        reserves_max:
+          type: array
+          description: An array of objects corresponding to the maximum amount of each reserve that could've been deposited.
+          title: Reserves Max
+          items:
+            asset:
+              title: Asset
+              type: string
+              description: The asset in canonical (Code:Issuer) form.
+            amount:
+              title: Amount
+              type: string
+              description: Reserve amount for the asset.
+        min_price:
+          title: Min. price
+          type: string
+          description: Indicates the minimum exchange rate for this deposit operation.
+        max_price:
+          title: Max. price
+          type: string
+          description: Indicates the maximum exchange rate for this deposit operation.
+        reserves_deposited:
+          type: array
+          description: An array of objects representing how much of each reserve ended up actually deposited into the pool.
+          title: Reserves Deposited
+          items:
+            asset:
+              title: Asset
+              type: string
+              description: The asset in canonical (Code:Issuer) form.
+            amount:
+              title: Amount
+              type: string
+              description: Reserve amount for the asset.
+        shares_received:
+          title: Shares received
+          type: string
+          description: Represents the number of pool shares received for this deposit.
+    LiquidityPoolWithdrawOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type liquidity_pool_withdraw. Extends the common operation attributes described in OperationEntry.
+      properties:
+        liquidity_pool_id:
+          title: Liquidity Pool
+          type: string
+          description: The liquidity pool associated with this withdrawal.
+        reserves_min:
+          type: array
+          description: An array of objects corresponding to the minimum amount of each reserve that should've been withdrawn.
+          title: Reserves Min
+          items:
+            asset:
+              title: Asset
+              type: string
+              description: The asset in canonical (Code:Issuer) form.
+            amount:
+              title: Amount
+              type: string
+              description: Reserve amount for the asset.
+        shares:
+          title: Shares
+          type: string
+          description: The number of shares that were redeemed for this withdrawal operation.
+        reserves_received:
+          type: array
+          description: An array of objects representing how much of each reserve ended up actually withdrawn from the pool.
+          title: Reserves Deposited
+          items:
+            asset:
+              title: Asset
+              type: string
+              description: The asset in canonical (Code:Issuer) form.
+            amount:
+              title: Amount
+              type: string
+              description: Reserve amount for the asset.
     SetOptionsOperationDetails:
       type: object
       description: Additional details of an operation of individual type set_options. Extends the common operation attributes described in OperationEntry.
