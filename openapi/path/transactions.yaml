@@ -36,7 +36,7 @@
     get:
       operationId: getTransactionsForAccount
       summary: Get a list of transactions associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given account.
+      description: Returns transactions associated with the given account. It can only load a maximum of 5 transaction at a time.
       parameters:
         - name: account_id
           in: query
@@ -49,7 +49,7 @@
           schema:
             type: string
           required: false
-          description: Must be set to true of the result should also include failed transactions.
+          description: Must be set to true if the result should also include failed transactions.
         - name: network
           in: query
           schema:
@@ -73,7 +73,7 @@
           schema:
             type: integer
           required: true
-          description: The number of records to be returned.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of transactions for the account.
@@ -99,20 +99,20 @@
     get:
       operationId: getTransactionsForLedger
       summary: Get a list of transactions associated with the given ledger depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given ledger.
+      description: Returns transactions associated with the given ledger. It can only load a maximum of 5 transaction at a time.
       parameters:
-        - name: ledger_id
+        - name: ledger_squence
           in: query
           schema:
             type: string
           required: true
-          description: Id or sequence of the ledger to get the information for.
+          description: Sequence number of the ledger to get the information for.
         - name: include_failed
           in: query
           schema:
             type: string
           required: false
-          description: Must be set to true of the result should also include failed transactions.
+          description: Must be set to true if the result should also include failed transactions.
         - name: network
           in: query
           schema:
@@ -136,7 +136,7 @@
           schema:
             type: integer
           required: true
-          description: The number of records to be returned.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of transactions for the ledger.
@@ -162,7 +162,7 @@
     get:
       operationId: getTransactionsForLiquidityPool
       summary: Get a list of transactions associated with the given liquidity pool depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given liquidity pool.
+      description: Returns transactions associated with the given liquidity pool. It can only load a maximum of 5 transaction at a time.
       parameters:
         - name: liquidity_pool_id
           in: query
@@ -175,7 +175,7 @@
           schema:
             type: string
           required: false
-          description: Must be set to true of the result should also include failed transactions.
+          description: Must be set to true if the result should also include failed transactions.
         - name: network
           in: query
           schema:
@@ -199,7 +199,7 @@
           schema:
             type: integer
           required: true
-          description: The number of records to be returned.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of transactions for the liquidity pool.
@@ -225,7 +225,7 @@
     get:
       operationId: getTransactionsForClaimableBalance
       summary: Get a list of transactions associated with the given claimable balance depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given claimable balance.
+      description: Returns transactions associated with the given claimable balance. It can only load a maximum of 5 transaction at a time.
       parameters:
         - name: claimable_balance_id
           in: query
@@ -238,7 +238,7 @@
           schema:
             type: string
           required: false
-          description: Must be set to true of the result should also include failed transactions.
+          description: Must be set to true if the result should also include failed transactions.
         - name: network
           in: query
           schema:
@@ -262,7 +262,7 @@
           schema:
             type: integer
           required: true
-          description: The number of records to be returned.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of transactions for the claimable balance.

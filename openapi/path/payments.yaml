@@ -15,7 +15,7 @@
           schema:
             type: string
           required: false
-          description: Must be set to true of the result should also include failed payments.
+          description: Must be set to true if the result should also include failed payments.
         - name: network
           in: query
           schema:
@@ -39,7 +39,7 @@
           schema:
             type: integer
           required: true
-          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
+          description: The number of records to be returned. Currently maximum 2. If the user asks for more please let him know that you can only load maximum 2 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of payments for the account.

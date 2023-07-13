@@ -25,10 +25,10 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
             
     return records
 
-async def for_ledger(horizon_url, ledger_id, include_failed, cursor, order, limit):
+async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order, limit):
     server = Server(horizon_url=horizon_url)
     records = []
-    builder = server.transactions().for_ledger(sequence=ledger_id)
+    builder = server.transactions().for_ledger(sequence=ledger_sequence)
     if include_failed is not None and include_failed is True:
         builder.include_failed(include_failed=True)
     else:

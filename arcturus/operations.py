@@ -3,10 +3,62 @@ from arcturus.utils import add_paging
 
 KEYS_TO_KEEP = ['id', 'paging_token', 'type', 'transaction_hash', 'transaction_successful', 'source_account', 'created_at']
     
-async def for_account(horizon_url, account_id, cursor, order, limit):
+async def for_account(horizon_url, account_id, include_failed, cursor, order, limit):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_account(account_id=account_id)
+    if include_failed is not None and include_failed is True:
+        builder.include_failed(include_failed=True)
+    else:
+        builder.include_failed(include_failed=False)
+    add_paging(builder, cursor, order, limit) 
+    records += builder.call()["_embedded"]["records"]
+    
+    for x in records:
+        delete_keys_except(x, KEYS_TO_KEEP)
+        
+    return records
+
+async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order, limit):
+    server = Server(horizon_url=horizon_url)
+    records = []
+    builder = server.operations().for_ledger(sequence=ledger_sequence)
+    if include_failed is not None and include_failed is True:
+        builder.include_failed(include_failed=True)
+    else:
+        builder.include_failed(include_failed=False)
+    add_paging(builder, cursor, order, limit) 
+    records += builder.call()["_embedded"]["records"]
+    
+    for x in records:
+        delete_keys_except(x, KEYS_TO_KEEP)
+        
+    return records
+
+async def for_liquidity_pool(horizon_url, liquidity_pool_id, include_failed, cursor, order, limit):
+    server = Server(horizon_url=horizon_url)
+    records = []
+    builder = server.operations().for_liquidity_pool(liquidity_pool_id=liquidity_pool_id)
+    if include_failed is not None and include_failed is True:
+        builder.include_failed(include_failed=True)
+    else:
+        builder.include_failed(include_failed=False)
+    add_paging(builder, cursor, order, limit) 
+    records += builder.call()["_embedded"]["records"]
+    
+    for x in records:
+        delete_keys_except(x, KEYS_TO_KEEP)
+        
+    return records
+
+async def for_claimable_balance(horizon_url, claimable_balance_id, include_failed, cursor, order, limit):
+    server = Server(horizon_url=horizon_url)
+    records = []
+    builder = server.operations().for_claimable_balance(claimable_balance_id=claimable_balance_id)
+    if include_failed is not None and include_failed is True:
+        builder.include_failed(include_failed=True)
+    else:
+        builder.include_failed(include_failed=False)
     add_paging(builder, cursor, order, limit) 
     records += builder.call()["_embedded"]["records"]
     
