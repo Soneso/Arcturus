@@ -1,0 +1,18 @@
+  /blocked_domains/{domain}:
+    get:
+      operationId: getBlockedDomainInfo
+      summary: Searches through the off-chain blocked malicious domains list from Stellar Expert directory service to determine if the requested domain or its top-level domain is in the blocklist.
+      parameters:
+      - in: path
+        name: domain
+        schema:
+            type: string
+        required: true
+        description: Domain to verify.
+      responses:
+        "200":
+          description: An object response indicating if the domain is blocked by Stellar Expert.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockedDomain'

@@ -1,0 +1,12 @@
+    BlockedDomain:
+      type: object
+      description: Indicates if a domain is blocked by the stellar expert directory service domain blocklist.
+      properties:
+        domain:
+          type: string
+          title: Domain
+          description: The domain
+        blocked:
+          type: boolen
+          title: Blocked
+          description: True if the domain is blocked, otherwise false.

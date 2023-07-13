@@ -9,6 +9,7 @@ import arcturus.claimable_balances as claimable_balances
 import arcturus.payments as payments
 import arcturus.transactions as transactions
 import arcturus.operations as operations
+import arcturus.domains as domains
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -295,6 +296,13 @@ async def operation_liquidity_pool_deposit_details():
 async def operation_liquidity_pool_withdraw_details():
     return await operation_details(request=request)
 
+@app.get("/blocked_domains/<string:domain>")
+async def get_blocked_domains(domain):
+    print(domain)
+    details = await domains.blocked_domains(domain)
+    return quart.Response(response=json.dumps(details), status=200)
+
+
 @app.get("/logo.png")
 async def plugin_logo():
     filename = 'logo.png'
@@ -317,14 +325,16 @@ async def openapi_spec():
                  'openapi/path/stellar_toml.yaml', 
                  'openapi/path/payments.yaml',
                  'openapi/path/transactions.yaml',
-                 'openapi/path/operations.yaml',  
+                 'openapi/path/operations.yaml',
+                 'openapi/path/domains.yaml', 
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/claimable_balances.yaml',
                  'openapi/components/stellar_toml.yaml',
                  'openapi/components/payments.yaml',
                  'openapi/components/transactions.yaml',
-                 'openapi/components/operations.yaml']
+                 'openapi/components/operations.yaml',
+                 'openapi/components/domains.yaml']
     combined_text = combine_files(file_list)
     return quart.Response(combined_text, mimetype="text/yaml")
 
