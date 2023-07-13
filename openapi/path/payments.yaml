@@ -2,7 +2,7 @@
     get:
       operationId: getPaymentsForAccount
       summary: Get a list of maximum 2 payments associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. The account can be the receiver or sender of the payment.
-      description: Returns payments associated with the given account. It can only load a maximum of 2 payments at a time. The account can be the receiver or sender of the payment. It can be a normal payment operation or a create account operation.
+      description: Returns payments associated with the given account. It can only load a maximum of 2 payments at a time. The account can be the receiver or sender of the payment.
       parameters:
         - name: account_id
           in: query

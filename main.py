@@ -21,6 +21,8 @@ HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
+LEDGER_NOT_FOUND = "Ledger not found"
+LIQUIDITY_POOL_NOT_FOUND = "Liquidity pool not found"
 OPERATION_NOT_FOUND = "Operation not found"
 NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
@@ -177,6 +179,78 @@ async def transaction_details():
         return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(details), status=200)
+
+@app.get("/transactions/for_account")
+async def transactions_for_account():
+    try:
+        account_id = request.args.get('account_id')
+        network = request.args.get('network')
+        include_failed = request.args.get('include_failed')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await transactions.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/transactions/for_liquidity_pool")
+async def transactions_for_liquidity_pool():
+    try:
+        liquidity_pool_id = request.args.get('liquidity_pool_id')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        include_failed = request.args.get('include_failed')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await transactions.for_liquidity_pool(horizon_url_for_network(network), liquidity_pool_id, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/transactions/for_ledger")
+async def transactions_for_ledger():
+    try:
+        ledger_id = request.args.get('ledger_id')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        include_failed = request.args.get('include_failed')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await transactions.for_ledger(horizon_url_for_network(network), ledger_id, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=LEDGER_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+    
+@app.get("/transactions/for_claimable_balance")
+async def transactions_for_claimable_balance():
+    try:
+        claimable_balance_id = request.args.get('claimable_balance_id')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        include_failed = request.args.get('include_failed')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await transactions.for_claimable_balance(horizon_url_for_network(network), claimable_balance_id, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
 
 @app.get("/operations/for_account")
 async def operations_for_account():
