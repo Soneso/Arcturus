@@ -46,9 +46,7 @@
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SimplifiedPaymentEntry'
+                $ref: '#/components/schemas/PaymentsResponse'
         "400":
           description: Paging limit was higher than allowed.
           content:

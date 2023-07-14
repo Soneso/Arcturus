@@ -14,6 +14,17 @@
           type: string
           title: Asset Type
           description: The type for the intermediary asset. Either native, credit_alphanum4, or credit_alphanum12.
+    PaymentsResponse:
+      title: PaymentsResponse
+      required:
+        - payments
+      type: object
+      properties:
+        results:
+          title: Results
+          type: array
+          items:
+            $ref: "#/components/schemas/SimplifiedPaymentEntry"
     SimplifiedPaymentEntry:
       type: object
       description: Holds attributes about a payment operation on the Stellar Network.
@@ -48,11 +59,11 @@
           description: The payment recipient's account id.
         amount_received:
           type: string
-          title: From
+          title: Amount received
           description: Optional. Amount received including asset code and issuer account id in canonical form (separated by ':'). e.g. 'USDC:GAUNPP2NQKCWIJ3LDOFSZPQZ33YFB37IXF3LBT3S7UQAOTTK3H7BOQ6J'
         amount_sent:
           type: string
-          title: From
+          title: Amount sent
           description: Optional. Amount sent including asset code and issuer account id in canonical form (separated by ':'). e.g. 'USDC:GAUNPP2NQKCWIJ3LDOFSZPQZ33YFB37IXF3LBT3S7UQAOTTK3H7BOQ6J'
         paging_token:
           title: Paging Token

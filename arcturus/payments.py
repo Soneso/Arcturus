@@ -49,7 +49,7 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
         del x['_links']
         if 'to' in x and 'to_muxed' in x: #show only muxed to make it easier for ChatGPT
             del x['to']
-            
+                    
     return records
 
 async def for_account_simplified(horizon_url, account_id, include_failed, cursor, order, limit):
@@ -78,7 +78,10 @@ async def for_account_simplified(horizon_url, account_id, include_failed, cursor
         del payment['_links']
         replace_key(payment, TX_SUCCESSFUL_KEY, SUCCESSFUL_KEY)
         delete_keys_except(payment, KEYS_TO_KEEP)
-    return records
+        
+    payments = {}
+    payments['payments'] = records
+    return payments
 
 
 def replace_key(dictionary, old_key, new_key):
