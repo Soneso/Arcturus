@@ -58,22 +58,6 @@
           type: integer
           title: Nr. of operations
           description: The number of operations contained within this transaction.
-        envelope_xdr:
-          type: string
-          title: Envelope XDR
-          description: A base64 encoded string of the raw TransactionEnvelope XDR struct for this transaction. XDR is External Data Representation ans sepcified in RFC 4506.
-        result_xdr:
-          type: string
-          title: Result XDR
-          description: A base64 encoded string of the raw TransactionResult XDR struct for this transaction.
-        result_meta_xdr:
-          type: string
-          title: Result Meta XDR
-          description: A base64 encoded string of the raw TransactionMeta XDR struct for this transaction
-        fee_meta_xdr:
-          type: string
-          title: Fee meta XDR
-          description: A base64 encoded string of the raw LedgerEntryChanges XDR struct produced by taking fees for this transaction.
         signatures:
           type: array
           title: Signatures

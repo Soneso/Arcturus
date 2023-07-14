@@ -31,7 +31,7 @@ STELLAR_TOML_NOT_FOUND = "stellar.toml not found"
 
 # we have to limit the size of the response because it counts as a part of the context window of ChatGPT
 # it is now very limited but will expand dramatically in the future.
-MAX_PAGING_LIMIT = 2
+MAX_PAGING_LIMIT = 5
 PAGING_LIMIT_EXCEEDED = "Paging limit too high."
 
 @app.get("/account/details")
@@ -94,7 +94,6 @@ async def assets_for_issuer():
 
 @app.get("/claimable_balances/for_claimant")
 async def claimable_balances_for_claimant():
-    print("test: get claimable balances for claimant")
     try:
         claimant_account_id = request.args.get('claimant_account_id')
         network = request.args.get('network')
@@ -150,8 +149,8 @@ async def get_stellar_toml(domain):
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
-@app.get("/payments/for_account")
-async def payments_for_account():
+@app.get("/payment_list/for_account")
+async def payment_list_for_account():
     try:
         account_id = request.args.get('account_id')
         include_failed = request.args.get('include_failed')
@@ -161,13 +160,34 @@ async def payments_for_account():
         limit = request.args.get('limit')
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
+        records = await payments.for_account_simplified(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
-    
+
+@app.get("/payment/create_account/details")
+async def payment_create_account_details():
+    return await operation_details(request=request)
+
+@app.get("/payment/account_merge/details")
+async def payment_account_merge_details():
+    return await operation_details(request=request)
+
+@app.get("/payment/payment/details")
+async def payment_payment_details():
+    return await operation_details(request=request)
+
+@app.get("/payment/path_payment_strict_receive/details")
+async def payment_path_payment_strict_receive_details():
+    return await operation_details(request=request)
+
+@app.get("/payment/path_payment_strict_send/details")
+async def payment_path_payment_strict_send_details():
+    return await operation_details(request=request)
+
+
 @app.get("/transaction/details")
 async def transaction_details():
     try:
@@ -465,6 +485,7 @@ async def openapi_spec():
                  'openapi/components/operations.yaml',
                  'openapi/components/domains.yaml']
     combined_text = combine_files(file_list)
+    print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
 
 def horizon_url_for_network(network):

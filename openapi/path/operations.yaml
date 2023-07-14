@@ -650,8 +650,8 @@
   /operation/payment/details:
     get:
       operationId: getPaymentOperationDetails
-      summary: Get the operation details for an operation of type payment. A payment operation ends an amount in a specific asset to a destination account.
-      description: Get the details for the given payment operation id. A payment operation ends an amount in a specific asset to a destination account.
+      summary: Get the operation details for an operation of type payment. A payment operation sends an amount in a specific asset to a destination account.
+      description: Get the details for the given payment operation id. A payment operation sends an amount in a specific asset to a destination account.
       externalDocs:
         description: Fine more info about operations here
         url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
