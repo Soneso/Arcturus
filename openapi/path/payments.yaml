@@ -59,11 +59,11 @@
             text/plain:
               schema:
                 type: string
-  /payments/account_merge/details:
+  /payment/details:
     get:
-      operationId: getAccountMergePaymentDetails
-      summary: Get the payment details for a payment of type account_merge. An account_merge payment removes the source account and transfers the source account's lumens to another account.
-      description: Get the details for the given account_merge payment id. An account_merge payment removes the source account and transfers the source account's lumens to another account.
+      operationId: getPaymentDetails
+      summary: Get the payment details for a payment by id.
+      description: Get the details for the given account_merge payment id.
       externalDocs:
         description: Fine more info about operations here
         url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
@@ -86,143 +86,7 @@
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountMergeOperationDetails'
-        "404":
-          description: Payment was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payments/create_account/details:
-    get:
-      operationId: getCreateAccountPaymentDetails
-      summary: Get the payment details for a payment of type create_account. A create_account payment creates and funds a new account with the specified starting balance.
-      description: Get the details for the given create_account payment id. A create_account payment creates and funds a new account with the specified starting balance.
-      externalDocs:
-        description: Fine more info about operations here
-        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: The unique identifier of the payment.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-      responses:
-        "200":
-          description: A complex object holding the details of the found payment operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateAccountOperationDetails'
-        "404":
-          description: Payment was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payment/payment/details:
-    get:
-      operationId: getPaymentDetails
-      summary: Get the payment details for a payment of type payment. A payment sends an amount in a specific asset to a destination account.
-      description: Get the details for the given payment operation id. A payment sends an amount in a specific asset to a destination account.
-      externalDocs:
-        description: Fine more info about operations here
-        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: The unique identifier of the payment.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-      responses:
-        "200":
-          description: A complex object holding the details of the found payment operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentOperationDetails'
-        "404":
-          description: Payment was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payment/path_payment_strict_receive/details:
-    get:
-      operationId: getPathPaymentStrictReceivePaymentDetails
-      summary: Get the operation details for a payment of type path_payment_strict_receive. Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are Strict Receive designate the payment amount in the asset received.
-      description: Get the details for the given path_payment_strict_receive payment id. Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are Strict Receive designate the payment amount in the asset received.
-      externalDocs:
-        description: Fine more info about operations here
-        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: The unique identifier of the payment.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-      responses:
-        "200":
-          description: A complex object holding the details of the found payment operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PathPaymentStrictReceiveOperationDetails'
-        "404":
-          description: Payment was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payment/path_payment_strict_send/details:
-    get:
-      operationId: getPathPaymentStrictSendPaymentDetails
-      summary: Get the payment details for a payment of type path_payment_strict_send. Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are Strict Send designate the payment amount in the asset sent.
-      description: Get the details for the given path_payment_strict_send payment id. Sends a payment from one account to another in a path through the order books, starting as one asset and ending as another. Path payments that are Strict Send designate the payment amount in the asset sent.
-      externalDocs:
-        description: Fine more info about operations here
-        url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: The unique identifier of the payment.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-      responses:
-        "200":
-          description: A complex object holding the details of the found payment operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PathPaymentStrictSendOperationDetails'
+                $ref: '#/components/schemas/OperationDetails'
         "404":
           description: Payment was not found on the Stellar Network.
           content:

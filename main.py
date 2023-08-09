@@ -167,26 +167,9 @@ async def payment_list_for_account():
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/payment/create_account/details")
-async def payment_create_account_details():
+@app.get("/payment/details")
+async def payment_details():
     return await operation_details(request=request)
-
-@app.get("/payment/account_merge/details")
-async def payment_account_merge_details():
-    return await operation_details(request=request)
-
-@app.get("/payment/payment/details")
-async def payment_payment_details():
-    return await operation_details(request=request)
-
-@app.get("/payment/path_payment_strict_receive/details")
-async def payment_path_payment_strict_receive_details():
-    return await operation_details(request=request)
-
-@app.get("/payment/path_payment_strict_send/details")
-async def payment_path_payment_strict_send_details():
-    return await operation_details(request=request)
-
 
 @app.get("/transaction/details")
 async def transaction_details():
