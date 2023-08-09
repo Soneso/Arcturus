@@ -13,11 +13,11 @@
         transaction_hash:
           type: string
           title: Transaction Hash
-          description: A unique identifier for the transaction, the operation representing this operation belongs to. It is sometimes also called transaction id.
+          description: A unique id for the transaction, the operation representing this operation belongs to.
         transaction_successful:
           type: boolean
           title: Successfull
-          description: Indicates if this operation was part of a successful transaction. If true, the operation was successfull. If false, the operation failed.
+          description: Indicates if this operation was part of a successful transaction.
         source_account:
           type: string
           title: Source Account
@@ -171,7 +171,7 @@
         bump_to:
           type: string
           title: Bump To
-          description: The new value for the source account's sequence number.
+          description: The new value for the source account's sequence nr.
     CreateAccountOperationDetails:
       type: object
       description: Additional details of an operation of individual type create_account. Extends the common operation attributes described in OperationEntry.
@@ -301,7 +301,7 @@
         shares_received:
           title: Shares received
           type: string
-          description: Represents the number of pool shares received for this deposit.
+          description: Represents the nr of pool shares received for this deposit.
     LiquidityPoolWithdrawOperationDetails:
       type: object
       description: Additional details of an operation of individual type liquidity_pool_withdraw. Extends the common operation attributes described in OperationEntry.
@@ -326,7 +326,7 @@
         shares:
           title: Shares
           type: string
-          description: The number of shares that were redeemed for this withdrawal operation.
+          description: The nr of shares that were redeemed for this withdrawal operation.
         reserves_received:
           type: array
           description: An array of objects representing how much of each reserve ended up actually withdrawn from the pool.
@@ -545,7 +545,7 @@
         price:
           title: Price
           type: string
-          description: How many units of buying_asset it takes to get 1 unit of selling_asset. A number representing the decimal form of price_r.
+          description: How many units of buying_asset it takes to get 1 unit of selling_asset. A nr representing the decimal form of price_r.
         price_r:
           title: Price R
           type: object
@@ -598,7 +598,7 @@
         price:
           title: Price
           type: string
-          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A number representing the decimal form of price_r.
+          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A nr representing the decimal form of price_r.
         price_r:
           title: Price R
           type: object
@@ -651,7 +651,7 @@
         price:
           title: Price
           type: string
-          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A number representing the decimal form of price_r.
+          description: How many units of selling_asset it takes to get 1 unit of buying_asset. A nr representing the decimal form of price_r.
         price_r:
           title: Price R
           type: object
