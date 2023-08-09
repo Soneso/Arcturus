@@ -361,88 +361,8 @@ async def operations_for_transaction():
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/operation/account_merge/details")
-async def operation_account_merge_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/allow_trust/details")
-async def operation_allow_trust_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/set_trust_line_flags/details")
-async def operation_set_trust_line_flags_details():
-    return await operation_details(request=request) 
-
-@app.get("/operation/bump_sequence/details")
-async def operation_bump_sequence_details():
-    return await operation_details(request=request)  
-
-@app.get("/operation/create_account/details")
-async def operation_create_account_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/set_options/details")
-async def operation_set_options_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/manage_data/details")
-async def operation_manage_data_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/change_trust/details")
-async def operation_change_trust_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/create_claimable_balance/details")
-async def operation_create_claimable_balance_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/claim_claimable_balance/details")
-async def operation_claim_claimable_balance_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/payment/details")
-async def operation_payment_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/path_payment_strict_receive/details")
-async def operation_path_payment_strict_receive_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/path_payment_strict_send/details")
-async def operation_path_payment_strict_send_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/manage_sell_offer/details")
-async def operation_manage_sell_offer_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/manage_buy_offer/details")
-async def operation_manage_buy_offer_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/create_passive_sell_offer/details")
-async def operation_create_passive_sell_offer_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/begin_sponsoring_future_reserves/details")
-async def operation_begin_sponsoring_future_reserves_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/end_sponsoring_future_reserves/details")
-async def operation_end_sponsoring_future_reserves_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/revoke_sponsorship/details")
-async def operation_revoke_sponsorship_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/liquidity_pool_deposit/details")
-async def operation_liquidity_pool_deposit_details():
-    return await operation_details(request=request)
-
-@app.get("/operation/liquidity_pool_withdraw/details")
-async def operation_liquidity_pool_withdraw_details():
+@app.get("/operation/details")
+async def operation_details():
     return await operation_details(request=request)
 
 @app.get("/blocked_domains/<string:domain>")
@@ -470,17 +390,19 @@ async def openapi_spec():
     file_list = ['openapi/info.yaml', 
                  'openapi/path/accounts.yaml',
                  'openapi/path/assets.yaml',
+                 'openapi/path/stellar_toml.yaml',
                  'openapi/path/claimable_balances.yaml',
-                 'openapi/path/stellar_toml.yaml', 
                  'openapi/path/payments.yaml',
                  'openapi/path/transactions.yaml',
+                 'openapi/path/operations.yaml',
                  'openapi/path/domains.yaml', 
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
-                 'openapi/components/claimable_balances.yaml',
                  'openapi/components/stellar_toml.yaml',
+                 'openapi/components/claimable_balances.yaml',
                  'openapi/components/payments.yaml',
                  'openapi/components/transactions.yaml',
+                 'openapi/components/operations.yaml',
                  'openapi/components/domains.yaml']
     combined_text = combine_files(file_list)
     print(combined_text)

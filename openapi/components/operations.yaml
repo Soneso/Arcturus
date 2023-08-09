@@ -30,6 +30,52 @@
           title: Paging Token
           type: string
           description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.
+    OperationDetails:
+      type: object
+      description:  Additional details of an operation. Entries extend the common operation attributes described in OperationEntry depending on operation type.
+      properties:
+        account_merge_details:
+          $ref: "#/components/schemas/AccountMergeOperationDetails"
+        allow_trust_details:
+          $ref: "#/components/schemas/AllowTrustOperationDetails"
+        begin_sponsoring_future_reserves_details:
+          $ref: "#/components/schemas/BeginSponsoringFutureReservesOperationDetails"
+        end_sponsoring_future_reserves_details:
+          $ref: "#/components/schemas/EndSponsoringFutureReservesOperationDetails"
+        revoke_sponsorship_details:
+          $ref: "#/components/schemas/EndSponsoringFutureReservesOperationDetails"
+        set_trustline_flags_details:
+          $ref: "#/components/schemas/SetTrustlineFlagsOperationDetails"
+        bump_sequence_details:
+          $ref: "#/components/schemas/BumpSequenceOperationDetails"
+        create_account_details:
+          $ref: "#/components/schemas/CreateAccountOperationDetails"
+        change_trust_details:
+          $ref: "#/components/schemas/ChangeTrustOperationDetails"
+        create_claimable_balance_details:
+          $ref: "#/components/schemas/CreateClaimableBalanceOperationDetails"
+        claim_claimable_balance_details:
+          $ref: "#/components/schemas/ClaimClaimableBalanceOperationDetails"
+        liquidity_pool_deposit_details:
+          $ref: "#/components/schemas/LiquidityPoolDepositOperationDetails"
+        liquidity_pool_withdraw_details:
+          $ref: "#/components/schemas/LiquidityPoolWithdrawOperationDetails"
+        set_option_details:
+          $ref: "#/components/schemas/SetOptionsOperationDetails"
+        manage_data_details:
+          $ref: "#/components/schemas/ManageDataOperationDetails"
+        payment_details:
+          $ref: "#/components/schemas/PaymentOperationDetails"
+        path_payment_strict_receive_details:
+          $ref: "#/components/schemas/PathPaymentStrictReceiveOperationDetails"
+        path_payment_strict_send_details:
+          $ref: "#/components/schemas/PathPaymentStrictSendOperationDetails"
+        manage_buy_offer_details:
+          $ref: "#/components/schemas/ManageBuyOfferOperationDetails"
+        manage_sell_offer_details:
+          $ref: "#/components/schemas/ManageSellOfferOperationDetails"
+        create_passive_sell_offer_details:
+          $ref: "#/components/schemas/CreatePassiveSellOfferOperationDetails"
     AccountMergeOperationDetails:
       type: object
       description: Additional details of an operation of individual type account_merge. Extends the common operation attributes described in OperationEntry.

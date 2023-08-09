@@ -89,10 +89,11 @@ async def get_details(horizon_url, operation_id):
     builder = server.operations().operation(operation_id=operation_id)
     operation = builder.call()
     del operation['_links']
+    del operation['type_i']
     if operation['type'] == 'set_options':
         if 'set_flags' in operation:
             del operation['set_flags']
         if 'clear_flags' in operation:
             del operation['clear_flags']
-        
-    return operation
+    type_key = operation['type'] + '_details'
+    return {type_key: operation}
