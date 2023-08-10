@@ -76,6 +76,18 @@
           $ref: "#/components/schemas/ManageSellOfferOperationDetails"
         create_passive_sell_offer_details:
           $ref: "#/components/schemas/CreatePassiveSellOfferOperationDetails"
+        inflation_details:
+          $ref: "#/components/schemas/OperationEntry"
+        clawback_details:
+          $ref: "#/components/schemas/ClawbackOperationDetails"
+        clawback_claimable_balance_details:
+          $ref: "#/components/schemas/ClawbackClaimableBalanceOperationDetails"
+        invoke_host_function_details:
+          $ref: "#/components/schemas/InvokeHostFunctionOperationDetails"
+        bump_footprint_expiration_details:
+          $ref: "#/components/schemas/BumpFootprintExpirationOperationDetails"
+        restore_footprint_details:
+          $ref: "#/components/schemas/OperationEntry"
     AccountMergeOperationDetails:
       type: object
       description: Additional details of an operation of individual type account_merge. Extends the common operation attributes described in OperationEntry.
@@ -739,3 +751,78 @@
           type: string
           title: Offer ID
           description: A unique identifier for this offer. If it's value is 0 than the operation created the offer, otherwise the offer was updated by this operation.
+    ClawbackOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type clawback. Extends the common operation attributes described in OperationEntry.
+      properties:
+        amount:
+          title: Amount
+          type: string
+          description: The amount that has been clawbacked.
+        from:
+          title: From
+          type: string
+          description: The account that the amount has been clawbacked from.
+        asset_type:
+          type: string
+          title: Asset type
+          description: The type of asset. Either native, credit_alphanum4, credit_alphanum12 or liquidity_pool_shares.
+        asset_code:
+          type: string
+          title: Asset code
+          description: The code for the asset. Appears if the asset_type is not native.
+        asset_issuer:
+          type: string
+          title: Asset issuer
+          description: The Stellar address/account id of the issuer account of the asset. Appears if the asset_type is not native.
+    ClawbackClaimableBalanceOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type clawback claimable balance. Extends the common operation attributes described in OperationEntry.
+      properties:
+        balance_id:
+          title: Balance ID
+          type: string
+          description: The id of the claimable balance that has been clawbacked.
+    InvokeHostFunctionOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type invoke host function. Extends the common operation attributes described in OperationEntry. This type of operation is used to invoke soroban smart contracts.
+      properties:
+        function:
+          title: Function
+          type: string
+          description: Type of the function that has been invoked.
+        parameters:
+          type: array
+          title: Parameters
+          description: Host function parameters for the host function that has been invoked.
+          items:
+            $ref: "#/components/schemas/HostFunctionParameter"
+        address:
+          title: Created contract
+          type: string
+          description: The address of the created contract if this operation created a smart contract.
+        salt:
+          title: Salt
+          type: string
+          description: Salt used for the call. Optional.
+    HostFunctionParameter:
+      type: object
+      description: Parameter used to invoke a host function.
+      properties:
+        value:
+          title: Value
+          type: string
+          description: Value of the parameter. Encoded as SCVal. 
+        type:
+          type: Type
+          title: string
+          description: Type of the SCVal encoded value.
+    BumpFootprintExpirationOperationDetails:
+      type: object
+      description: Additional details of an operation of individual type bump footprint expiration. Extends the common operation attributes described in OperationEntry.
+      properties:
+        ledgers_to_expire:
+          title: Ledgers
+          type: number
+          description: Number of ledgers expired by this operation.
+    
