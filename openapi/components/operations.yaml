@@ -814,8 +814,8 @@
           type: string
           description: Value of the parameter. Encoded as SCVal. 
         type:
-          type: Type
-          title: string
+          title: Type
+          type: string
           description: Type of the SCVal encoded value.
     BumpFootprintExpirationOperationDetails:
       type: object

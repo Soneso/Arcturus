@@ -1,0 +1,128 @@
+    SCVal:
+      type: object
+      description: Decoded smart contract value used by Stellar Soroban Smart Contracts.
+      properties:
+        type:
+          type: Type
+          title: string
+          description: Type of the SCVal.
+        value:
+          title: Value
+          type: string
+          description: Decoded value.
+        error_value:
+          $ref: "#/components/schemas/SCError"
+        u128_parts:
+          $ref: "#/components/schemas/SCI128Parts"
+        i128_parts:
+          $ref: "#/components/schemas/SCI128Parts"
+        u256_parts:
+          $ref: "#/components/schemas/SCI256Parts"
+        i256_parts:
+          $ref: "#/components/schemas/SCI256Parts"
+        vec_elements:
+          type: array
+          title: Elements
+          description: The list of elements contained in the vector.
+          items:
+            $ref: "#/components/schemas/SCVal"
+        map_entries:
+          type: array
+          title: Entries
+          description: The enties contained in the map.
+          items:
+            $ref: "#/components/schemas/SCMapEntry"
+        address:
+          $ref: "#/components/schemas/SCAddress"
+    SCError:
+      type: object
+      description: Smart contract error
+      properties:
+        type:
+          title: Type
+          type: string
+          description: Error type.
+        code:
+          title: Code
+          type: string
+          description: Error code.
+    SCMapEntry:
+      type: object
+      description: Entry contained in an SCVal of type map.
+      properties:
+        key:
+          $ref: "#/components/schemas/SCVal"
+        value:
+          $ref: "#/components/schemas/SCVal"
+    SCI128Parts:
+      type: object
+      description: 64 bit hi and low parts representing a 128 bit integer value.
+      properties:
+        hi:
+          title: Hi
+          type: string
+          description: Hi part 64 bits of the 128 bit integer.
+        lo:
+          title: Lo
+          type: string
+          description: Low part 64 bits of the 128 bit integer.
+    SCI256Parts:
+      type: object
+      description: 64 bit parts representing a 256 bit integer value.
+      properties:
+        hi_hi:
+          title: HiHi
+          type: string
+          description: Hi hi part 64 bits of the 256 bit integer.
+        hi_lo:
+          title: HiLo
+          type: string
+          description: Hi lo part 64 bits of the 256 bit integer.
+        lo_hi:
+          title: LoHi
+          type: string
+          description: Lo hi part 64 bits of the 256 bit integer.
+        lo_lo:
+          title: LoLo
+          type: string
+          description: Lo lo part 64 bits of the 256 bit integer.
+    SCContractInstance:
+      type: object
+      description: Represents a contract instance in the context of soroban smart contracts.
+      properties:
+        executable:
+          $ref: "#/components/schemas/SCContractExecutable"
+        storage:
+          type: array
+          title: Storage entries
+          description: The enties contained in the storage for this smart contract instance.
+          items:
+            $ref: "#/components/schemas/SCMapEntry"
+    SCContractExecutable:
+      type: object
+      description: Represents a contract executable in the context of soroban smart contracts.
+      properties:
+        type:
+          title: Type
+          type: string
+          description: Type of the contract executable. Can be WASM or TOKEN.
+        wasm_id:
+          title: Wasm id
+          type: string
+          description: Id of the wasm source code of this contract executable.
+    SCAddress:
+      type: object
+      description: Represents an address in the context of soroban smart contracts.
+      properties:
+        type:
+          title: Type
+          type: string
+          description: Type of the address. Can represent a stellar account or a soroban contract.
+        account_id:
+          title: Account ID
+          type: string
+          description: Id of the stellar account if the address represents a stellar account.
+        contract_id:
+          title: Contract ID
+          type: string
+          description: Id of the contract if the address represents a soroban smart contract.
