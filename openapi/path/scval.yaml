@@ -1,0 +1,25 @@
+  /scval/decode:
+    get:
+      operationId: getDecodedSCVal
+      summary: Decodes a base64 encoded SCVal XDR to a human readable form.
+      description: Decodes a base64 encoded SCVal XDR to a human readable form.
+      parameters:
+        - name: encoded_scval
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The base64 encoded SCVal XDR.
+      responses:
+        "200":
+          description: An object containing the decoded scval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCVal'
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string

@@ -65,7 +65,7 @@
       summary: Get the payment details for a payment by id.
       description: Get the details for the given account_merge payment id.
       externalDocs:
-        description: Fine more info about operations here
+        description: Find more info about operations here
         url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
       parameters:
         - name: id

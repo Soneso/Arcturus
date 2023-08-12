@@ -10,7 +10,7 @@
           title: Value
           type: string
           description: Decoded value.
-        error_value:
+        decoded_error:
           $ref: "#/components/schemas/SCError"
         u128_parts:
           $ref: "#/components/schemas/SCI128Parts"
@@ -34,18 +34,28 @@
             $ref: "#/components/schemas/SCMapEntry"
         address:
           $ref: "#/components/schemas/SCAddress"
+        contract_instance:
+          $ref: "#/components/schemas/SCContractInstance"
     SCError:
       type: object
       description: Smart contract error
       properties:
-        type:
-          title: Type
+        error_type_number:
+          title: Error Type Number
+          type: number
+          description: Error type as number.
+        error_type_string:
+          title: Error Type string
           type: string
-          description: Error type.
-        code:
-          title: Code
+          description: Human readable error type.
+        error_code_number:
+          title: Error Code Number
+          type: number
+          description: Error code as number.
+        error_code_string:
+          title: Error Code String
           type: string
-          description: Error code.
+          description: Human readable error code.
     SCMapEntry:
       type: object
       description: Entry contained in an SCVal of type map.
@@ -126,3 +136,7 @@
           title: Contract ID
           type: string
           description: Id of the contract if the address represents a soroban smart contract.
+        contract_addr:
+          title: Contract Address
+          type: string
+          description: Encoded address of the contract starts with "C"

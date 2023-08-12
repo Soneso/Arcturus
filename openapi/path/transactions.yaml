@@ -4,7 +4,7 @@
       summary: Get the transaction details.
       description: Get the details for the given transaction including fee, memo, source account, signatures, number of operations. To perform actions with an account on the Stellar network, you compose operations, bundle them into a transaction, and then sign and submit the transaction to the network.
       externalDocs:
-        description: Fine more info about transactions here
+        description: Find more info about transactions here
         url: https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/operations-and-transactions
       parameters:
         - name: hash

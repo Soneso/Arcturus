@@ -10,6 +10,7 @@ import arcturus.payments as payments
 import arcturus.transactions as transactions
 import arcturus.operations as operations
 import arcturus.domains as domains
+import arcturus.scval as scval
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -65,7 +66,7 @@ async def account_decode_muxed():
         data = await account.decode_muxed(muxed_account_id)
     except Exception as e:
         print("An exception occurred:", e)
-        return quart.Response(response=NO_ENTRY_FOUND, status=404)
+        return quart.Response(response=INVALID_ARGUMENT, status=400)
     else:
         return quart.Response(response=json.dumps(data), status=200)
     
@@ -354,7 +355,17 @@ async def get_blocked_domains(domain):
     details = await domains.blocked_domains(domain)
     return quart.Response(response=json.dumps(details), status=200)
 
-
+@app.get("/scval/decode")
+async def scval_decode():
+    try:
+        base64_xdr = request.args.get('encoded_scval')
+        data = await scval.decode_scval(base64_xdr=base64_xdr)
+    except Exception as e:
+        print("An exception occurred:", e)
+        return quart.Response(response=INVALID_ARGUMENT, status=400)
+    else:
+        return quart.Response(response=json.dumps(data), status=200)
+    
 @app.get("/logo.png")
 async def plugin_logo():
     filename = 'logo.png'
@@ -379,6 +390,7 @@ async def openapi_spec():
                  'openapi/path/transactions.yaml',
                  'openapi/path/operations.yaml',
                  'openapi/path/domains.yaml',
+                 'openapi/path/scval.yaml',
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/stellar_toml.yaml',
