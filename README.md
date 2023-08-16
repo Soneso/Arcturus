@@ -63,7 +63,7 @@ Due to the currently limited size of the ChatGPT context window, the plugin can 
 ### Payments 
 
 The plugin can load, understand and display:
-- List of payments for a given account or a given transaction
+- List of payments for a given account, a given transaction or a given ledger
 - Payment details for all types of payments such as create_account, merge_account, payment, path_payment (uses paging)
 - Transaction data associated with the payment, e.g, to be able to show the memo
 

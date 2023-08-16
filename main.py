@@ -161,7 +161,7 @@ async def payment_list_for_account():
         limit = request.args.get('limit')
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await payments.for_account_simplified(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
+        records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
@@ -182,10 +182,28 @@ async def payment_list_for_transaction():
         records = await payments.for_transaction(horizon_url_for_network(network), transaction_hash, include_failed, cursor, order, limit)
         print(f"records: {records}")
     except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+        return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
+@app.get("/payment_list/for_ledger")
+async def payment_list_for_ledger():
+    try:
+        sequence = request.args.get('sequence')
+        include_failed = request.args.get('include_failed')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await payments.for_ledger(horizon_url_for_network(network), sequence, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=LEDGER_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+    
 @app.get("/payment/details")
 async def payment_details():
     return await operation_details(request=request)
