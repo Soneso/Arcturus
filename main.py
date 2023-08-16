@@ -167,6 +167,24 @@ async def payment_list_for_account():
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+    
+@app.get("/payment_list/for_transaction")
+async def payment_list_for_transaction():
+    try:
+        transaction_hash = request.args.get('hash')
+        include_failed = request.args.get('include_failed')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await payments.for_transaction(horizon_url_for_network(network), transaction_hash, include_failed, cursor, order, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
 
 @app.get("/payment/details")
 async def payment_details():

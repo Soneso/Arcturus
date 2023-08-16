@@ -39,7 +39,9 @@ The plugin should now be installed and enabled! You can start with a question li
 
 ## Implementation status
 
-Currently the plugin can fetch data related to Stellar accounts and their payments. 
+Currently the plugin can fetch data related to 
+- Stellar accounts and their payments.
+- Transactions and operations
 
 Please see this [example conversation](https://github.com/Soneso/Arcturus/blob/main/example.md).
 
@@ -58,15 +60,32 @@ The plugin can load, understand and display:
 
 Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 claimable balances at a time. Therefore, paging is limited to 2 entries per request. 
 
-### Payments associated with an account
+### Payments 
 
 The plugin can load, understand and display:
-- On-Chain payment details for all types of payments such as create_account, payment, path_payment (uses paging)
-- On-Chain transaction data associated with the payment, e.g, to be able to show the memo
+- List of payments for a given account or a given transaction
+- Payment details for all types of payments such as create_account, merge_account, payment, path_payment (uses paging)
+- Transaction data associated with the payment, e.g, to be able to show the memo
 
 **Limitations**
 
-Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 payments at a time. Therefore, paging is limited to 2 entries per request.
+Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 5 payments at a time. Therefore, paging is limited to 5 entries per request.
+
+### Operations
+- List of operations for a given account, transaction, ledger, liquidity pool or claimable balance
+- Operation details of a given operation
+- Transaction data associated with the operation, e.g, to be able to show the memo
+
+**Limitations**
+
+Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 5 operations at a time. Therefore, paging is limited to 5 entries per request.
+
+### Transactions
+- List of transactions for a given account, ledger, liquidity pool or claimable balance
+- Transaction details for a given transaction
+
+### SCVal
+- decode scval
 
 ### Network
 
