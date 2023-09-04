@@ -1,0 +1,119 @@
+  /soroban/get_latest_ledger:
+    get:
+      operationId: getSorobanLatestLedger
+      summary: For finding out the current latest known ledger of this node.
+      description: For finding out the current latest known ledger of this node.
+      parameters:
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'futurenet' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: An object containing the latest known ladger data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCVal'
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /soroban/contract_events:
+    get:
+      operationId: getSorobanContractEvents
+      summary: Fetches soroban contract events for the given contract id and sequence number to fetch events after (inclusive). 
+      description: Fetches soroban contract events for the given contract id and sequence number to fetch events after (inclusive). 
+      parameters:
+        - name: start_ledger
+          in: query
+          schema:
+            type: number
+          required: true
+          description: Start soroban ledger sequence number to fetch contract events after (inclusive). End is the latest ledger.
+        - name: contract_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The Soroban contract id to query the events for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'futurenet' as default. Allow the user to specify the network.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          required: true
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
+      responses:
+        "200":
+          description: A complex object array response holding a list of soroban contract events found.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SorobanEvent'
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /soroban/contract_data:
+    get:
+      operationId: getSorobanContractData
+      summary: Fetches soroban contract storage data for the given contract id, key and storage type. 
+      description: Fetches soroban contract storage data for the given contract id, key and storage type.  
+      parameters:
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'futurenet' as default. Allow the user to specify the network.
+        - name: contract_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The Soroban contract id to query the storage data for.
+        - name: key
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The key of the storage data to look for, which is a xdr encoded base64 string of type SCVal.
+        - name: durability
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Storage type to look into. Can be 'persistent' or 'temporary'. Use 'persistent' as default. Allow the user to specify the storage type named durability.
+      responses:
+        "200":
+          description: An object containing the storage data for the given parameters if found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCVal'
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string

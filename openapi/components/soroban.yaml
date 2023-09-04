@@ -1,0 +1,56 @@
+    SorobanLatestLedger:
+      type: object
+      description: Holds attributes about the latest known ledger for soroban requests.
+      properties:
+        id:
+          type: string
+          title: Ledger Id
+          description: Unique identifier for the latest ledger.
+        protocolVersion:
+          type: number
+          title: Protocol Version
+          description: Stellar Core protocol version associated with the latest ledger.
+        sequence:
+          type: number
+          title: Sequence
+          description: Sequence number of the latest ledger.
+    SorobanEvent:
+      type: object
+      description: Holds attributes about a Soroban Event on the Stellar Network.
+      properties:
+        id:
+          type: string
+          title: Event Id
+          description: Unique identifier for this event.
+        event_type:
+          type: string
+          title: Type
+          description: Type of the event.
+        topic:
+          type: array
+          title: Topic
+          description: List containing the topic this event was emitted with.
+          items:
+            $ref: "#/components/schemas/SCVal"
+        value:
+          $ref: "#/components/schemas/SCVal"
+        contract_id:
+          type: string
+          title: Contract ID
+          description: ID of the emitting contract.
+        ledger:
+          type: string
+          title: Ledger
+          description: Sequence number of the Ledger the event belongs to.
+        ledger_closed_at:
+          type: string
+          title: Ledger Close Time
+          description: ISO8601 timestamp of the ledger closing time.
+        in_successful_contract_call:
+          type: bool
+          title: In Successful Contract Call
+          description:  If true the event was emitted during a successful contract call.
+        paging_token:
+          type: string
+          title: Pagination Token
+          description: Pagination Token.

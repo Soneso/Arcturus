@@ -11,6 +11,7 @@ import arcturus.transactions as transactions
 import arcturus.operations as operations
 import arcturus.domains as domains
 import arcturus.scval as scval
+import arcturus.soroban as soroban
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -20,11 +21,13 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
 HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
+SOROBAN_RPC_FUTURENET_URL = "https://rpc-futurenet.stellar.org:443/"
 ACCOUNT_NOT_FOUND = "Account not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
 LEDGER_NOT_FOUND = "Ledger not found"
 LIQUIDITY_POOL_NOT_FOUND = "Liquidity pool not found"
 OPERATION_NOT_FOUND = "Operation not found"
+CONTRACT_NOT_FOUND = "Contract not found"
 NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
 CLAIMABLE_BALANCE_NOT_FOUND = "Claimable Balance not found"
@@ -383,11 +386,10 @@ async def operations_for_transaction():
 
 @app.get("/operation/details")
 async def operation_details():
-    return await operation_details(request=request)
+    return await op_details(request=request)
 
 @app.get("/blocked_domains/<string:domain>")
 async def get_blocked_domains(domain):
-    print(domain)
     details = await domains.blocked_domains(domain)
     return quart.Response(response=json.dumps(details), status=200)
 
@@ -395,12 +397,61 @@ async def get_blocked_domains(domain):
 async def scval_decode():
     try:
         base64_xdr = request.args.get('encoded_scval')
-        data = await scval.decode_scval(base64_xdr=base64_xdr)
+        data = scval.decode_scval(base64_xdr=base64_xdr)
     except Exception as e:
         print("An exception occurred:", e)
         return quart.Response(response=INVALID_ARGUMENT, status=400)
     else:
         return quart.Response(response=json.dumps(data), status=200)
+    
+@app.get("/scval/xdr_for")
+async def scval_xdr_for():
+    try:
+        scval_type = request.args.get('type')
+        value = request.args.get('value')
+        print(f"type {scval_type}, value {value}")
+        data = scval.xdr_for(scval_type, value)
+    except Exception as e:
+        print("An exception occurred:", e)
+        return quart.Response(response=INVALID_ARGUMENT, status=400)
+    else:
+        return quart.Response(response=data, status=200)
+
+@app.get("/soroban/get_latest_ledger")
+async def soroban_get_latest_ledger():
+    network = request.args.get('network')
+    data = await soroban.get_latest_ledger(soroban_rpc_url_for_network(network))
+    return quart.Response(response=json.dumps(data), status=200)
+
+@app.get("/soroban/contract_events")
+async def soroban_contract_events():
+    try:
+        contract_id = request.args.get('contract_id')
+        start_ledger = request.args.get('start_ledger')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        limit = request.args.get('limit')
+        if int(limit) > 10:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        records = await soroban.contract_events(soroban_rpc_url_for_network(network), start_ledger, contract_id, cursor, limit)
+        print(f"records: {records}")
+    except NotFoundError:
+        return quart.Response(response=CONTRACT_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/soroban/contract_data")
+async def soroban_contract_data():
+
+    contract_id = request.args.get('contract_id')
+    key = request.args.get('key')
+    durability = request.args.get('durability')
+    network = request.args.get('network')
+    result = await soroban.contract_data(soroban_rpc_url_for_network(network), contract_id, key, durability)
+    if result == None:
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(result), status=200)
     
 @app.get("/logo.png")
 async def plugin_logo():
@@ -427,6 +478,7 @@ async def openapi_spec():
                  'openapi/path/operations.yaml',
                  'openapi/path/domains.yaml',
                  'openapi/path/scval.yaml',
+                 'openapi/path/soroban.yaml',
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/stellar_toml.yaml',
@@ -435,9 +487,10 @@ async def openapi_spec():
                  'openapi/components/transactions.yaml',
                  'openapi/components/operations.yaml',
                  'openapi/components/domains.yaml',
-                 'openapi/components/scval.yaml']
+                 'openapi/components/scval.yaml', 
+                 'openapi/components/soroban.yaml']
     combined_text = combine_files(file_list)
-    print(combined_text)
+    #print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
 
 def horizon_url_for_network(network):
@@ -448,6 +501,9 @@ def horizon_url_for_network(network):
     if network == 'futurenet':
         return HORIZON_FUTURENET_URL
     return network
+
+def soroban_rpc_url_for_network(network):
+    return SOROBAN_RPC_FUTURENET_URL
 
 def combine_files(file_list):
     combined_text = ''
@@ -461,7 +517,7 @@ def combine_files(file_list):
 def main():
     app.run(debug=True, host="0.0.0.0", port=5003)
 
-async def operation_details(request):
+async def op_details(request):
     try:
         o_id = request.args.get('id')
         network = request.args.get('network')

@@ -23,3 +23,34 @@
             text/plain:
               schema:
                 type: string
+  /scval/xdr_for:
+    get:
+      operationId: getSCValXdrFor
+      summary: Generates an base 64 encoded SCVal XDR for the given type and value.
+      description: Generates an base 64 encoded SCVal XDR for the given type and value.
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Type of the SCVal XDR to encode. Can be 'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'duration', 'timepoint', 'bool' or 'address'
+        - name: value
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Value to encode into the SCVal XDR depending on type.
+      responses:
+        "200":
+          description: The encoded SCVal XDR base64 string.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string

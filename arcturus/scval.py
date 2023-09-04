@@ -1,7 +1,8 @@
 from stellar_sdk import xdr as stellar_xdr
 from stellar_sdk import StrKey
+from stellar_sdk import scval as sdk_scval
 
-async def decode_scval(base64_xdr):
+def decode_scval(base64_xdr):
     val = stellar_xdr.SCVal.from_xdr(base64_xdr)
     return prepare_decoded_scval(val=val)
 
@@ -175,4 +176,35 @@ def prepare_decoded_scerr(err_val):
     
     error['error_code'] = err_val.code
     return error
-    
+
+def xdr_for(scval_type:str, data: str):
+    if scval_type == 'address':
+        return sdk_scval.to_address(data).to_xdr()
+    elif scval_type == 'symbol':
+        return sdk_scval.to_symbol(data).to_xdr()
+    elif scval_type == 'string':
+        return sdk_scval.to_string(data).to_xdr()
+    elif scval_type == 'u32':
+        return sdk_scval.to_uint32(int(data)).to_xdr()
+    elif scval_type == 'i32':
+        return sdk_scval.to_int32(int(data)).to_xdr()
+    elif scval_type == 'u64':
+        return sdk_scval.to_uint64(int(data)).to_xdr()
+    elif scval_type == 'i64':
+        return sdk_scval.to_int64(int(data)).to_xdr()
+    elif scval_type == 'u128':
+        return sdk_scval.to_uint128(int(data)).to_xdr()
+    elif scval_type == 'i128':
+        return sdk_scval.to_int128(int(data)).to_xdr()
+    elif scval_type == 'u256':
+        return sdk_scval.to_uint256(int(data)).to_xdr()
+    elif scval_type == 'i256':
+        return sdk_scval.to_int256(int(data)).to_xdr()
+    elif scval_type == 'bool':
+        return sdk_scval.to_bool(bool(data)).to_xdr()
+    elif scval_type == 'duration':
+        return sdk_scval.to_duration(int(data)).to_xdr()
+    elif scval_type == 'timepoint':
+        return sdk_scval.to_timepoint(int(data)).to_xdr()
+    else:
+        raise ValueError("Invalid type")

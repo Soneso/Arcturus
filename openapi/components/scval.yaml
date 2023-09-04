@@ -3,8 +3,8 @@
       description: Decoded smart contract value used by Stellar Soroban Smart Contracts.
       properties:
         type:
-          type: Type
-          title: string
+          type: string
+          title: Type
           description: Type of the SCVal.
         value:
           title: Value
