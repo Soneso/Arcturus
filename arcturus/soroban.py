@@ -2,7 +2,9 @@ from stellar_sdk.soroban_server import (SorobanServer, Durability)
 from stellar_sdk.soroban_rpc import (EventFilter, EventFilterType)
 from stellar_sdk import xdr as stellar_xdr
 from stellar_sdk import StrKey
+from stellar_sdk.address import Address
 from arcturus.scval import decode_scval, prepare_decoded_scval
+import base64
     
 async def get_latest_ledger(rpc_url):
     response = SorobanServer(rpc_url).get_latest_ledger()
@@ -43,6 +45,46 @@ async def contract_data(rpc_url, contract_id, key, durability):
         print("Error getting legder entry data:", e)
         return None
     
+async def contract_code_for_wasm_id(rpc_url, wasm_id):
+    ledger_key = stellar_xdr.LedgerKey(
+        stellar_xdr.LedgerEntryType.CONTRACT_CODE,
+        contract_code = stellar_xdr.LedgerKeyContractCode(
+            hash = stellar_xdr.Hash(bytes.fromhex(wasm_id)), 
+            body_type=stellar_xdr.ContractEntryBodyType.DATA_ENTRY),
+    )
+    resp = SorobanServer(rpc_url).get_ledger_entries([ledger_key])
+    entries = resp.entries
+    if not entries:
+        return None
+    ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(entries[0].xdr)
+    return base64.b64encode(ledger_entry_data.contract_code.body.code).decode('ascii')
+
+async def contract_code_for_contract_id(rpc_url, contract_id):
+    
+    if not StrKey.is_valid_contract(contract_id):
+        contract_id = StrKey.encode_contract(bytes.fromhex(contract_id))
+        
+    sc_address = Address(contract_id).to_xdr_sc_address()
+    
+    ledger_key = stellar_xdr.LedgerKey(
+        stellar_xdr.LedgerEntryType.CONTRACT_DATA,
+        contract_data=stellar_xdr.LedgerKeyContractData(
+            contract=sc_address,
+            key=stellar_xdr.SCVal(stellar_xdr.SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE),
+            durability=stellar_xdr.ContractDataDurability.PERSISTENT,
+            body_type=stellar_xdr.ContractEntryBodyType.DATA_ENTRY,
+        ),
+    )
+    resp = SorobanServer(rpc_url).get_ledger_entries([ledger_key])
+    entries = resp.entries
+    if not entries:
+        return None
+    ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(entries[0].xdr)
+    wasm_id = ledger_entry_data.contract_data.body.data.val.instance.executable.wasm_hash.hash.hex()
+    if wasm_id == None:
+        return None
+    return await contract_code_for_wasm_id(rpc_url=rpc_url, wasm_id=wasm_id)
+        
 def decode_event_info(event_info):
     data = {}    
     data['event_type'] = event_info.event_type

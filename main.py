@@ -442,16 +442,37 @@ async def soroban_contract_events():
 
 @app.get("/soroban/contract_data")
 async def soroban_contract_data():
+    try:
+        contract_id = request.args.get('contract_id')
+        key = request.args.get('key')
+        durability = request.args.get('durability')
+        network = request.args.get('network')
+        result = await soroban.contract_data(soroban_rpc_url_for_network(network), contract_id, key, durability)
+        if result == None:
+            return quart.Response(response=NO_ENTRY_FOUND, status=404)
+        else:
+            return quart.Response(response=json.dumps(result), status=200)
+    except Exception:
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)    
 
-    contract_id = request.args.get('contract_id')
-    key = request.args.get('key')
-    durability = request.args.get('durability')
-    network = request.args.get('network')
-    result = await soroban.contract_data(soroban_rpc_url_for_network(network), contract_id, key, durability)
-    if result == None:
-        return quart.Response(response=NO_ENTRY_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(result), status=200)
+@app.get("/soroban/contract_code")
+async def soroban_contract_code():
+    try:
+        contract_id = request.args.get('contract_id')
+        wasm_id = request.args.get('wasm_id')
+        network = request.args.get('network')
+        result = None
+        if wasm_id is not None:
+            result = await soroban.contract_code_for_wasm_id(soroban_rpc_url_for_network(network), wasm_id)
+        elif contract_id is not None:
+            result = await soroban.contract_code_for_contract_id(soroban_rpc_url_for_network(network), contract_id=contract_id)
+        
+        if result == None:
+            return quart.Response(response=NO_ENTRY_FOUND, status=404)
+        else:
+            return quart.Response(response=json.dumps(result), status=200)
+    except Exception:
+        return quart.Response(response=NO_ENTRY_FOUND, status=404) 
     
 @app.get("/logo.png")
 async def plugin_logo():
