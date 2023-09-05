@@ -54,3 +54,183 @@
           type: string
           title: Pagination Token
           description: Pagination Token.
+    SCMeta:
+      type: object
+      description: Decoded smart contract metadata and specification from Stellar Soroban Smart Contracts.
+      properties:
+        interface_version:
+          type: string
+          title: Host Interface version
+          description: The Host environment interface version used by the smart contract.
+        contract_meta:
+          type: array
+          title: Contract Meta
+          description: Metadata entries that can be used by applications and tooling off-network.
+          items:
+            key:
+              title: Key
+              type: string
+              description: Key of the metadata entry
+            value:
+              title: Value
+              type: string
+              description: Value of the metadata entry
+        contract_spec:
+          type: array
+          title: Contract Spec
+          description: Spec entries for every function, struct, and union exported by the contract
+          items:
+            function:
+              title: Function
+              $ref: "#/components/schemas/SCSpecFunction"
+            udt_struct:
+              title: User defined type struct
+              $ref: "#/components/schemas/SCSpecUdtStruct"
+            udt_union:
+              title: User defined type union
+              $ref: "#/components/schemas/SCSpecUdtUnion"
+            udt_enum:
+              title: User defined type enum
+              $ref: "#/components/schemas/SCSpecUdtEnum"
+            udt_error_enum:
+              title: User defined type error enum
+              $ref: "#/components/schemas/SCSpecUdtEnum"
+    SCSpecFunction:
+      type: object
+      description: Specification of a Stellar Soroban Smart contract function.
+      properties:
+        name:
+          type: string
+          title: Name
+          description: The name of the function.
+        doc:
+          type: string
+          title: Doc
+          description: The documentation of the function.
+        inputs:
+          type: array
+          title: Inputs
+          description: The input parameters of the function
+          items:
+            name:
+              type: string
+              title: Name
+              description: The name of the input parameter.
+            doc:
+              type: string
+              title: Doc
+              description: The documentation of the input parameter.
+            type:
+              title: Type
+              type: string
+              description: The type of the input parameter.
+        output:
+          title: Output
+          type: string
+          description: The output type of the function
+    SCSpecUdtStruct:
+      type: object
+      description: Specification of a Stellar Soroban Smart contract user defined type struct.
+      properties:
+        name:
+          type: string
+          title: Name
+          description: The name of the struct.
+        doc:
+          type: string
+          title: Doc
+          description: The documentation of the struct.
+        lib:
+          type: string
+          title: Lib
+          description: The library of the struct.
+        fields:
+          type: array
+          title: Fields
+          description: The fields of the struct.
+          items:
+            name:
+              type: string
+              title: Name
+              description: The name of the field.
+            doc:
+              type: string
+              title: Doc
+              description: The documentation of the field.
+            type:
+              title: Type
+              type: string
+              description: The type of the field.
+    SCSpecUdtUnion:
+      type: object
+      description: Specification of a Stellar Soroban Smart contract user defined type union.
+      properties:
+        name:
+          type: string
+          title: Name
+          description: The name of the union.
+        doc:
+          type: string
+          title: Doc
+          description: The documentation of the union.
+        lib:
+          type: string
+          title: Lib
+          description: The library of the union.
+        cases:
+          type: array
+          title: Cases
+          description: The cases of the union.
+          items:
+            kind:
+              type: string
+              title: Kind
+              description: The kind of the case.
+            name:
+              type: string
+              title: Name
+              description: The name of the case.
+            doc:
+              type: string
+              title: Doc
+              description: The documentation of the case.
+            type:
+              type: array
+              title: Type
+              description: The type array of the case.
+              items:
+                type: string
+                description: A type of the case.
+    SCSpecUdtEnum:
+      type: object
+      description: Specification of a Stellar Soroban Smart contract user defined type enum or error enum.
+      properties:
+        name:
+          type: string
+          title: Name
+          description: The name of the enum.
+        doc:
+          type: string
+          title: Doc
+          description: The documentation of the enum.
+        lib:
+          type: string
+          title: Lib
+          description: The library of the enum.
+        cases:
+          type: array
+          title: Cases
+          description: The cases of the enum.
+          items:
+            name:
+              type: string
+              title: Name
+              description: The name of the case.
+            doc:
+              type: string
+              title: Doc
+              description: The documentation of the case.
+            value:
+              type: number
+              title: Value
+              description: The value of the case.

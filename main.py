@@ -472,6 +472,21 @@ async def soroban_contract_code():
         else:
             return quart.Response(response=json.dumps(result), status=200)
     except Exception:
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)
+
+@app.get("/soroban/contract_meta")
+async def soroban_contract_meta():
+    try:
+        contract_id = request.args.get('contract_id')
+        wasm_id = request.args.get('wasm_id')
+        network = request.args.get('network')
+        result = await soroban.contract_meta(soroban_rpc_url_for_network(network), wasm_id=wasm_id, contract_id=contract_id)
+        
+        if result == None:
+            return quart.Response(response=NO_ENTRY_FOUND, status=404)
+        else:
+            return quart.Response(response=json.dumps(result), status=200)
+    except Exception:
         return quart.Response(response=NO_ENTRY_FOUND, status=404) 
     
 @app.get("/logo.png")

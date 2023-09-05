@@ -149,13 +149,56 @@
           description: The Soroban wasm id to get the wasm source code for. 
       responses:
         "200":
-          description: The base64 encoded wasm source coude if found.
+          description: The base64 encoded wasm source code if found.
           content:
             text/plain:
               schema:
                 type: string
         "404":
-          description: No wasm source coude found.
+          description: No wasm source code found.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /soroban/contract_meta:
+    get:
+      operationId: getSorobanContractMeta
+      summary: Fetches soroban contract meta and spec for the given contract id or wasm id. Either contract id or wasm id must be specified.
+      description: Fetches soroban contract metadata and spec for the given contract id or wasm id. Either contract id or wasm id must be specified.
+      parameters:
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'futurenet' as default. Allow the user to specify the network.
+        - name: contract_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The Soroban contract id to get the metadata and specification for. 
+        - name: wasm_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The Soroban wasm id to get the metadata and specification for. 
+      responses:
+        "200":
+          description: An object containing the metadata and specification of the contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SCMeta'
+        "404":
+          description: No metadata and specification found.
           content:
             text/plain:
               schema:

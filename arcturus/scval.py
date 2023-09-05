@@ -1,6 +1,7 @@
 from stellar_sdk import xdr as stellar_xdr
 from stellar_sdk import StrKey
 from stellar_sdk import scval as sdk_scval
+import base64
 
 def decode_scval(base64_xdr):
     val = stellar_xdr.SCVal.from_xdr(base64_xdr)
@@ -208,3 +209,224 @@ def xdr_for(scval_type:str, data: str):
         return sdk_scval.to_timepoint(int(data)).to_xdr()
     else:
         raise ValueError("Invalid type")
+    
+def format_spec_entry(entry: stellar_xdr.SCSpecEntry):
+    dic = {}
+    if entry.kind == stellar_xdr.SCSpecEntryKind.SC_SPEC_ENTRY_FUNCTION_V0:
+        if entry.function_v0 is not None:
+            dic['function'] = format_spec_entry_function(entry.function_v0)
+    elif entry.kind == stellar_xdr.SCSpecEntryKind.SC_SPEC_ENTRY_UDT_STRUCT_V0:
+        if entry.udt_struct_v0 is not None:
+            dic['udt_struct'] = format_spec_entry_udt_struct(entry.udt_struct_v0)
+    elif entry.kind == stellar_xdr.SCSpecEntryKind.SC_SPEC_ENTRY_UDT_UNION_V0:
+        if entry.udt_union_v0 is not None:
+            dic['udt_union'] = format_spec_entry_udt_union(entry.udt_union_v0)
+    elif entry.kind == stellar_xdr.SCSpecEntryKind.SC_SPEC_ENTRY_UDT_ENUM_V0:
+        if entry.udt_enum_v0 is not None:
+            dic['udt_enum'] = format_spec_entry_udt_enum(entry.udt_enum_v0)
+    elif entry.kind == stellar_xdr.SCSpecEntryKind.SC_SPEC_ENTRY_UDT_ERROR_ENUM_V0:
+        if entry.udt_error_enum_v0 is not None:
+            dic['udt_error_enum'] = format_spec_entry_udt_error_enum(entry.udt_error_enum_v0)
+            
+    return dic
+        
+def format_spec_entry_function(function: stellar_xdr.SCSpecFunctionV0):
+    dic = {}
+    if function.name is not None:
+        dic['name'] = format_bytes_2_str(function.name.sc_symbol)
+    if function.doc is not None:
+        doc = format_bytes_2_str(function.doc)
+        if len(doc) > 0:
+            dic['doc'] = doc
+    if function.inputs is not None:
+        inputs = []
+        for input in function.inputs:
+            d = {'name':format_bytes_2_str(input.name), 'type':format_spec_type_def(input.type)}
+            doc = format_bytes_2_str(input.doc)
+            if len(doc) > 0:
+                d['doc'] = doc
+            inputs.append(d)
+        dic['inputs'] = inputs
+    if function.outputs is not None and len(function.outputs) > 0:
+        dic['output'] = format_spec_type_def(function.outputs[0])
+         
+    return dic
+
+def format_spec_entry_udt_struct(udt_struct: stellar_xdr.SCSpecUDTStructV0):
+    dic = {}
+    if udt_struct.name is not None:
+        dic['name'] = format_bytes_2_str(udt_struct.name)
+    if udt_struct.lib is not None:
+        lib = format_bytes_2_str(udt_struct.lib)
+        if len(lib) > 0:
+            dic['lib'] = lib
+    if udt_struct.doc is not None:
+        doc = format_bytes_2_str(udt_struct.doc)
+        if len(doc) > 0:
+            dic['doc'] = doc
+        
+    if udt_struct.fields is not None:
+        fields = []
+        for field in udt_struct.fields:
+            d = {'name':format_bytes_2_str(field.name), 'type':format_spec_type_def(field.type)}
+            doc = format_bytes_2_str(field.doc)
+            if len(doc) > 0:
+                d['doc'] = doc
+            fields.append(d)
+        dic['fields'] = fields
+         
+    return dic
+
+def format_spec_entry_udt_union(udt_union: stellar_xdr.SCSpecUDTUnionV0):
+    dic = {}
+    if udt_union.name is not None:
+        dic['name'] = format_bytes_2_str(udt_union.name)
+    if udt_union.lib is not None:
+        lib = format_bytes_2_str(udt_union.lib)
+        if len(lib) > 0:
+            dic['lib'] = lib
+    if udt_union.doc is not None:
+        doc = format_bytes_2_str(udt_union.doc)
+        if len(doc) > 0:
+            dic['doc'] = doc
+        
+    if udt_union.cases is not None:
+        cases = []
+        for case in udt_union.cases:
+            if case.kind == stellar_xdr.SCSpecUDTUnionCaseV0Kind.SC_SPEC_UDT_UNION_CASE_VOID_V0:
+                d = {'kind':'void', 'name': format_bytes_2_str(case.void_case.name)}
+                doc = format_bytes_2_str(case.void_case.doc)
+                if len(doc) > 0:
+                    d['doc'] = doc
+                cases.append(d)
+            elif case.kind == stellar_xdr.SCSpecUDTUnionCaseV0Kind.SC_SPEC_UDT_UNION_CASE_TUPLE_V0:
+                case_dick = {'kind':'tuple', 'name': format_bytes_2_str(case.tuple_case.name)}
+                doc = format_bytes_2_str(case.tuple_case.doc)
+                if len(doc) > 0:
+                    case_dick['doc'] = doc
+                case_types = []
+                for case_type in case.tuple_case.type:
+                    case_types.append(format_spec_type_def(case_type))
+                case_dick['type'] = case_types
+                cases.append(case_dick)
+        dic['cases'] = cases
+         
+    return dic
+
+def format_spec_entry_udt_enum(udt_enum: stellar_xdr.SCSpecUDTEnumV0):
+    dic = {}
+    if udt_enum.name is not None:
+        dic['name'] = format_bytes_2_str(udt_enum.name)
+    if udt_enum.lib is not None:
+        lib = format_bytes_2_str(udt_enum.lib)
+        if len(lib) > 0:
+            dic['lib'] = lib
+    if udt_enum.doc is not None:
+        doc = format_bytes_2_str(udt_enum.doc)
+        if len(doc) > 0:
+            dic['doc'] = doc
+        
+    if udt_enum.cases is not None:
+        cases = []
+        for case in udt_enum.cases:
+            d = {'name': format_bytes_2_str(case.name), 'value': str(case.value.uint32)}
+            doc = format_bytes_2_str(case.doc)
+            if len(doc) > 0:
+                d['doc'] = doc
+            cases.append(d)
+        dic['cases'] = cases
+         
+    return dic
+
+def format_spec_entry_udt_error_enum(udt_error_enum: stellar_xdr.SCSpecUDTErrorEnumV0):
+    dic = {}
+    if udt_error_enum.name is not None:
+        dic['name'] = format_bytes_2_str(udt_error_enum.name)
+    if udt_error_enum.lib is not None:
+        lib = format_bytes_2_str(udt_error_enum.lib)
+        if len(lib) > 0:
+            dic['lib'] = lib
+    if udt_error_enum.doc is not None:
+        doc = format_bytes_2_str(udt_error_enum.doc)
+        if len(doc) > 0:
+            dic['doc'] = doc
+        
+    if udt_error_enum.cases is not None:
+        cases = []
+        for case in udt_error_enum.cases:
+            d = {'name': format_bytes_2_str(case.name), 'value': str(case.value.uint32)}
+            doc = format_bytes_2_str(case.doc)
+            if len(doc) > 0:
+                d['doc'] = doc
+            cases.append(d)
+        dic['cases'] = cases
+         
+    return dic
+
+def format_spec_type_def(type_def: stellar_xdr.SCSpecTypeDef):
+    
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_VAL:
+        return 'val'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_BOOL:
+        return 'bool'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_VOID:
+        return 'void'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_ERROR:
+        return 'error'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_U32:
+        return 'u32'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_I32:
+        return 'i32'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_U64:
+        return 'u64'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_TIMEPOINT:
+        return 'timepoint'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_DURATION:
+        return 'duration'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_U128:
+        return 'u128'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_I128:
+        return 'i128'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_U256:
+        return 'u256'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_I256:
+        return 'i256'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_BYTES:
+        return 'bytes'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_STRING:
+        return 'string'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_SYMBOL:
+        return 'symbol'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_ADDRESS:
+        return 'address'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_OPTION:
+        return 'option <value_type = ' + format_spec_type_def(type_def.option.value_type) +'>'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_RESULT:
+        return 'result <ok_type = ' + format_spec_type_def(type_def.result.ok_type) + ', error_type = ' +  format_spec_type_def(type_def.result.error_type) + '>'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_VEC:
+        return 'vec <element_type = ' + format_spec_type_def(type_def.vec.element_type) +'>'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_MAP:
+        return 'map <key_type = ' + format_spec_type_def(type_def.map.key_type) + ', value_type = ' +  format_spec_type_def(type_def.map.value_type) + '>'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_SET:
+        return 'set <element_type = ' + format_spec_type_def(type_def.set.element_type) +'>'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_TUPLE:
+        result = 'tuple <value_types = '
+        for elem_type in type_def.tuple.valueTypes:
+            result += format_spec_type_def(elem_type) + ', '
+        result += '>'
+        return result
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_BYTES_N:
+        return 'bytesN[' + str(type_def.bytes_n.n) + ']'
+    if type_def.type == stellar_xdr.SCSpecType.SC_SPEC_TYPE_UDT:
+        return 'udt <name = ' + format_bytes_2_str(type_def.udt.name) + '>'
+    
+    return 'unknown'
+
+def format_bytes_2_str(b:bytes):
+    if len(b) == 0:
+        return ''
+    try:
+        return b.decode('utf8', 'strict')
+    except Exception:
+        nase = base64.b64encode(b.decode('latin-1', 'replace'))
+        return nase.decode('utf-8')
