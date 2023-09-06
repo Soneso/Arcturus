@@ -1,15 +1,21 @@
-  /assets/for_issuer:
+  /assets/get_assets:
     get:
       operationId: getAssetsForIssuer
-      summary: Get some of assets issued by this issuer account and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a subset of assets issued by the given issuer account.
+      summary: Get some of assets issued by an issuer and/or having that asset code and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns a subset of found assets. Minimum one of the parameters issuer_account_id and asset_code must be provided.
       parameters:
         - name: issuer_account_id
           in: query
           schema:
             type: string
-          required: true
-          description: Id of the issuer account to get the assets it controls.
+          required: false
+          description: Id of the issuer account to get the assets it controls. Minimum one of the parameters issuer_account_id and asset_code must be provided.
+        - name: asset_code
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Asset code to look for. Minimum one of the parameters issuer_account_id and asset_code must be provided.
         - name: network
           in: query
           schema:

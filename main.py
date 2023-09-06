@@ -82,15 +82,16 @@ async def account_directory_info():
     else:
         return quart.Response(response=json.dumps(data), status=200)
     
-@app.get("/assets/for_issuer")
-async def assets_for_issuer():
+@app.get("/assets/get_assets")
+async def assets_get_assets():
     try:
         issuer_account_id = request.args.get('issuer_account_id')
+        asset_code = request.args.get('asset_code')
         network = request.args.get('network')
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
-        records = await assets.for_issuer(horizon_url_for_network(network), issuer_account_id, cursor, order, limit)
+        records = await assets.get_assets(horizon_url_for_network(network), issuer_account_id, asset_code, cursor, order, limit)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
