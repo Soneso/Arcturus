@@ -1,6 +1,6 @@
 import aiohttp
 
-async def blocked_domains(domain):
+async def blocked_domains(domain:str):
     url = f"https://api.stellar.expert/explorer/directory/blocked-domains/{domain}"
     print(url)
     async with aiohttp.ClientSession() as session:

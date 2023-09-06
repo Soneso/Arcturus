@@ -409,7 +409,6 @@ async def scval_xdr_for():
     try:
         scval_type = request.args.get('type')
         value = request.args.get('value')
-        print(f"type {scval_type}, value {value}")
         data = scval.xdr_for(scval_type, value)
     except Exception as e:
         print("An exception occurred:", e)
@@ -487,7 +486,14 @@ async def soroban_contract_meta():
         else:
             return quart.Response(response=json.dumps(result), status=200)
     except Exception:
-        return quart.Response(response=NO_ENTRY_FOUND, status=404) 
+        return quart.Response(response=NO_ENTRY_FOUND, status=404)
+    
+@app.get("/soroban/get_transaction_status")
+async def get_soroban_transaction_status():
+    transaction_hash = request.args.get('transaction_id')
+    network = request.args.get('network')
+    result = await soroban.transaction_status(soroban_rpc_url_for_network(network), transaction_hash=transaction_hash)
+    return quart.Response(response=result, status=200)
     
 @app.get("/logo.png")
 async def plugin_logo():

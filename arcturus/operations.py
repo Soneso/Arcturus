@@ -1,9 +1,10 @@
 from stellar_sdk import Server
 from arcturus.utils import add_paging
+from typing import Union
 
 KEYS_TO_KEEP = ['id', 'paging_token', 'type', 'transaction_hash', 'transaction_successful', 'source_account', 'created_at']
     
-async def for_account(horizon_url, account_id, include_failed, cursor, order, limit):
+async def for_account(horizon_url:str, account_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_account(account_id=account_id)
@@ -19,7 +20,7 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
         
     return records
 
-async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order, limit):
+async def for_ledger(horizon_url:str, ledger_sequence:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_ledger(sequence=ledger_sequence)
@@ -35,7 +36,7 @@ async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order
         
     return records
 
-async def for_liquidity_pool(horizon_url, liquidity_pool_id, include_failed, cursor, order, limit):
+async def for_liquidity_pool(horizon_url:str, liquidity_pool_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_liquidity_pool(liquidity_pool_id=liquidity_pool_id)
@@ -51,7 +52,7 @@ async def for_liquidity_pool(horizon_url, liquidity_pool_id, include_failed, cur
         
     return records
 
-async def for_claimable_balance(horizon_url, claimable_balance_id, include_failed, cursor, order, limit):
+async def for_claimable_balance(horizon_url:str, claimable_balance_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_claimable_balance(claimable_balance_id=claimable_balance_id)
@@ -67,7 +68,7 @@ async def for_claimable_balance(horizon_url, claimable_balance_id, include_faile
         
     return records
 
-async def for_transaction(horizon_url, transaction_hash, cursor, order, limit):
+async def for_transaction(horizon_url:str, transaction_hash:str, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.operations().for_transaction(transaction_hash=transaction_hash)
@@ -84,7 +85,7 @@ def delete_keys_except(dictionary, keys_to_keep):
     for key in keys_to_delete:
         del dictionary[key]
         
-async def get_details(horizon_url, operation_id):
+async def get_details(horizon_url:str, operation_id:str):
     server = Server(horizon_url=horizon_url)
     builder = server.operations().operation(operation_id=operation_id)
     operation = builder.call()

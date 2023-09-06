@@ -16,7 +16,7 @@
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SCVal'
+                $ref: '#/components/schemas/SorobanLatestLedger'
         "400":
           description: Invalid argument.
           content:
@@ -205,6 +205,31 @@
                 type: string
         "400":
           description: Invalid argument.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /soroban/get_transaction_status:
+    get:
+      operationId: getSorobanTransactionStatus
+      summary: Returns the status of the specified soroban transaction.
+      description: Returns the status of the specified soroban transaction.
+      parameters:
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'futurenet' as default. Allow the user to specify the network.
+        - name: transaction_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Id (or hash) of the transaction to request the status for.
+      responses:
+        "200":
+          description: The status of the soroban transaction. Can be success, failed or not found. Not found can mean that it is still pending.
           content:
             text/plain:
               schema:

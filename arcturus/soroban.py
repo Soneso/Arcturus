@@ -1,5 +1,5 @@
 from stellar_sdk.soroban_server import (SorobanServer, Durability)
-from stellar_sdk.soroban_rpc import (EventFilter, EventFilterType)
+from stellar_sdk.soroban_rpc import (EventFilter, EventFilterType, EventInfo)
 from stellar_sdk import xdr as stellar_xdr
 from stellar_sdk import StrKey
 from stellar_sdk.address import Address
@@ -8,7 +8,7 @@ import base64
 import re
 import traceback
     
-async def get_latest_ledger(rpc_url):
+async def get_latest_ledger(rpc_url:str):
     response = SorobanServer(rpc_url).get_latest_ledger()
     return response.__dict__
 
@@ -27,7 +27,7 @@ async def contract_events(rpc_url, start_ledger, contract_id, cursor, limit):
        records.append(decode_event_info(event_info))
     return records
 
-async def contract_data(rpc_url, contract_id, key, durability):
+async def contract_data(rpc_url:str, contract_id:str, key:str, durability:str):
     dur = Durability.PERSISTENT
     if durability == "temporary":
        dur = Durability.TEMPORARY
@@ -47,7 +47,7 @@ async def contract_data(rpc_url, contract_id, key, durability):
         print("Error getting legder entry data:", e)
         return None
     
-async def contract_code_for_wasm_id(rpc_url, wasm_id):
+async def contract_code_for_wasm_id(rpc_url:str, wasm_id:str):
     ledger_key = stellar_xdr.LedgerKey(
         stellar_xdr.LedgerEntryType.CONTRACT_CODE,
         contract_code = stellar_xdr.LedgerKeyContractCode(
@@ -61,7 +61,7 @@ async def contract_code_for_wasm_id(rpc_url, wasm_id):
     ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(entries[0].xdr)
     return base64.b64encode(ledger_entry_data.contract_code.body.code).decode('latin-1')
 
-async def contract_code_for_contract_id(rpc_url, contract_id):
+async def contract_code_for_contract_id(rpc_url:str, contract_id:str):
     
     if not StrKey.is_valid_contract(contract_id):
         contract_id = StrKey.encode_contract(bytes.fromhex(contract_id))
@@ -87,7 +87,7 @@ async def contract_code_for_contract_id(rpc_url, contract_id):
         return None
     return await contract_code_for_wasm_id(rpc_url=rpc_url, wasm_id=wasm_id)
 
-async def contract_meta(rpc_url, wasm_id, contract_id):
+async def contract_meta(rpc_url:str, wasm_id:str, contract_id:str):
     code = None
     if wasm_id is not None:
         code = await contract_code_for_wasm_id(rpc_url, wasm_id=wasm_id)
@@ -102,9 +102,13 @@ async def contract_meta(rpc_url, wasm_id, contract_id):
         return None
     
     return meta
+
+async def transaction_status(rpc_url:str, transaction_hash:str):
+    response = SorobanServer(rpc_url).get_transaction(transaction_hash)
+    return response.status.value
     
         
-def decode_event_info(event_info):
+def decode_event_info(event_info: EventInfo):
     data = {}    
     data['event_type'] = event_info.event_type
     data['id'] = event_info.id

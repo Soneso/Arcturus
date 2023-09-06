@@ -3,11 +3,11 @@ from stellar_sdk import StrKey
 from stellar_sdk import scval as sdk_scval
 import base64
 
-def decode_scval(base64_xdr):
+def decode_scval(base64_xdr:str):
     val = stellar_xdr.SCVal.from_xdr(base64_xdr)
     return prepare_decoded_scval(val=val)
 
-def prepare_decoded_scval(val):
+def prepare_decoded_scval(val:stellar_xdr.SCVal):
     data = {}
     if val.type == stellar_xdr.SCValType.SCV_BOOL:
         data['type'] = 'bool'

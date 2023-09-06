@@ -1,5 +1,6 @@
 from stellar_sdk import Server
 from arcturus.utils import add_paging
+from typing import (Union, Dict, Any, List)
 
 ID_KEY = 'id'
 TYPE_KEY = 'type'
@@ -34,7 +35,7 @@ TYPE_PATH_PAYMENT_STRICT_RECEIVE = 'path_payment_strict_receive'
   
 KEYS_TO_KEEP = [ID_KEY, TYPE_KEY, TX_HASH_KEY, SUCCESSFUL_KEY, CREATED_AT_KEY, FROM_KEY, TO_KEY, AMOUNT_RECEIVED_KEY, AMOUNT_SENT_KEY, AMOUNT_KEY, PAGIN_TOKEN_KEY]
 
-async def for_account(horizon_url, account_id, include_failed, cursor, order, limit):
+async def for_account(horizon_url:str, account_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.payments().for_account(account_id)
@@ -65,7 +66,7 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
     payments['payments'] = records
     return payments
 
-async def for_transaction(horizon_url, transaction_hash, include_failed, cursor, order, limit):
+async def for_transaction(horizon_url:str, transaction_hash:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.payments().for_transaction(transaction_hash=transaction_hash)
@@ -100,7 +101,7 @@ async def for_transaction(horizon_url, transaction_hash, include_failed, cursor,
     payments['payments'] = records
     return payments
 
-async def for_ledger(horizon_url, sequence, include_failed, cursor, order, limit):
+async def for_ledger(horizon_url:str, sequence:Union[int, str], include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.payments().for_ledger(sequence=sequence)
@@ -136,16 +137,16 @@ async def for_ledger(horizon_url, sequence, include_failed, cursor, order, limit
     return payments
 
     
-def replace_key(dictionary, old_key, new_key):
+def replace_key(dictionary:Dict[str, Any], old_key:str, new_key:str):
     if old_key in dictionary:
         dictionary[new_key] = dictionary.pop(old_key)
         
-def delete_keys_except(dictionary, keys_to_keep):
+def delete_keys_except(dictionary:Dict[str, Any], keys_to_keep:List[str]):
     keys_to_delete = [key for key in dictionary.keys() if key not in keys_to_keep]
     for key in keys_to_delete:
         del dictionary[key]
 
-def simplify_standard_payment(payment, account_id):
+def simplify_standard_payment(payment:Dict[str, Any], account_id:str):
     canonic_amount(payment=payment)
     if FROM_KEY in payment and payment[FROM_KEY] == account_id:
         replace_key(payment, AMOUNT_KEY, AMOUNT_SENT_KEY)
@@ -154,7 +155,7 @@ def simplify_standard_payment(payment, account_id):
         replace_key(payment, AMOUNT_KEY, AMOUNT_RECEIVED_KEY)
         del payment[TO_KEY]
 
-def canonic_amount(payment):
+def canonic_amount(payment:Dict[str, Any]):
     if AMOUNT_KEY in payment:
         amount = payment[AMOUNT_KEY]
         if ASSET_CODE_KEY in payment:
@@ -168,7 +169,7 @@ def canonic_amount(payment):
             
         payment[AMOUNT_KEY] = amount
         
-def canonic_source_amount(payment):
+def canonic_source_amount(payment:Dict[str, Any]):
     if SOURCE_AMOUNT_KEY in payment:
         amount = payment[SOURCE_AMOUNT_KEY]
         if SOURCE_ASSET_CODE_KEY in payment:
@@ -181,7 +182,7 @@ def canonic_source_amount(payment):
             del payment[SOURCE_ASSET_ISSUER_KEY]
         payment[SOURCE_AMOUNT_KEY] = amount
         
-def simplify_create_account_payment(payment, account_id):
+def simplify_create_account_payment(payment:Dict[str, Any], account_id:str):
     if STARTING_BALANCE_KEY in payment and ACCOUNT_KEY in payment and FUNDER_KEY in payment:
         if payment[ACCOUNT_KEY] == account_id:
            payment[AMOUNT_RECEIVED_KEY] = payment[STARTING_BALANCE_KEY] + ' native'
@@ -190,14 +191,14 @@ def simplify_create_account_payment(payment, account_id):
            payment[AMOUNT_SENT_KEY] = payment[STARTING_BALANCE_KEY] + ' native'
            payment[TO_KEY] = payment[ACCOUNT_KEY]
         
-def simplify_account_merge_payment(payment, account_id):
+def simplify_account_merge_payment(payment:Dict[str, Any], account_id:str):
     if INTO_KEY in payment and ACCOUNT_KEY in payment:
        if payment[ACCOUNT_KEY] == account_id:
            payment[TO_KEY] = payment[INTO_KEY]
        elif payment[INTO_KEY] == account_id:
            payment[FROM_KEY] = payment[ACCOUNT_KEY]
 
-def simplify_path_payment(payment, account_id):
+def simplify_path_payment(payment:Dict[str, Any], account_id:str):
     if FROM_KEY in payment and payment[FROM_KEY] == account_id:
         canonic_source_amount(payment=payment)
         replace_key(payment, SOURCE_AMOUNT_KEY, AMOUNT_SENT_KEY)

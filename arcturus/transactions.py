@@ -1,7 +1,8 @@
 from stellar_sdk import Server
 from arcturus.utils import add_paging
+from typing import (Union, Dict, Any)
 
-async def get_details(horizon_url, hash):
+async def get_details(horizon_url:str, hash:str):
     server = Server(horizon_url=horizon_url)
     builder = server.transactions().transaction(transaction_hash=hash)
     transaction = builder.call()
@@ -9,7 +10,7 @@ async def get_details(horizon_url, hash):
   
     return transaction
 
-async def for_account(horizon_url, account_id, include_failed, cursor, order, limit):
+async def for_account(horizon_url:str, account_id:str, include_failed:str, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.transactions().for_account(account_id=account_id)
@@ -25,7 +26,7 @@ async def for_account(horizon_url, account_id, include_failed, cursor, order, li
             
     return records
 
-async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order, limit):
+async def for_ledger(horizon_url:str, ledger_sequence:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.transactions().for_ledger(sequence=ledger_sequence)
@@ -41,7 +42,7 @@ async def for_ledger(horizon_url, ledger_sequence, include_failed, cursor, order
             
     return records
 
-async def for_claimable_balance(horizon_url, claimable_balance_id, include_failed, cursor, order, limit):
+async def for_claimable_balance(horizon_url:str, claimable_balance_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.transactions().for_claimable_balance(claimable_balance_id=claimable_balance_id)
@@ -57,7 +58,7 @@ async def for_claimable_balance(horizon_url, claimable_balance_id, include_faile
             
     return records
 
-async def for_liquidity_pool(horizon_url, liquidity_pool_id, include_failed, cursor, order, limit):
+async def for_liquidity_pool(horizon_url:str, liquidity_pool_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
     builder = server.transactions().for_liquidity_pool(liquidity_pool_id=liquidity_pool_id)
@@ -73,7 +74,7 @@ async def for_liquidity_pool(horizon_url, liquidity_pool_id, include_failed, cur
             
     return records
 
-def del_extra_data(transaction):
+def del_extra_data(transaction:Dict[str, Any]):
     # delete data that we do not need at this time to save on context window
     del transaction['_links']
     del transaction['id'] # we have the hash and it is also known from request
