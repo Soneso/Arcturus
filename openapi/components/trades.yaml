@@ -1,0 +1,72 @@
+    Trade:
+      type: object
+      description: When an offer is fully or partially fulfilled, a trade happens. Trades can also be caused by successful path payments, because path payments involve fulfilling offers. A trade occurs between two parties — base and counter. Which is which is either arbitrary or determined by the calling parameters.
+      title: Trade
+      properties:
+        id:
+          title: ID
+          type: string
+          description: A unique identifier for this trade.
+        base_account:
+          title: Base account
+          type: string
+          description: The account ID of the base party for this trade.
+        base_offer_id:
+          title: Base offer id
+          type: string
+          description: The base offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
+        base_liquidity_pool_id:
+          title: Base liquidity pool id
+          type: string
+          description: The base liquidity pool ID. If this trade was executed against a liquidity pool.
+        base_amount:
+          title: Base amount
+          type: number
+          format: float
+          description: The amount of the base asset that was moved from base_account to counter_account.
+        base_asset:
+          title: Base Asset
+          type: string
+          description: The base asset. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
+        counter_account:
+          title: Counter account
+          type: string
+          description: The account ID of the counter party for this trade.
+        counter_offer_id:
+          title: Counter offer id
+          type: string
+          description: The counter offer ID. If this offer was immediately and fully consumed, this will be a synethic ID.
+        counter_liquidity_pool_id:
+          title: Counter liquidity pool id
+          type: string
+          description: The counter liquidity pool ID. If this trade was executed against a liquidity pool.
+        counter_amount:
+          title: Counter amount
+          type: number
+          format: float
+          description: The amount of the counter asset that was moved from base_account to counter_account.
+        counter_asset:
+          title: Counter Asset
+          type: string
+          description: The counter asset. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
+        price:
+          title: Offer price
+          type: number
+          format: float
+          description: The original offer price.
+        base_is_seller:
+          title: Base is seller
+          type: bool
+          description: Indicates which party is the seller.
+        trade_type:
+          title: Trade type
+          type: string
+          description: Type of the trade. can be orderbook or liquidity_pool.
+        ledger_close_time:
+          title: Ledger close time
+          type: string
+          description: An ISO 8601 formatted string of when the ledger with this trade was closed.
+        paging_token:
+          title: Paging Token
+          type: string
+          description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.

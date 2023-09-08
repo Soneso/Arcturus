@@ -1,0 +1,27 @@
+    Orderbook:
+      type: object
+      description: An order book is a collections of offers for a specific pair of assets on the Stellar Network DEX.
+      title: Orderbook
+      properties:
+        base:
+          title: Base Asset
+          type: string
+          description: The Base Asset. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
+        counter:
+          title: Counter Asset
+          type: string
+          description: The Counter Asset. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
+        bids:
+          title: Bids
+          type: array
+          description: The prices and amounts for the buyside of the asset pair.
+          items:
+            type: string
+            description: The bid price of the base asset denominated in the counter asset and the amount that the offer maker is willing to buy for that price. Separated by /
+        asks:
+          title: Asks
+          type: array
+          description: The prices and amounts for the sellside of the asset pair.
+          items:
+            type: string
+            description: The ask price of the base asset denominated in the counter asset and the amount that the offer maker is willing to sell for that price. Separated by /

@@ -1,5 +1,5 @@
 from stellar_sdk import Server
-from arcturus.utils import add_paging
+from arcturus.utils import add_paging, delete_keys_except, replace_key
 from typing import (Union, Dict, Any, List)
 
 ID_KEY = 'id'
@@ -135,16 +135,6 @@ async def for_ledger(horizon_url:str, sequence:Union[int, str], include_failed:b
     payments = {}
     payments['payments'] = records
     return payments
-
-    
-def replace_key(dictionary:Dict[str, Any], old_key:str, new_key:str):
-    if old_key in dictionary:
-        dictionary[new_key] = dictionary.pop(old_key)
-        
-def delete_keys_except(dictionary:Dict[str, Any], keys_to_keep:List[str]):
-    keys_to_delete = [key for key in dictionary.keys() if key not in keys_to_keep]
-    for key in keys_to_delete:
-        del dictionary[key]
 
 def simplify_standard_payment(payment:Dict[str, Any], account_id:str):
     canonic_amount(payment=payment)

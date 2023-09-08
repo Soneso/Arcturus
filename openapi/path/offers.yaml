@@ -1,0 +1,123 @@
+  /offers/get_offers:
+    get:
+      operationId: getOffers
+      summary: Get a list of maximum 3 offers depending on the provided parameters.
+      description: Returns a list of found offers depending on the provided parameters. It can only load a maximum of 3 offers at a time.
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the account to get the offers for. Searches selling an buying offers. Do not fill if the user explicitly asks for the offers of a seller. If this is set, the parameters seller_id, sponsor_id, selling_asset_code, selling_asset_issuer, buying_asset_code, buying_asset_issuer will be ignored.
+        - name: seller_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the seller account to get the offers for. Searches only the selling offers. Fill this if the user explicitly asks for the offers of a seller. Will be ignored if account_id is set.
+        - name: sponsor_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the sponsoring account to get the offers for. Will be ignored if account_id is set.
+        - name: selling_asset_code
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Asset code of the selling asset to look for. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. Will be ignored if account_id is set.
+        - name: selling_asset_issuer
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Issuer account id of the selling asset to look for. If selling_asset_code is 'native' this will be ignored. Will aslo be ignored if account_id is set.
+        - name: buying_asset_code
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Asset code of the buying asset to look for. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. Will be ignored if account_id is set.
+        - name: buying_asset_issuer
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Issuer account id of the buying asset to look for. If buying_asset_code is 'native' this will be ignored. Will aslo be ignored if account_id is set.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
+        - name: order
+          in: query
+          schema:
+            type: string
+          required: true
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
+        - name: limit
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The number of records to be returned. Currently maximum 3. If the user asks for more plese let him know that you can only load maximum 3 at a time.
+      responses:
+        "200":
+          description: A complex object array response holding maximum 3 offers matching the given criteria. Use paginination if the user wants more.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+        "400":
+          description: Paging limit was higher than allowed.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: An error occured.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /offers/offer:
+    get:
+      operationId: getOfferForId
+      summary: Get information about an offer identified by the offer id.
+      parameters:
+        - name: offer_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Id of the offer to get the information for.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object response holding the details of the offer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        "404":
+          description: Offer was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string

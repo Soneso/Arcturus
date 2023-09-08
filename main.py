@@ -9,6 +9,9 @@ import arcturus.claimable_balances as claimable_balances
 import arcturus.payments as payments
 import arcturus.transactions as transactions
 import arcturus.operations as operations
+import arcturus.offers as offers
+import arcturus.orderbook as orderbook
+import arcturus.trades as trades
 import arcturus.domains as domains
 import arcturus.scval as scval
 import arcturus.soroban as soroban
@@ -27,6 +30,7 @@ TRANSACTION_NOT_FOUND = "Transaction not found"
 LEDGER_NOT_FOUND = "Ledger not found"
 LIQUIDITY_POOL_NOT_FOUND = "Liquidity pool not found"
 OPERATION_NOT_FOUND = "Operation not found"
+OFFER_NOT_FOUND = "Offer not found"
 CONTRACT_NOT_FOUND = "Contract not found"
 NO_ENTRY_FOUND = "No entry found"
 INVALID_ARGUMENT = "Invalid argument"
@@ -109,7 +113,6 @@ async def claimable_balances_for_claimant():
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         
         records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -127,7 +130,6 @@ async def claimable_balances_for_sponsor():
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         
         records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -139,7 +141,6 @@ async def claimable_balance():
         claimable_balance_id = request.args.get('claimable_balance_id')
         network = request.args.get('network')
         details = await claimable_balances.claimable_balance(horizon_url_for_network(network), claimable_balance_id)
-        print(f"details: {details}")
     except NotFoundError:
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
@@ -166,7 +167,6 @@ async def payment_list_for_account():
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -184,7 +184,6 @@ async def payment_list_for_transaction():
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await payments.for_transaction(horizon_url_for_network(network), transaction_hash, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
     else:
@@ -202,7 +201,6 @@ async def payment_list_for_ledger():
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await payments.for_ledger(horizon_url_for_network(network), sequence, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=LEDGER_NOT_FOUND, status=404)
     else:
@@ -218,7 +216,6 @@ async def transaction_details():
         t_id = request.args.get('hash')
         network = request.args.get('network')
         details = await transactions.get_details(horizon_url_for_network(network), t_id)
-        print(f"details: {details}")
     except NotFoundError:
         return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
     else:
@@ -236,7 +233,6 @@ async def transactions_for_account():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await transactions.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -254,7 +250,6 @@ async def transactions_for_liquidity_pool():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await transactions.for_liquidity_pool(horizon_url_for_network(network), liquidity_pool_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
     else:
@@ -272,7 +267,6 @@ async def transactions_for_ledger():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await transactions.for_ledger(horizon_url_for_network(network), ledger_sequence, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=LEDGER_NOT_FOUND, status=404)
     else:
@@ -290,7 +284,6 @@ async def transactions_for_claimable_balance():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await transactions.for_claimable_balance(horizon_url_for_network(network), claimable_balance_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
@@ -308,7 +301,6 @@ async def operations_for_account():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await operations.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -326,7 +318,6 @@ async def operations_for_liquidity_pool():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await operations.for_liquidity_pool(horizon_url_for_network(network), liquidity_pool_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
     else:
@@ -344,7 +335,6 @@ async def operations_for_ledger():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await operations.for_ledger(horizon_url_for_network(network), ledger_sequence, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=LEDGER_NOT_FOUND, status=404)
     else:
@@ -362,7 +352,6 @@ async def operations_for_claimable_balance():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await operations.for_claimable_balance(horizon_url_for_network(network), claimable_balance_id, include_failed, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
     else:
@@ -379,7 +368,6 @@ async def operations_for_transaction():
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await operations.for_transaction(horizon_url_for_network(network), transaction_hash, cursor, order, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
@@ -389,6 +377,94 @@ async def operations_for_transaction():
 async def operation_details():
     return await op_details(request=request)
 
+@app.get("/offers/get_offers")
+async def offers_get_offers():
+    try:
+        account_id = request.args.get('account_id')
+        seller_id = request.args.get('seller_id')
+        sponsor_id = request.args.get('sponsor_id')
+        selling_asset_code = request.args.get('selling_asset_code')
+        selling_asset_issuer = request.args.get('selling_asset_issuer')
+        buying_asset_code = request.args.get('buying_asset_code')
+        buying_asset_issuer = request.args.get('buying_asset_issuer')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        records = []
+        if account_id is not None:
+            records = await offers.for_account(horizon_url_for_network(network), account_id, cursor, order, limit)
+        else:
+            records = await offers.all_offers(horizon_url_for_network(network), seller_id = seller_id, sponsor_id= sponsor_id,
+                                              selling_asset_code = selling_asset_code, selling_asset_issuer= selling_asset_issuer,
+                                              buying_asset_code = buying_asset_code, buying_asset_issuer= buying_asset_issuer,
+                                              cursor=cursor, order=order, limit=limit)
+    except Exception as e:
+        return quart.Response(response=e, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/offers/offer")
+async def offer():
+    try:
+        offer_id = request.args.get('offer_id')
+        network = request.args.get('network')
+        details = await offers.get_details(horizon_url_for_network(network), offer_id)
+    except NotFoundError:
+        return quart.Response(response=OFFER_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
+
+@app.get("/orderbook/get_orderbook")
+async def orderbook_get_orderbook():
+    try:
+        selling_asset_code = request.args.get('selling_asset_code')
+        selling_asset_issuer = request.args.get('selling_asset_issuer')
+        buying_asset_code = request.args.get('buying_asset_code')
+        buying_asset_issuer = request.args.get('buying_asset_issuer')
+        network = request.args.get('network')
+        entries = await orderbook.orderbook(horizon_url_for_network(network),selling_asset_code = selling_asset_code, 
+                                            selling_asset_issuer= selling_asset_issuer, buying_asset_code = buying_asset_code, 
+                                            buying_asset_issuer= buying_asset_issuer)
+    except Exception as e:
+        return quart.Response(response=e, status=404)
+    else:
+        return quart.Response(response=json.dumps(entries), status=200)
+
+@app.get("/trades/get_trades")
+async def trades_get_trades():
+    try:
+        base_asset_code = request.args.get('base_asset_code')
+        base_asset_issuer = request.args.get('base_asset_issuer')
+        counter_asset_code = request.args.get('counter_asset_code')
+        counter_asset_issuer = request.args.get('counter_asset_issuer')
+        account_id = request.args.get('account_id')
+        offer_id = request.args.get('offer_id')
+        liquidity_pool_id = request.args.get('liquidity_pool_id')
+        trade_type = request.args.get('trade_type')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        
+        if account_id is not None:
+            records = await trades.for_account(horizon_url=horizon_url_for_network(network),account_id=account_id, 
+                                               trade_type=trade_type, cursor=cursor, order=order, limit=limit)
+        elif liquidity_pool_id is not None:
+            records = await trades.for_liquidity_pool(horizon_url=horizon_url_for_network(network),liquidity_pool_id=liquidity_pool_id,
+                                                      cursor=cursor, order=order, limit=limit)
+        elif offer_id is not None and base_asset_code is None and counter_asset_code is None:
+            records = await trades.for_offer(horizon_url_for_network(network),offer_id==offer_id,
+                                                      cursor=cursor, order=order, limit=limit)
+        else:
+            records = await trades.all_trades(horizon_url=horizon_url_for_network(network),base_asset_code=base_asset_code, base_asset_issuer=base_asset_issuer,
+                                              counter_asset_code=counter_asset_code, counter_asset_issuer=counter_asset_issuer,offer_id=offer_id, trade_type=trade_type,
+                                              cursor=cursor, order=order, limit=limit)
+    except Exception as e:
+        return quart.Response(response=e, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+    
 @app.get("/blocked_domains/<string:domain>")
 async def get_blocked_domains(domain):
     details = await domains.blocked_domains(domain)
@@ -434,7 +510,6 @@ async def soroban_contract_events():
         if int(limit) > 10:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await soroban.contract_events(soroban_rpc_url_for_network(network), start_ledger, contract_id, cursor, limit)
-        print(f"records: {records}")
     except NotFoundError:
         return quart.Response(response=CONTRACT_NOT_FOUND, status=404)
     else:
@@ -520,6 +595,8 @@ async def openapi_spec():
                  'openapi/path/transactions.yaml',
                  'openapi/path/operations.yaml',
                  'openapi/path/domains.yaml',
+                 'openapi/path/offers.yaml',
+                 'openapi/path/orderbook.yaml',
                  'openapi/path/scval.yaml',
                  'openapi/path/soroban.yaml',
                  'openapi/components/accounts.yaml',
@@ -530,13 +607,15 @@ async def openapi_spec():
                  'openapi/components/transactions.yaml',
                  'openapi/components/operations.yaml',
                  'openapi/components/domains.yaml',
+                 'openapi/components/offers.yaml',
+                 'openapi/components/orderbook.yaml',
                  'openapi/components/scval.yaml', 
                  'openapi/components/soroban.yaml']
     combined_text = combine_files(file_list)
     #print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
 
-def horizon_url_for_network(network):
+def horizon_url_for_network(network:str):
     if network == 'public':
         return HORIZON_PUBLIC_URL
     if network == 'testnet':
@@ -545,7 +624,7 @@ def horizon_url_for_network(network):
         return HORIZON_FUTURENET_URL
     return network
 
-def soroban_rpc_url_for_network(network):
+def soroban_rpc_url_for_network(network:str):
     return SOROBAN_RPC_FUTURENET_URL
 
 def combine_files(file_list):

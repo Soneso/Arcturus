@@ -1,0 +1,51 @@
+  /orderbook/get_orderbook:
+    get:
+      operationId: getOrderbook
+      summary: Returns the current order book as a collections of offers for a specific pair of assets.
+      description: Returns the current order book as a collections of offers for a specific pair of assets.
+      parameters:
+        - name: selling_asset_code
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Asset code of the asset beeing sold (base asset). Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset.
+        - name: selling_asset_issuer
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Issuer account id of the asset beeing sold (base asset). If selling_asset_code is 'native' this will be ignored.
+        - name: buying_asset_code
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The code for the asset being bought (counter asset). Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset.
+        - name: buying_asset_issuer
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Issuer account id of the asset being bought (counter asset). If buying_asset_code is 'native' this will be ignored.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: A complex object representing the current orderbook for the pair of assets.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Orderbook'
+        "404":
+          description: An error occured.
+          content:
+            text/plain:
+              schema:
+                type: string

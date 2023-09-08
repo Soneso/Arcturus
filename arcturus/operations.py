@@ -1,5 +1,5 @@
 from stellar_sdk import Server
-from arcturus.utils import add_paging
+from arcturus.utils import add_paging, delete_keys_except
 from typing import Union
 
 KEYS_TO_KEEP = ['id', 'paging_token', 'type', 'transaction_hash', 'transaction_successful', 'source_account', 'created_at']
@@ -79,11 +79,6 @@ async def for_transaction(horizon_url:str, transaction_hash:str, cursor:Union[in
         delete_keys_except(x, KEYS_TO_KEEP)
         
     return records
-
-def delete_keys_except(dictionary, keys_to_keep):
-    keys_to_delete = [key for key in dictionary.keys() if key not in keys_to_keep]
-    for key in keys_to_delete:
-        del dictionary[key]
         
 async def get_details(horizon_url:str, operation_id:str):
     server = Server(horizon_url=horizon_url)
