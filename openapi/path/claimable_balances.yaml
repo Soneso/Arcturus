@@ -1,72 +1,21 @@
-  /claimable_balances/for_claimant:
+  /claimable_balances:
     get:
-      operationId: getClaimableBalancesForClaimant
-      summary: Get a list of maximum 2 claimable balances having the given account as a claimant and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns claimable balances having the given account as a claimant. It can only load a maximum of 2 claimable balances at a time.
+      operationId: getClaimableBalances
+      summary: Get a list of maximum 2 claimable balances depending on the given parameters.
+      description: Returns claimable balances depending on the given parameters. It can only load a maximum of 2 claimable balances at a time.
       parameters:
         - name: claimant_account_id
           in: query
           schema:
             type: string
-          required: true
-          description: Id of the account to get the information for.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
           required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: string
-          required: true
-          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding some claimable balances having the given account as a claimant.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ClaimableBalance'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Account was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /claimable_balances/for_sponsor:
-    get:
-      operationId: getClaimableBalancesForSponsor
-      summary: Get a list of maximum 2 claimable balances having the given account as a sponsor and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns claimable balances having the given account as a sponsor. It can only load a maximum of 2 claimable balances at a time.
-      parameters:
+          description: Id of the claimant account to fetch claimable balances for.
         - name: sponsor_account_id
           in: query
           schema:
             type: string
-          required: true
-          description: Id of the account to get the information for.
+          required: false
+          description: Id of the sponsor of the claimable balances to fetch claimable balances for.
         - name: network
           in: query
           schema:
@@ -88,12 +37,12 @@
         - name: limit
           in: query
           schema:
-            type: integer
+            type: string
           required: true
           description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
       responses:
         "200":
-          description: A complex object array response holding some claimable balances having the given account as a sponsor.
+          description: A complex object array response holding a list of fetched claimable balances for the given parameter values.
           content:
             application/json:
               schema:

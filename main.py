@@ -101,35 +101,23 @@ async def assets_get_assets():
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/claimable_balances/for_claimant")
-async def claimable_balances_for_claimant():
+@app.get("/claimable_balances")
+async def get_claimable_balances():
     try:
         claimant_account_id = request.args.get('claimant_account_id')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > MAX_PAGING_LIMIT:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        
-        records = await claimable_balances.for_claimant(horizon_url_for_network(network), claimant_account_id, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-    
-@app.get("/claimable_balances/for_sponsor")
-async def claimable_balances_for_sponsor():
-    try:
         sponsor_account_id = request.args.get('sponsor_account_id')
         network = request.args.get('network')
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        
+        if limit is None:
+            limit = 2
+        
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        
-        records = await claimable_balances.for_sponsor(horizon_url_for_network(network), sponsor_account_id, cursor, order, limit)
+        records = await claimable_balances.get_claimable_balances(horizon_url_for_network(network), claimant_account_id, sponsor_account_id, cursor, order, limit)
+            
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
