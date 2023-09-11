@@ -245,8 +245,8 @@ async def get_operations():
 async def operation_details():
     return await op_details(request=request)
 
-@app.get("/offers/get_offers")
-async def offers_get_offers():
+@app.get("/offers")
+async def get_offers():
     try:
         account_id = request.args.get('account_id')
         seller_id = request.args.get('seller_id')
@@ -259,6 +259,12 @@ async def offers_get_offers():
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        
+        if limit is None:
+            limit = 3
+        if int(limit) > 3:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        
         records = []
         if account_id is not None:
             records = await offers.for_account(horizon_url_for_network(network), account_id, cursor, order, limit)
@@ -272,8 +278,8 @@ async def offers_get_offers():
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/offers/offer")
-async def offer():
+@app.get("/offer/details")
+async def offer_details():
     try:
         offer_id = request.args.get('offer_id')
         network = request.args.get('network')
@@ -299,8 +305,8 @@ async def orderbook_get_orderbook():
     else:
         return quart.Response(response=json.dumps(entries), status=200)
 
-@app.get("/trades/get_trades")
-async def trades_get_trades():
+@app.get("/trades")
+async def get_trades():
     try:
         base_asset_code = request.args.get('base_asset_code')
         base_asset_issuer = request.args.get('base_asset_issuer')
@@ -315,6 +321,11 @@ async def trades_get_trades():
         order = request.args.get('order')
         limit = request.args.get('limit')
         
+        if limit is None:
+            limit = 3
+        if int(limit) > 3:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+    
         if account_id is not None:
             records = await trades.for_account(horizon_url=horizon_url_for_network(network),account_id=account_id, 
                                                trade_type=trade_type, cursor=cursor, order=order, limit=limit)
@@ -322,7 +333,7 @@ async def trades_get_trades():
             records = await trades.for_liquidity_pool(horizon_url=horizon_url_for_network(network),liquidity_pool_id=liquidity_pool_id,
                                                       cursor=cursor, order=order, limit=limit)
         elif offer_id is not None and base_asset_code is None and counter_asset_code is None:
-            records = await trades.for_offer(horizon_url_for_network(network),offer_id==offer_id,
+            records = await trades.for_offer(horizon_url=horizon_url_for_network(network),offer_id=offer_id,
                                                       cursor=cursor, order=order, limit=limit)
         else:
             records = await trades.all_trades(horizon_url=horizon_url_for_network(network),base_asset_code=base_asset_code, base_asset_issuer=base_asset_issuer,
@@ -467,6 +478,7 @@ async def openapi_spec():
                  'openapi/path/orderbook.yaml',
                  'openapi/path/scval.yaml',
                  'openapi/path/soroban.yaml',
+                 'openapi/path/trades.yaml',
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/stellar_toml.yaml',
@@ -478,7 +490,8 @@ async def openapi_spec():
                  'openapi/components/offers.yaml',
                  'openapi/components/orderbook.yaml',
                  'openapi/components/scval.yaml', 
-                 'openapi/components/soroban.yaml']
+                 'openapi/components/soroban.yaml',
+                 'openapi/components/trades.yaml']
     combined_text = combine_files(file_list)
     #print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")

@@ -1,4 +1,4 @@
-  /offers/get_offers:
+  /offers:
     get:
       operationId: getOffers
       summary: Get a list of maximum 3 offers depending on the provided parameters.
@@ -63,16 +63,16 @@
           schema:
             type: string
           required: false
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending. meaning most recent). If this argument isn't set, it defaults to asc.
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending, meaning oldest first) or 'desc' (for descending, meaning most recent first). If this argument isn't set, it defaults to desc (most recent).
         - name: limit
           in: query
           schema:
             type: string
           required: true
-          description: The number of records to be returned. Currently maximum 3. If the user asks for more plese let him know that you can only load maximum 3 at a time.
+          description: The number of records to be returned. Currently maximum 3. If the user asks for more please let him know that you can only load maximum 3 at a time.
       responses:
         "200":
-          description: A complex object array response holding maximum 3 offers matching the given criteria. Use paginination if the user wants more.
+          description: A complex object array response holding a list of offers for the given parameters.
           content:
             application/json:
               schema:
@@ -91,9 +91,9 @@
             text/plain:
               schema:
                 type: string
-  /offers/offer:
+  /offer/details:
     get:
-      operationId: getOfferForId
+      operationId: getOfferDetails
       summary: Get information about an offer identified by the offer id.
       parameters:
         - name: offer_id

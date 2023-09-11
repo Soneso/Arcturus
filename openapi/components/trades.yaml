@@ -51,9 +51,8 @@
           description: The counter asset. It can be native (for XML) of if not native, than formatted like this "asset_code:asset_issuer_id".
         price:
           title: Offer price
-          type: number
-          format: float
-          description: The original offer price.
+          type: string
+          description: The original offer price given by denominator and nominator.
         base_is_seller:
           title: Base is seller
           type: bool

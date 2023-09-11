@@ -47,7 +47,6 @@ async def for_offer(horizon_url:str, offer_id:str, cursor:Union[int, str], order
     builder = server.trades().for_offer(offer_id=offer_id)
     add_paging(builder, cursor, order, limit) 
     records += builder.call()["_embedded"]["records"]
-    
     for trade in records:
         simplify_trade(trade=trade)
         
@@ -116,7 +115,7 @@ def simplify_trade(trade:Dict[str, Any]):
         del trade[COUNTER_ASSET_ISSUER]   
     
     if PRICE in trade:
-        trade[PRICE] = int(trade[PRICE]['n']) / int(trade[PRICE]['n'])
+        trade[PRICE] = "d=" + trade[PRICE]['d'] +"; n=" + trade[PRICE]['n']
         
     if LINKS in trade:
         del trade[LINKS]   

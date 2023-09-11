@@ -8,7 +8,9 @@ ASSET_ISSUER_KEY = 'asset_issuer'
 def add_paging(builder, cursor:Union[int, str], order:str, limit:int):
     if cursor is not None:
         builder.cursor(cursor)
-    if order is None or order == 'asc':
+        
+    # default to desc
+    if order is not None and order == 'asc':
         builder.order(desc=False)
     else:
         builder.order(desc=True)

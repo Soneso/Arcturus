@@ -1,8 +1,8 @@
-  /trades/get_trades:
+  /trades:
     get:
       operationId: getTrades
-      summary: Get a list of maximum 5 trades depending on the provided parameters.
-      description: Returns a list of found trades depending on the provided parameters. It can only load a maximum of 5 trades at a time.
+      summary: Get a list of maximum 3 trades for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the fetched list of the maximum 5 trades or the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 3 trades at a time.
       parameters:
         - name: account_id
           in: query
@@ -33,25 +33,25 @@
           schema:
             type: string
           required: false
-          description: Asset code of the base asset. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. Will be ignored if account_id or liquidity_pool_id is set.
+          description: Asset code of the base asset. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. If this parameter is provided you also need to provide counter_asset_code. Will be ignored if account_id or liquidity_pool_id is set.
         - name: base_asset_issuer
           in: query
           schema:
             type: string
           required: false
-          description: Issuer account id of the base asset. If base_asset_code is 'native' this will be ignored. Will aslo be ignored if account_id or liquidity_pool_id is set.
+          description: Issuer account id of the base asset. If base_asset_code is 'native' this will be ignored. Will be ignored if account_id or liquidity_pool_id is set.
         - name: counter_asset_code
           in: query
           schema:
             type: string
           required: false
-          description: Asset code of the counter asset. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. Will aslo be ignored if account_id or liquidity_pool_id is set.
+          description: Asset code of the counter asset. Can be 'native' if it refers to stellar lumens (XLM) or another asset code if it refers to an issued asset. If this parameter is provided you also need to provide base_asset_code. Will be ignored if account_id or liquidity_pool_id is set.
         - name: counter_asset_issuer
           in: query
           schema:
             type: string
           required: false
-          description: Issuer account id of the counter asset. If counter_asset_code is 'native' this will be ignored. Will aslo be ignored if account_id or liquidity_pool_id is set.
+          description: Issuer account id of the counter asset. If counter_asset_code is 'native' this will be ignored. Will be ignored if account_id or liquidity_pool_id is set.
         - name: network
           in: query
           schema:
@@ -69,16 +69,16 @@
           schema:
             type: string
           required: false
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending. meaning most recent). If this argument isn't set, it defaults to asc.
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending, meaning oldest first) or 'desc' (for descending, meaning most recent first). If this argument isn't set, it defaults to desc (most recent).
         - name: limit
           in: query
           schema:
             type: string
           required: true
-          description: The number of records to be returned. Currently maximum 3. If the user asks for more plese let him know that you can only load maximum 3 at a time.
+          description: The number of records to be returned. Currently maximum 3. If the user asks for more please let him know that you can only load maximum 3 at a time.
       responses:
         "200":
-          description: A complex object array response holding maximum 3 offers matching the given criteria. Use paginination if the user wants more.
+          description: A complex object array response holding a list of trades for the given parameters.
           content:
             application/json:
               schema:

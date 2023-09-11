@@ -33,7 +33,7 @@
           schema:
             type: string
           required: false
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending. meaning most recent). If this argument isn't set, it defaults to asc.
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending, meaning oldest first) or 'desc' (for descending, meaning most recent first). If this argument isn't set, it defaults to desc (most recent).
         - name: limit
           in: query
           schema:
