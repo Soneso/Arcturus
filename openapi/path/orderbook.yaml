@@ -1,4 +1,4 @@
-  /orderbook/get_orderbook:
+  /orderbook:
     get:
       operationId: getOrderbook
       summary: Returns the current order book as a collections of offers for a specific pair of assets.

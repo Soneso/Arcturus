@@ -10,6 +10,7 @@ import arcturus.payments as payments
 import arcturus.transactions as transactions
 import arcturus.operations as operations
 import arcturus.offers as offers
+import arcturus.liquidity_pools as liquidity_pools
 import arcturus.orderbook as orderbook
 import arcturus.trades as trades
 import arcturus.domains as domains
@@ -289,8 +290,8 @@ async def offer_details():
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
-@app.get("/orderbook/get_orderbook")
-async def orderbook_get_orderbook():
+@app.get("/orderbook")
+async def get_orderbook():
     try:
         selling_asset_code = request.args.get('selling_asset_code')
         selling_asset_issuer = request.args.get('selling_asset_issuer')
@@ -343,6 +344,41 @@ async def get_trades():
         return quart.Response(response=e, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/liquidity_pools")
+async def get_liquidity_pools():
+    try:
+        account_id = request.args.get('account_id')
+        reserves = request.args.get('reserves')
+        network = request.args.get('network')
+        cursor = request.args.get('cursor')
+        order = request.args.get('order')
+        limit = request.args.get('limit')
+        
+        if limit is None:
+            limit = MAX_PAGING_LIMIT
+        if int(limit) > MAX_PAGING_LIMIT:
+            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
+        
+        records = await liquidity_pools.get_liquidity_pools(horizon_url=horizon_url_for_network(network), account_id=account_id, 
+                                                            reserves=reserves, cursor=cursor, order=order, limit=limit)
+            
+    except Exception as e:
+        return quart.Response(response=e, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+
+@app.get("/liquidity_pool/details")
+async def liquidity_pool_details():
+    try:
+        liquidity_pool_id = request.args.get('liquidity_pool_id')
+        network = request.args.get('network')
+        details = await liquidity_pools.get_details(horizon_url=horizon_url_for_network(network), 
+                                                    liquidity_pool_id=liquidity_pool_id)
+    except NotFoundError:
+        return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(details), status=200)
     
 @app.get("/blocked_domains/<string:domain>")
 async def get_blocked_domains(domain):
@@ -479,6 +515,7 @@ async def openapi_spec():
                  'openapi/path/scval.yaml',
                  'openapi/path/soroban.yaml',
                  'openapi/path/trades.yaml',
+                 'openapi/path/liquidity_pools.yaml',
                  'openapi/components/accounts.yaml',
                  'openapi/components/assets.yaml',
                  'openapi/components/stellar_toml.yaml',
@@ -491,7 +528,8 @@ async def openapi_spec():
                  'openapi/components/orderbook.yaml',
                  'openapi/components/scval.yaml', 
                  'openapi/components/soroban.yaml',
-                 'openapi/components/trades.yaml']
+                 'openapi/components/trades.yaml',
+                 'openapi/components/liquidity_pools.yaml']
     combined_text = combine_files(file_list)
     #print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")

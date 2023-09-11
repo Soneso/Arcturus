@@ -1,0 +1,36 @@
+    LiquidityPool:
+      type: object
+      description: An object holding the details of a liquidity pool on the stellar network. Liquidity pools enable automated market making on the Stellar network. 
+      title: Liquidity pool
+      properties:
+        id:
+          title: ID
+          type: string
+          description: A unique identifier for this liquidity pool.
+        type:
+          title: Type
+          type: string
+          description: The type of the liquidity pool
+        total_trustlines:
+          title: Total Trustlines
+          type: string
+          description: Total number of trustlines to this liquidity pool.
+        total_shares:
+          title: Total Shares
+          type: string
+          description: Total number of shares this liquidity pool holds.
+        reserves:
+          title: Reserves
+          type: array
+          description: The assets and amounts representing th reserves of the liquidity pool.
+          items:
+            type: string
+            description: Asset in canonical form (asset_code:asset_issuer_id or naitive) and amount. Separated by /
+        last_modified:
+          title: Last Modified
+          type: string
+          description: The time this offer was modified the last time.
+        paging_token:
+          title: Paging Token
+          type: string
+          description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.
