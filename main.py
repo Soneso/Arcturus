@@ -277,87 +277,31 @@ async def transactions_for_claimable_balance():
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
-@app.get("/operations/for_account")
-async def operations_for_account():
+@app.get("/operations")
+async def get_operations():
     try:
         account_id = request.args.get('account_id')
-        include_failed = request.args.get('include_failed')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await operations.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/operations/for_liquidity_pool")
-async def operations_for_liquidity_pool():
-    try:
         liquidity_pool_id = request.args.get('liquidity_pool_id')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        include_failed = request.args.get('include_failed')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await operations.for_liquidity_pool(horizon_url_for_network(network), liquidity_pool_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/operations/for_ledger")
-async def operations_for_ledger():
-    try:
         ledger_sequence = request.args.get('ledger_sequence')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        include_failed = request.args.get('include_failed')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await operations.for_ledger(horizon_url_for_network(network), ledger_sequence, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=LEDGER_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-    
-@app.get("/operations/for_claimable_balance")
-async def operations_for_claimable_balance():
-    try:
         claimable_balance_id = request.args.get('claimable_balance_id')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        include_failed = request.args.get('include_failed')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await operations.for_claimable_balance(horizon_url_for_network(network), claimable_balance_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/operations/for_transaction")
-async def operations_for_transaction():
-    try:
         transaction_hash = request.args.get('transaction_hash')
+        include_failed = request.args.get('include_failed')
         network = request.args.get('network')
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        if limit is None:
+            limit = 5
         if int(limit) > 5:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await operations.for_transaction(horizon_url_for_network(network), transaction_hash, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
+        records = []
+        
+        records = await operations.get_operations(horizon_url = horizon_url_for_network(network), account_id = account_id,
+                                                  ledger_sequence = ledger_sequence, liquidity_pool_id = liquidity_pool_id,
+                                                  claimable_balance_id = claimable_balance_id, transaction_hash = transaction_hash,
+                                                  include_failed = include_failed, cursor = cursor, order = order, limit = limit)
+    except NotFoundError as nfe:
+        return quart.Response(response=nfe.message, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
