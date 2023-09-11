@@ -43,19 +43,22 @@ async def orderbook(horizon_url:str, selling_asset_code:str, selling_asset_issue
     records = builder.call()
     bids_simple = []
     for bid in records[BIDS]:
-        del bid[PRICE_R]
-        bids_simple.append(bid[PRICE] + "/" + bid[AMOUNT])
-        del bid[PRICE]
-        del bid[AMOUNT]
+       bids_simple.append(bid[PRICE] + "/" + bid[AMOUNT])
+       
     records[BIDS] = bids_simple
+    
+    if len(records[BIDS]) > 5:
+        records[BIDS] = records[BIDS][:5]
     
     asks_simple = []
     for ask in records[ASKS]:
-        del ask[PRICE_R]
         asks_simple.append(ask[PRICE] + "/" + ask[AMOUNT])
-        del ask[PRICE]
-        del ask[AMOUNT]
+    
     records[ASKS] = asks_simple
+    
+    if len(records[ASKS]) > 5:
+        records[ASKS] = records[ASKS][:5]
+    
     
     canonic_asset(dic=records, key= BASE)
     canonic_asset(dic=records, key= COUNTER)
