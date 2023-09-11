@@ -143,60 +143,39 @@ async def get_stellar_toml(domain):
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
-@app.get("/payment_list/for_account")
-async def payment_list_for_account():
+@app.get("/payments")
+async def get_payments():
     try:
         account_id = request.args.get('account_id')
+        transaction_hash = request.args.get('transaction_hash')
+        ledger_sequence = request.args.get('ledger_sequence')
         include_failed = request.args.get('include_failed')
         network = request.args.get('network')
         cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
+        
+        if limit is None:
+            limit = 5
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await payments.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-    
-@app.get("/payment_list/for_transaction")
-async def payment_list_for_transaction():
-    try:
-        transaction_hash = request.args.get('hash')
-        include_failed = request.args.get('include_failed')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > MAX_PAGING_LIMIT:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await payments.for_transaction(horizon_url_for_network(network), transaction_hash, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=TRANSACTION_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/payment_list/for_ledger")
-async def payment_list_for_ledger():
-    try:
-        sequence = request.args.get('sequence')
-        include_failed = request.args.get('include_failed')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > MAX_PAGING_LIMIT:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await payments.for_ledger(horizon_url_for_network(network), sequence, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=LEDGER_NOT_FOUND, status=404)
+        records = []
+        
+        if account_id is not None:
+            records = await payments.for_account(horizon_url=horizon_url_for_network(network), account_id=account_id, 
+                                                 include_failed=include_failed,cursor=cursor, order=order, limit=limit)
+        else:
+            records = await payments.get_payments(horizon_url=horizon_url_for_network(network),transaction_hash=transaction_hash,
+                                                  ledger_sequence=ledger_sequence, include_failed=include_failed, 
+                                                  cursor=cursor, order=order, limit=limit)
+    except NotFoundError as nfe:
+        return quart.Response(response=nfe.message, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
     
 @app.get("/payment/details")
 async def payment_details():
-    return await operation_details(request=request)
+    return await op_details(request=request)
 
 @app.get("/transaction/details")
 async def transaction_details():

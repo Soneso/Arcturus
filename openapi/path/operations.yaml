@@ -1,8 +1,8 @@
   /operations:
     get:
       operationId: getOperations
-      summary: Get the list of the maximum top 5 stellar operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns the fetched list of the maximum top 5 stellar operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 5 operations at a time.
+      summary: Get a list of the maximum 5 stellar operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the fetched list of the maximum 5 stellar operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 5 operations at a time.
       parameters:
         - name: account_id
           in: query

@@ -66,45 +66,15 @@ async def for_account(horizon_url:str, account_id:str, include_failed:bool, curs
     payments['payments'] = records
     return payments
 
-async def for_transaction(horizon_url:str, transaction_hash:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
+async def get_payments(horizon_url:str, transaction_hash:str, ledger_sequence:Union[int, str], include_failed:bool, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
-    builder = server.payments().for_transaction(transaction_hash=transaction_hash)
-    if include_failed is not None and include_failed is True:
-        builder.include_failed(include_failed=True)
-    else:
-        builder.include_failed(include_failed=False)
-    add_paging(builder, cursor, order, limit) 
-    records += builder.call()["_embedded"]["records"]
-    
-    for payment in records:
-        if TYPE_KEY in payment and TYPE_CREATE_ACCOUNT == payment[TYPE_KEY]:
-            payment[FROM_KEY] = payment[FUNDER_KEY]
-            payment[TO_KEY] = payment[ACCOUNT_KEY]
-        elif TYPE_KEY in payment and TYPE_ACCOUNT_MERGE == payment[TYPE_KEY]:
-            payment[TO_KEY] = payment[INTO_KEY]
-            payment[FROM_KEY] = payment[ACCOUNT_KEY]
-        elif TYPE_KEY in payment and TYPE_PAYMENT == payment[TYPE_KEY]:
-            canonic_amount(payment=payment)
-        elif TYPE_KEY in payment and (TYPE_PATH_PAYMENT_STRICT_SEND == payment[TYPE_KEY] 
-                                      or TYPE_PATH_PAYMENT_STRICT_RECEIVE == payment[TYPE_KEY]):
-            canonic_source_amount(payment=payment)
-            replace_key(payment, SOURCE_AMOUNT_KEY, AMOUNT_SENT_KEY)
-            canonic_amount(payment=payment)
-            replace_key(payment, AMOUNT_KEY, AMOUNT_RECEIVED_KEY)
+    builder = server.payments()
+    if transaction_hash is not None:
+        builder = builder.for_transaction(transaction_hash=transaction_hash)
+    elif ledger_sequence is not None:
+        builder = builder.for_ledger(sequence=ledger_sequence)
         
-        del payment['_links']
-        replace_key(payment, TX_SUCCESSFUL_KEY, SUCCESSFUL_KEY)
-        delete_keys_except(payment, KEYS_TO_KEEP)
-        
-    payments = {}
-    payments['payments'] = records
-    return payments
-
-async def for_ledger(horizon_url:str, sequence:Union[int, str], include_failed:bool, cursor:Union[int, str], order:str, limit:int):
-    server = Server(horizon_url=horizon_url)
-    records = []
-    builder = server.payments().for_ledger(sequence=sequence)
     if include_failed is not None and include_failed is True:
         builder.include_failed(include_failed=True)
     else:

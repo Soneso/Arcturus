@@ -1,15 +1,27 @@
-  /payment_list/for_account:
+  /payments:
     get:
-      operationId: getPaymentListForAccount
-      summary: Get a list of maximum 5 realtime data payment operations associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. The account can be the receiver or sender of the payment.
-      description: Returns a list of realtime data payment operations associated with the given account. It can only load a maximum of 5 payments at a time. The account can be the receiver or sender of the payment.
+      operationId: getPayments
+      summary: Get a list of maximum 5 realtime data payment operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the fetched list of the maximum 5 realtime data payment operations for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 5 payments at a time.
       parameters:
         - name: account_id
           in: query
           schema:
             type: string
-          required: true
-          description: Id of the account to get the information for.
+          required: false
+          description: Id of the account to fetch the payments for. The account can be the receiver or sender of the payment.
+        - name: transaction_hash
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id/Hash of the transaction to fetch the payments for.
+        - name: ldeger_sequence
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Sequence/Id of the ledger to fetch the payments for.
         - name: include_failed
           in: query
           schema:
@@ -42,7 +54,7 @@
           description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
-          description: A complex object array response holding a list of payment operations for the account.
+          description: A complex object array response holding a list of payment operations for the given parameters.
           content:
             application/json:
               schema:
@@ -54,129 +66,7 @@
               schema:
                 type: string
         "404":
-          description: Account was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payment_list/for_transaction:
-    get:
-      operationId: getPaymentListForTransaction
-      summary: Get a list of maximum 5 realtime data payment operations associated with the given transaction depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a list of realtime data payment operations associated with the given transaction. It can only load a maximum of 5 payments at a time.
-      parameters:
-        - name: hash
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Id/Hash of the transaction.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed payments.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of payment operations for the transaction.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentsResponse'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Transaction was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /payment_list/for_ledger:
-    get:
-      operationId: getPaymentListForLedger
-      summary: Get a list of maximum 5 realtime data payment operations associated with the given ledger depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a list of realtime data payment operations associated with the given ledger. It can only load a maximum of 5 payments at a time.
-      parameters:
-        - name: sequence
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Sequence/Id of the ledger.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed payments.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of payment operations for the ledger.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaymentsResponse'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Ledger was not found on the Stellar Network.
+          description: Parameter value was not found on the Stellar Network.
           content:
             text/plain:
               schema:
