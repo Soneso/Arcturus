@@ -1,11 +1,11 @@
-    TransactionDetails:
+    TransactionSimple:
       type: object
-      description: The details of a given transaction, including fee, memo, source account, signatures, number of operations.
+      description: Simplified, most relevant info about a transaction. This are not the complete details of the transaction. If the user wants all details you need to query the transaction details.
       properties:
-        id:
+        hash:
           type: string
-          title: Id
-          description: A unique identifier for this transaction.
+          title: Id/Hash
+          description: The unique identifier for this transaction.
         memo:
           type: string
           title: Memo
@@ -22,13 +22,49 @@
           type: bool
           title: Successfull
           description: Indicates if this transaction was successful or not.
+        created_at:
+          type: string
+          title: Created at
+          description: The date this transaction was created. ISO8601 string.
+        source_account:
+          type: string
+          title: Source account
+          description: The account that originates the transaction.
+        fee_charged:
+          type: integer
+          title: Fee
+          description: The fee (in Stroops) paid by the source account to apply this transaction to the ledger. A Stroop is the smallest denomination of XLM. 1 Stroop = 0.0000001 XML (stellar native token).
+        operation_count:
+          type: integer
+          title: Nr. of operations
+          description: The number of operations contained within this transaction.
+    TransactionDetails:
+      type: object
+      description: All details of a given transaction.
+      properties:
         hash:
           type: string
-          title: Hash
-          description: A hex-encoded SHA-256 hash of this transaction's XDR-encoded form. Same as id. XDR is External Data Representation ans sepcified in RFC 4506.
+          title: Id/Hash
+          description: The unique identifier for this transaction.
+        memo:
+          type: string
+          title: Memo
+          description: The optional memo attached to a transaction.
+        memo_type:
+          type: string
+          title: Memo type
+          description: The type of memo. Potential values include MEMO_TEXT, MEMO_ID, MEMO_HASH, MEMO_RETURN.
+        paging_token:
+          type: string
+          title: Pagin Token
+          description: A cursor value for use in pagination.
+        successful:
+          type: bool
+          title: Successfull
+          description: Indicates if this transaction was successful or not.
         ledger:
           type: integer
-          title: Hash
+          title: Ledger
           description: The sequence number of the ledger that this transaction was included in.
         created_at:
           type: string
@@ -53,7 +89,7 @@
         fee_account:
           type: string
           title: Fee account
-          description: The id of the account which payed the fee fro this transaction.
+          description: The id of the account which payed the fee for this transaction.
         operation_count:
           type: integer
           title: Nr. of operations

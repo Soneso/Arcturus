@@ -1,3 +1,84 @@
+  /transactions:
+    get:
+      operationId: getTransactions
+      summary: Get a list of maximum 5 transactions for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the fetched list of the maximum 5 transactions or the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 5 transaction at a time.
+      parameters:
+        - name: account_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the account to fetch the transactions for.
+        - name: ledger_sequence
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Sequence number of the ledger to fetch the transactions for.
+        - name: liquidity_pool_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the liquidity pool to fetch the transactions for.
+        - name: claimable_balance_id
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Id of the claimable balance to fetch the transactions for.
+        - name: include_failed
+          in: query
+          schema:
+            type: string
+          required: false
+          description: Must be set to true if the result should also include failed transactions.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          required: false
+          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
+        - name: order
+          in: query
+          schema:
+            type: string
+          required: false
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending. meaning most recent). If this argument isn't set, it defaults to asc.
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          required: true
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
+      responses:
+        "200":
+          description: A complex object array response holding a list of transactions for the given parameters. The single items do not contain the complete details of the transaction. If the user wants all details you need to query the transaction details.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionSimple'
+        "400":
+          description: Paging limit was higher than allowed.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description: Parameter value was not found on the Stellar Network.
+          content:
+            text/plain:
+              schema:
+                type: string
   /transaction/details:
     get:
       operationId: getTransactionDetails
@@ -21,265 +102,13 @@
           description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
-          description: A complex object holding the details of the found transacion.
+          description: A complex object holding all the details of the found transacion.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionDetails'
         "404":
           description: Transaction was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /transactions/for_account:
-    get:
-      operationId: getTransactionsForAccount
-      summary: Get a list of transactions associated with the given account depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given account. It can only load a maximum of 5 transaction at a time.
-      parameters:
-        - name: account_id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Id of the account to get the information for.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed transactions.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of transactions for the account.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDetails'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Account was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /transactions/for_ledger:
-    get:
-      operationId: getTransactionsForLedger
-      summary: Get a list of transactions associated with the given ledger depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given ledger. It can only load a maximum of 5 transaction at a time.
-      parameters:
-        - name: ledger_squence
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Sequence number of the ledger to get the information for.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed transactions.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of transactions for the ledger.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDetails'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Ledger was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /transactions/for_liquidity_pool:
-    get:
-      operationId: getTransactionsForLiquidityPool
-      summary: Get a list of transactions associated with the given liquidity pool depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given liquidity pool. It can only load a maximum of 5 transaction at a time.
-      parameters:
-        - name: liquidity_pool_id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Id of the liquidity pool to get the information for.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed transactions.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of transactions for the liquidity pool.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDetails'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Liquidity pool was not found on the Stellar Network.
-          content:
-            text/plain:
-              schema:
-                type: string
-  /transactions/for_claimable_balance:
-    get:
-      operationId: getTransactionsForClaimableBalance
-      summary: Get a list of transactions associated with the given claimable balance depending on the pagination parameters 'cursor, 'order' and 'limit'. 
-      description: Returns transactions associated with the given claimable balance. It can only load a maximum of 5 transaction at a time.
-      parameters:
-        - name: claimable_balance_id
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Id of the claimable balance to get the information for.
-        - name: include_failed
-          in: query
-          schema:
-            type: string
-          required: false
-          description: Must be set to true if the result should also include failed transactions.
-        - name: network
-          in: query
-          schema:
-            type: string
-          required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: true
-          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
-      responses:
-        "200":
-          description: A complex object array response holding a list of transactions for the claimable balance.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionDetails'
-        "400":
-          description: Paging limit was higher than allowed.
-          content:
-            text/plain:
-              schema:
-                type: string
-        "404":
-          description: Claimable balance was not found on the Stellar Network.
           content:
             text/plain:
               schema:

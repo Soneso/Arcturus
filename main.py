@@ -114,7 +114,7 @@ async def get_claimable_balances():
         if limit is None:
             limit = 2
         
-        if int(limit) > MAX_PAGING_LIMIT:
+        if int(limit) > 2:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await claimable_balances.get_claimable_balances(horizon_url_for_network(network), claimant_account_id, sponsor_account_id, cursor, order, limit)
             
@@ -156,7 +156,7 @@ async def get_payments():
         limit = request.args.get('limit')
         
         if limit is None:
-            limit = 5
+            limit = MAX_PAGING_LIMIT
         if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = []
@@ -188,71 +188,28 @@ async def transaction_details():
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
-@app.get("/transactions/for_account")
-async def transactions_for_account():
+@app.get("/transactions")
+async def get_transactions():
     try:
         account_id = request.args.get('account_id')
-        network = request.args.get('network')
-        include_failed = request.args.get('include_failed')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await transactions.for_account(horizon_url_for_network(network), account_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/transactions/for_liquidity_pool")
-async def transactions_for_liquidity_pool():
-    try:
         liquidity_pool_id = request.args.get('liquidity_pool_id')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        include_failed = request.args.get('include_failed')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await transactions.for_liquidity_pool(horizon_url_for_network(network), liquidity_pool_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=LIQUIDITY_POOL_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-
-@app.get("/transactions/for_ledger")
-async def transactions_for_ledger():
-    try:
         ledger_sequence = request.args.get('ledger_sequence')
-        network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        include_failed = request.args.get('include_failed')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        if int(limit) > 5:
-            return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await transactions.for_ledger(horizon_url_for_network(network), ledger_sequence, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=LEDGER_NOT_FOUND, status=404)
-    else:
-        return quart.Response(response=json.dumps(records), status=200)
-    
-@app.get("/transactions/for_claimable_balance")
-async def transactions_for_claimable_balance():
-    try:
         claimable_balance_id = request.args.get('claimable_balance_id')
         network = request.args.get('network')
-        cursor = request.args.get('cursor')
         include_failed = request.args.get('include_failed')
+        cursor = request.args.get('cursor')
         order = request.args.get('order')
         limit = request.args.get('limit')
-        if int(limit) > 5:
+        if limit is None:
+            limit = MAX_PAGING_LIMIT
+        if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
-        records = await transactions.for_claimable_balance(horizon_url_for_network(network), claimable_balance_id, include_failed, cursor, order, limit)
-    except NotFoundError:
-        return quart.Response(response=CLAIMABLE_BALANCE_NOT_FOUND, status=404)
+        records = await transactions.get_transactions(horizon_url=horizon_url_for_network(network), account_id=account_id,
+                                                      liquidity_pool_id=liquidity_pool_id, ledger_sequence=ledger_sequence,
+                                                      claimable_balance_id=claimable_balance_id, include_failed=include_failed,
+                                                      cursor=cursor, order=order, limit=limit)
+    except NotFoundError as nfe:
+        return quart.Response(response=nfe.message, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
@@ -270,8 +227,8 @@ async def get_operations():
         order = request.args.get('order')
         limit = request.args.get('limit')
         if limit is None:
-            limit = 5
-        if int(limit) > 5:
+            limit = MAX_PAGING_LIMIT
+        if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = []
         

@@ -68,8 +68,8 @@
           in: query
           schema:
             type: string
-          required: true
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending). If this argument isn't set, it defaults to asc.
+          required: false
+          description: A designation of the order in which records should appear. Options include 'asc' (for ascending) or 'desc' (for descending. meaning most recent). If this argument isn't set, it defaults to asc.
         - name: limit
           in: query
           schema:

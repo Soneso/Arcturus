@@ -10,67 +10,32 @@ async def get_details(horizon_url:str, hash:str):
   
     return transaction
 
-async def for_account(horizon_url:str, account_id:str, include_failed:str, cursor:Union[int, str], order:str, limit:int):
+async def get_transactions(horizon_url:str, account_id:str, ledger_sequence:str, claimable_balance_id:str,
+                           liquidity_pool_id:str, include_failed:str, cursor:Union[int, str], order:str, limit:int):
     server = Server(horizon_url=horizon_url)
     records = []
-    builder = server.transactions().for_account(account_id=account_id)
+    builder = server.transactions()
+    if account_id is not None:
+        builder = builder.for_account(account_id=account_id)
+    elif ledger_sequence is not None:
+        builder = builder.for_ledger(sequence=ledger_sequence)
+    elif claimable_balance_id is not None:
+        builder = builder.for_claimable_balance(claimable_balance_id=claimable_balance_id)
+    elif liquidity_pool_id is not None:
+        builder = builder.for_liquidity_pool(liquidity_pool_id=liquidity_pool_id)
+        
     if include_failed is not None and include_failed is True:
         builder.include_failed(include_failed=True)
     else:
         builder.include_failed(include_failed=False)
+        
     add_paging(builder, cursor, order, limit) 
     records += builder.call()["_embedded"]["records"]
     
     for transaction in records:
-       del_extra_data(transaction)
-            
-    return records
-
-async def for_ledger(horizon_url:str, ledger_sequence:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
-    server = Server(horizon_url=horizon_url)
-    records = []
-    builder = server.transactions().for_ledger(sequence=ledger_sequence)
-    if include_failed is not None and include_failed is True:
-        builder.include_failed(include_failed=True)
-    else:
-        builder.include_failed(include_failed=False)
-    add_paging(builder, cursor, order, limit) 
-    records += builder.call()["_embedded"]["records"]
+       del_extra_data(transaction=transaction)
+       simplify_tx(transaction=transaction)
     
-    for transaction in records:
-        del_extra_data(transaction)
-            
-    return records
-
-async def for_claimable_balance(horizon_url:str, claimable_balance_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
-    server = Server(horizon_url=horizon_url)
-    records = []
-    builder = server.transactions().for_claimable_balance(claimable_balance_id=claimable_balance_id)
-    if include_failed is not None and include_failed is True:
-        builder.include_failed(include_failed=True)
-    else:
-        builder.include_failed(include_failed=False)
-    add_paging(builder, cursor, order, limit) 
-    records += builder.call()["_embedded"]["records"]
-    
-    for transaction in records:
-        del_extra_data(transaction)
-            
-    return records
-
-async def for_liquidity_pool(horizon_url:str, liquidity_pool_id:str, include_failed:bool, cursor:Union[int, str], order:str, limit:int):
-    server = Server(horizon_url=horizon_url)
-    records = []
-    builder = server.transactions().for_liquidity_pool(liquidity_pool_id=liquidity_pool_id)
-    if include_failed is not None and include_failed is True:
-        builder.include_failed(include_failed=True)
-    else:
-        builder.include_failed(include_failed=False)
-    add_paging(builder, cursor, order, limit) 
-    records += builder.call()["_embedded"]["records"]
-    
-    for transaction in records:
-        del_extra_data(transaction)
             
     return records
 
@@ -86,4 +51,35 @@ def del_extra_data(transaction:Dict[str, Any]):
         del transaction['result_meta_xdr']
     if 'fee_meta_xdr' in transaction:
         del transaction['fee_meta_xdr']
-    return transaction     
+    if 'memo_type' in transaction and transaction['memo_type'] == 'none':
+        del transaction['memo_type']
+        
+    return transaction
+
+def simplify_tx(transaction:Dict[str, Any]):
+    # if many transactions are returned
+    if 'inner_transaction' in transaction:
+        del transaction['inner_transaction']
+    if 'fee_bump_transaction' in transaction:
+        del transaction['fee_bump_transaction']
+    if 'signatures' in transaction:
+        del transaction['signatures']
+    if 'max_fee' in transaction:
+        del transaction['max_fee']
+    if 'fee_account' in transaction:
+        del transaction['fee_account']
+    if 'account_muxed_id' in transaction:
+        del transaction['account_muxed_id']
+    if 'preconditions' in transaction:
+        del transaction['preconditions']
+    if 'valid_after' in transaction:
+        del transaction['valid_after']
+    if 'memo_type' in transaction and transaction['memo_type'] == 'text':
+        if 'memo_bytes' in transaction:
+            del transaction['memo_bytes']
+    if 'source_account_sequence' in transaction:
+        del transaction['source_account_sequence']
+    if 'ledger' in transaction:
+        del transaction['ledger']
+
+    return transaction 
