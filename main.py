@@ -27,6 +27,7 @@ HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
 SOROBAN_RPC_FUTURENET_URL = "https://rpc-futurenet.stellar.org:443/"
 ACCOUNT_NOT_FOUND = "Account not found"
+ASSET_NOT_FOUND = "Asset not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
 LEDGER_NOT_FOUND = "Ledger not found"
 LIQUIDITY_POOL_NOT_FOUND = "Liquidity pool not found"
@@ -87,21 +88,30 @@ async def account_directory_info():
     else:
         return quart.Response(response=json.dumps(data), status=200)
     
-@app.get("/assets/get_assets")
-async def assets_get_assets():
+@app.get("/assets")
+async def get_assets():
     try:
         issuer_account_id = request.args.get('issuer_account_id')
         asset_code = request.args.get('asset_code')
         network = request.args.get('network')
-        cursor = request.args.get('cursor')
-        order = request.args.get('order')
-        limit = request.args.get('limit')
-        records = await assets.get_assets(horizon_url_for_network(network), issuer_account_id, asset_code, cursor, order, limit)
+        records = await assets.get_assets(horizon_url_for_network(network), issuer_account_id, asset_code)
     except NotFoundError:
         return quart.Response(response=ACCOUNT_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
+@app.get("/asset/details")
+async def asset_details():
+    try:
+        issuer_account_id = request.args.get('issuer_account_id')
+        asset_code = request.args.get('asset_code')
+        network = request.args.get('network')
+        records = await assets.get_details(horizon_url_for_network(network), issuer_account_id, asset_code)
+    except NotFoundError:
+        return quart.Response(response=ASSET_NOT_FOUND, status=404)
+    else:
+        return quart.Response(response=json.dumps(records), status=200)
+    
 @app.get("/claimable_balances")
 async def get_claimable_balances():
     try:

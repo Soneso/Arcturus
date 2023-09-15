@@ -1,15 +1,15 @@
-  /assets/get_assets:
+  /assets:
     get:
-      operationId: getAssetsForIssuer
-      summary: Get some of assets issued by an issuer and/or having that asset code and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns a subset of found assets. Minimum one of the parameters issuer_account_id and asset_code must be provided.
+      operationId: getAssets
+      summary: Get the list of assets that match the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the list of found assets for the given parameter values. Minimum one of the parameters issuer_account_id and asset_code must be provided.
       parameters:
         - name: issuer_account_id
           in: query
           schema:
             type: string
           required: false
-          description: Id of the issuer account to get the assets it controls. Minimum one of the parameters issuer_account_id and asset_code must be provided.
+          description: Id of the issuer account that issued the asset. Minimum one of the parameters issuer_account_id and asset_code must be provided.
         - name: asset_code
           in: query
           schema:
@@ -22,35 +22,49 @@
             type: string
           required: true
           description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
-        - name: cursor
-          in: query
-          schema:
-            type: string
-          required: false
-          description: The cursor value for use in pagination. A number that points to a specific location in a collection of responses and is pulled from the paging_token value of a record.
-        - name: order
-          in: query
-          schema:
-            type: string
-          required: false
-          description: A designation of the order in which records should appear. Options include 'asc' (for ascending, meaning oldest first) or 'desc' (for descending, meaning most recent first). If this argument isn't set, it defaults to desc (most recent).
-        - name: limit
-          in: query
-          schema:
-            type: integer
-          required: false
-          description: The maximum number of records to be returned. The limit can range from 1 to 20. If this argument isn't designated, it defaults to 10.
       responses:
         "200":
-          description: A complex object array response containing some assets issued by the given issuer account.
+          description: An array response containing the found assets and number of accounts trusting each found asset.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AssetResponse'
+                  type: string
+                  description: Asset in canonical form (asset_code:asset_issuer) and number of accounts trusting the asset separated by / 
+  /asset/details:
+    get:
+      operationId: getAssetDetails
+      summary: Get the details of an asset identified by asset code and asset issuer.
+      description: Returns the details of an asset.
+      parameters:
+        - name: issuer_account_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Id of the issuer account to get the assets it controls.
+        - name: asset_code
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Asset code of the asset.
+        - name: network
+          in: query
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+      responses:
+        "200":
+          description: An object holding the details of the asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetResponse'        
         "404":
-          description: Account was not found on the Stellar Network.
+          description: Asset was not found on the Stellar Network.
           content:
             text/plain:
               schema:
