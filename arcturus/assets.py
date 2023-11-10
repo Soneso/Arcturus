@@ -19,7 +19,7 @@ async def get_assets(horizon_url:str, asset_issuer_id:str, asset_code:str):
     result = []
     for x in records:
         if ASSET_CODE in x and ASSET_ISSUER in x and NUM_ACCOUNTS in x:
-            result.append(x[ASSET_CODE] + ':' + x[ASSET_ISSUER] + ' / ' + str(x[NUM_ACCOUNTS]))
+            result.append(x[ASSET_CODE] + ':' + x[ASSET_ISSUER] + ' / ' + str(x[NUM_ACCOUNTS]) + ' trustlines')
         
     return result
 

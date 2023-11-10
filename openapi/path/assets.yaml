@@ -31,7 +31,7 @@
                 type: array
                 items:
                   type: string
-                  description: Asset in canonical form (asset_code:asset_issuer) and number of accounts trusting the asset separated by / 
+                  description: Asset in canonical form and number of accounts trusting the asset
   /asset/details:
     get:
       operationId: getAssetDetails

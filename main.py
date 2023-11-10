@@ -285,7 +285,7 @@ async def get_offers():
                                               buying_asset_code = buying_asset_code, buying_asset_issuer= buying_asset_issuer,
                                               cursor=cursor, order=order, limit=limit)
     except Exception as e:
-        return quart.Response(response=e, status=404)
+        return quart.Response(response=str(e), status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
@@ -312,7 +312,7 @@ async def get_orderbook():
                                             selling_asset_issuer= selling_asset_issuer, buying_asset_code = buying_asset_code, 
                                             buying_asset_issuer= buying_asset_issuer)
     except Exception as e:
-        return quart.Response(response=e, status=404)
+        return quart.Response(response=str(e), status=404)
     else:
         return quart.Response(response=json.dumps(entries), status=200)
 
@@ -351,7 +351,7 @@ async def get_trades():
                                               counter_asset_code=counter_asset_code, counter_asset_issuer=counter_asset_issuer,offer_id=offer_id, trade_type=trade_type,
                                               cursor=cursor, order=order, limit=limit)
     except Exception as e:
-        return quart.Response(response=e, status=404)
+        return quart.Response(response=str(e), status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
@@ -374,7 +374,7 @@ async def get_liquidity_pools():
                                                             reserves=reserves, cursor=cursor, order=order, limit=limit)
             
     except Exception as e:
-        return quart.Response(response=e, status=404)
+        return quart.Response(response=str(e), status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
 
@@ -541,7 +541,7 @@ async def openapi_spec():
                  'openapi/components/trades.yaml',
                  'openapi/components/liquidity_pools.yaml']
     combined_text = combine_files(file_list)
-    #print(combined_text)
+    print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
 
 def horizon_url_for_network(network:str):

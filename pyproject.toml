@@ -10,7 +10,7 @@ license = "Apache License 2.0"
 python = "^3.10"
 quart = "^0.18.4"
 quart-cors = "^0.6.0"
-stellar-sdk = "^9.0.0a1"
+stellar-sdk = "^9.0.0b0"
 
 
 [build-system]
