@@ -51,15 +51,14 @@ async def contract_code_for_wasm_id(rpc_url:str, wasm_id:str):
     ledger_key = stellar_xdr.LedgerKey(
         stellar_xdr.LedgerEntryType.CONTRACT_CODE,
         contract_code = stellar_xdr.LedgerKeyContractCode(
-            hash = stellar_xdr.Hash(bytes.fromhex(wasm_id)), 
-            body_type=stellar_xdr.ContractEntryBodyType.DATA_ENTRY),
+            hash = stellar_xdr.Hash(bytes.fromhex(wasm_id))),
     )
     resp = SorobanServer(rpc_url).get_ledger_entries([ledger_key])
     entries = resp.entries
     if not entries:
         return None
     ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(entries[0].xdr)
-    return base64.b64encode(ledger_entry_data.contract_code.body.code).decode('latin-1')
+    return base64.b64encode(ledger_entry_data.contract_code.code).decode('latin-1')
 
 async def contract_code_for_contract_id(rpc_url:str, contract_id:str):
     
@@ -73,16 +72,16 @@ async def contract_code_for_contract_id(rpc_url:str, contract_id:str):
         contract_data=stellar_xdr.LedgerKeyContractData(
             contract=sc_address,
             key=stellar_xdr.SCVal(stellar_xdr.SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE),
-            durability=stellar_xdr.ContractDataDurability.PERSISTENT,
-            body_type=stellar_xdr.ContractEntryBodyType.DATA_ENTRY,
+            durability=stellar_xdr.ContractDataDurability.PERSISTENT
         ),
     )
+    
     resp = SorobanServer(rpc_url).get_ledger_entries([ledger_key])
     entries = resp.entries
     if not entries:
         return None
     ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(entries[0].xdr)
-    wasm_id = ledger_entry_data.contract_data.body.data.val.instance.executable.wasm_hash.hash.hex()
+    wasm_id = ledger_entry_data.contract_data.val.instance.executable.wasm_hash.hash.hex()
     if wasm_id == None:
         return None
     return await contract_code_for_wasm_id(rpc_url=rpc_url, wasm_id=wasm_id)

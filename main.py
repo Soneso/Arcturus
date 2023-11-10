@@ -25,7 +25,8 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
 HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
-SOROBAN_RPC_FUTURENET_URL = "https://rpc-futurenet.stellar.org:443/"
+SOROBAN_RPC_FUTURENET_URL = "https://soroban-futurenet.stellar.org"
+SOROBAN_RPC_TESTNET_URL = "https://soroban-testnet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 ASSET_NOT_FOUND = "Asset not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
@@ -477,6 +478,7 @@ async def soroban_contract_code():
 @app.get("/soroban/contract_meta")
 async def soroban_contract_meta():
     try:
+
         contract_id = request.args.get('contract_id')
         wasm_id = request.args.get('wasm_id')
         network = request.args.get('network')
@@ -554,6 +556,8 @@ def horizon_url_for_network(network:str):
     return network
 
 def soroban_rpc_url_for_network(network:str):
+    if network == 'testnet':
+        return SOROBAN_RPC_TESTNET_URL
     return SOROBAN_RPC_FUTURENET_URL
 
 def combine_files(file_list):
