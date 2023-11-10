@@ -194,7 +194,7 @@
               type: string
               title: Doc
               description: The documentation of the case.
-            type:
+            typ:
               type: array
               title: Type
               description: The type array of the case.

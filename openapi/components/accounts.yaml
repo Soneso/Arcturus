@@ -149,7 +149,7 @@ components:
           title: Signer Key
           type: string
           description: A hash of characters dependent on the signer type.
-        type:
+        typ:
           title: Signer Type
           type: string
           description: The type of hash for this signer. 
