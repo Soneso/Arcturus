@@ -139,7 +139,7 @@ components:
       items:
         weight:
           title: Weight
-          type: integer
+          typ: integer
           description: The numerical weight of a signer. Used to determine if a transaction meets the threshold requirements.
         sponsor:
           title: Signer Sponsor

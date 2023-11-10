@@ -120,7 +120,7 @@
               type: string
               title: Doc
               description: The documentation of the input parameter.
-            type:
+            typ:
               title: Type
               type: string
               description: The type of the input parameter.
@@ -157,7 +157,7 @@
               type: string
               title: Doc
               description: The documentation of the field.
-            type:
+            typ:
               title: Type
               type: string
               description: The type of the field.
