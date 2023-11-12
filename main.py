@@ -503,6 +503,11 @@ async def plugin_logo():
     filename = 'logo.png'
     return await quart.send_file(filename, mimetype='image/png')
 
+@app.get("/arcturus-pp.html")
+async def arcturus_pp():
+    filename = 'arcturus-pp.html'
+    return await quart.send_file(filename, mimetype='text/html')
+
 @app.get("/.well-known/ai-plugin.json")
 async def plugin_manifest():
     host = request.headers['Host']
