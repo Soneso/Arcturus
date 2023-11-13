@@ -106,7 +106,7 @@ def prepare_decoded_scval(val:stellar_xdr.SCVal):
         data['type'] = 'ledger key instance'
     elif val.type == stellar_xdr.SCValType.SCV_LEDGER_KEY_NONCE:
         data['type'] = 'ledger key nonce'
-        data['vale'] = val.nonce_key.nonce.int64
+        data['value'] = val.nonce_key.nonce.int64
     elif val.type == stellar_xdr.SCValType.SCV_CONTRACT_INSTANCE:
         data['type'] = 'contract instance'
         instance = {}
@@ -114,8 +114,8 @@ def prepare_decoded_scval(val:stellar_xdr.SCVal):
         if val.instance.executable.type == stellar_xdr.ContractExecutableType.CONTRACT_EXECUTABLE_WASM:
             executable['type'] = "wasm"
             executable['wasm_id'] = val.instance.executable.wasm_hash.hash.hex()
-        elif val.instance.executable.type == stellar_xdr.ContractExecutableType.CONTRACT_EXECUTABLE_TOKEN:
-            executable['type'] = "token"
+        elif val.instance.executable.type == stellar_xdr.ContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET:
+            executable['type'] = "asset"
         
         instance['executable'] = executable
         if val.instance.storage is not None:
