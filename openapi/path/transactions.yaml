@@ -113,3 +113,34 @@
             text/plain:
               schema:
                 type: string
+  /transaction/submit_tx_xdr: 
+    post:
+      operationId: submitTransactionXdr
+      summary: Submits a transaction encoded as a xdr string to the stellar network.
+      description: It submits a transaction encoded as a xdr string to the given stellar network.
+      parameters:
+        - name: network
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        - name: xdr
+          in: path
+          schema:
+            type: string
+          required: true
+          description: The transaction to be sent to the stellar network encoded as a xdr string.
+      responses:
+        "200":
+          description: Transaction successfully submitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TxSubmitResult'
+        "400":
+          description: An error occured and the transaction submission failed.
+          content:
+            text/plain:
+              schema:
+                type: string

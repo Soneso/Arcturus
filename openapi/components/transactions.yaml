@@ -147,3 +147,13 @@
         max_ledger:
           type: integer
           description: The upper bound
+    TxSubmitResult:
+      type: object
+      description: The result of submitting a transaction to the stellar network.
+      properties:
+        success:
+          type: boolean
+          description: true if the transaction has been successfully accepted by the Stellar Network.
+        hash:
+          type: string
+          description: Hash/Id of the transaction from the Stellar Network.

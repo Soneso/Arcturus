@@ -23,8 +23,11 @@ from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
 HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
+PUBLIC_NETWORK_PASSPHRASE: str = "Public Global Stellar Network ; September 2015"
 HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
+TESTNET_NETWORK_PASSPHRASE: str = "Test SDF Network ; September 2015"
 HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
+FUTURENET_NETWORK_PASSPHRASE: str = "Test SDF Future Network ; October 2022"
 SOROBAN_RPC_FUTURENET_URL = "https://soroban-futurenet.stellar.org"
 SOROBAN_RPC_TESTNET_URL = "https://soroban-testnet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
@@ -224,6 +227,25 @@ async def get_transactions():
         return quart.Response(response=nfe.message, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+
+@app.post("/transaction/submit_tx_xdr")
+async def submit_tx_xdr():
+    try:
+        request = await quart.request.get_json(force=True)
+        if "network" not in request:
+            raise Exception("missing network parameter")
+        if "xdr" not in request:
+            raise Exception("missing xdr parameter")
+        network = request["network"]
+        xdr = request["xdr"]
+        passphrase = passphrase_for_network(network=network)
+        horizon_url = horizon_url_for_network(network)
+        res = await transactions.submit_tx(tx_xdr=xdr, horizon_url=horizon_url, network_passphrase=passphrase)
+        if res is not None:
+            return quart.Response(response=json.dumps(res), status=200)
+        raise Exception("an unknown error occured while submitting the transaction")
+    except Exception as e:
+        return quart.Response(response=str(e), status=400)
 
 @app.get("/operations")
 async def get_operations():
@@ -559,6 +581,15 @@ def horizon_url_for_network(network:str):
     if network == 'futurenet':
         return HORIZON_FUTURENET_URL
     return network
+
+def passphrase_for_network(network:str):
+    if network == 'public':
+        return PUBLIC_NETWORK_PASSPHRASE
+    if network == 'testnet':
+        return TESTNET_NETWORK_PASSPHRASE
+    if network == 'futurenet':
+        return FUTURENET_NETWORK_PASSPHRASE
+    return PUBLIC_NETWORK_PASSPHRASE
 
 def soroban_rpc_url_for_network(network:str):
     if network == 'testnet':

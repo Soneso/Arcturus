@@ -1,4 +1,4 @@
-from stellar_sdk import Server
+from stellar_sdk import Server, parse_transaction_envelope_from_xdr
 from arcturus.utils import add_paging
 from typing import (Union, Dict, Any)
 
@@ -82,4 +82,16 @@ def simplify_tx(transaction:Dict[str, Any]):
     if 'ledger' in transaction:
         del transaction['ledger']
 
-    return transaction 
+    return transaction
+
+async def submit_tx(tx_xdr:str, horizon_url:str, network_passphrase:str):
+    server = Server(horizon_url=horizon_url)
+    transaction = parse_transaction_envelope_from_xdr(tx_xdr, network_passphrase)
+    resp = server.submit_transaction(transaction)
+    if 'successful' in resp:
+        res = {'successful' : resp['successful']}
+        if 'hash' in resp:
+            res['hash'] = resp['hash']
+        return res    
+
+    return None
