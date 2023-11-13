@@ -147,6 +147,18 @@
         max_ledger:
           type: integer
           description: The upper bound
+    TxSubmitRequest:
+      type: object
+      required:
+        - network
+        - xdr
+      properties:
+        network:
+          type: string
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        xdr:
+          type: string
+          description: The transaction to be sent to the stellar network encoded as a xdr string.
     TxSubmitResult:
       type: object
       description: The result of submitting a transaction to the stellar network.
