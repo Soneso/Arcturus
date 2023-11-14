@@ -1,4 +1,5 @@
-from stellar_sdk import Server
+from stellar_sdk import Server, Asset, NoneMemo, TextMemo, IdMemo, HashMemo, ReturnHashMemo
+from stellar_sdk.sep.stellar_uri import PayStellarUri
 from arcturus.utils import add_paging, delete_keys_except, replace_key
 from typing import (Union, Dict, Any, List)
 
@@ -167,3 +168,50 @@ def simplify_path_payment(payment:Dict[str, Any], account_id:str):
         canonic_amount(payment=payment)
         replace_key(payment, AMOUNT_KEY, AMOUNT_RECEIVED_KEY)
         del payment[TO_KEY]
+
+async def send_payment(network_passphrase: str, 
+                       destination: str, 
+                       amount: str, 
+                       asset_code: Union[str, None], 
+                       asset_issuer: Union[str, None], 
+                       memo_type: Union[str, None],
+                       memo: Union[str, None]) :
+    
+    pay_asset = Asset.native()
+    if asset_code is not None and asset_code != 'native':
+        if asset_issuer is not None:
+            pay_asset = Asset(asset_code, asset_code)
+        else:
+            raise ValueError("invalid asset: missing asset issuer")
+    
+    pay_memo = NoneMemo()
+    if memo is not None:
+        if memo_type is not None and memo_type == 'id':
+            try:
+                pay_memo = IdMemo(int(memo))
+            except Exception:
+               raise ValueError("invalid memo for memo type id: must be a 64 bit unsigned integer") 
+        elif memo_type is not None and memo_type == 'hash':
+            try:
+                pay_memo = HashMemo(memo)
+            except Exception:
+               raise ValueError("invalid memo for memo type hash: must be a 32 byte hex encoded string")
+        elif memo_type is not None and memo_type == 'return':
+            try:
+                pay_memo = ReturnHashMemo(memo)
+            except Exception:
+               raise ValueError("invalid memo for memo type return: must be a 32 byte hex encoded string")
+        else:
+            text = bytes(memo, encoding="utf-8")
+            if len(text) > 28:
+                raise ValueError("invalid memo for memo type text: memo to long. must be <= 28 bytes")
+            pay_memo = TextMemo(memo)
+            
+              
+    pay_uri_builder = PayStellarUri(destination = destination, amount = amount, asset=pay_asset, memo = pay_memo,
+                                    callback = None, message = None, network_passphrase = network_passphrase,
+                                    origin_domain = None, signature = None)
+    
+    spe7_pay_uri = pay_uri_builder.to_uri();
+    pay_link = spe7_pay_uri.replace("web+stellar:", "https://stellargate.com/")
+    return pay_link

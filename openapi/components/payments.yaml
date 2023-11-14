@@ -69,3 +69,31 @@
           title: Paging Token
           type: string
           description: A cursor value for use in pagination. Use this as cursor if the user requests the next or previous entries.
+    SendPaymentRequest:
+      type: object
+      required:
+        - network
+        - destination_account
+        - amount
+      properties:
+        network:
+          type: string
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        source_account:
+          type: string
+          description: The account id of the stellar source account that sends the payment. Optional. If not specified, the user will select the source account in the wallet.
+        destination_account:
+          type: string
+          description: The account id of the stellar destination account that will receive the payment.
+        asset:
+          type: string
+          description: The asset to be sent. Can be 'nativie' if stellar lumens else in canonical form (separated by ':'). e.g. 'USDC:GAUNPP2NQKCWIJ3LDOFSZPQZ33YFB37IXF3LBT3S7UQAOTTK3H7BOQ6J'. If not set, it will use stellar lumens.
+        amount:
+          type: string
+          description: Amount to be sent. (e.g. 10.01)
+        memo_type:
+          type: string
+          description: If a memo is used, than the memo type should be specified here. Can be 'text', 'id', 'hash' or 'return'.
+        memo:
+          type: string
+          description: If a memo is used, than the memo value should be specified here.

@@ -192,6 +192,46 @@ async def get_payments():
 async def payment_details():
     return await op_details(request=request)
 
+@app.post("/payment/send")
+async def send_payment():
+    try:
+        request = await quart.request.get_json(force=True)
+        if "network" not in request:
+            raise Exception("missing network parameter")
+        if "destination_account" not in request:
+            raise Exception("missing destination_account parameter")
+        if "amount" not in request:
+            raise Exception("missing amount parameter")
+        
+        network = request["network"]
+        destination_account = request["destination_account"]
+        amount = request["amount"]
+        passphrase = passphrase_for_network(network=network)
+            
+        memo_type = None
+        if "memo_type" in request:
+            memo_type = request["memo_type"]
+        memo = None
+        if "memo" in request:
+            memo = request["memo"]
+            
+        asset_code = "native"
+        if "asset_code" in request:
+            asset_code = request["asset_code"]
+        
+        asset_issuer = None
+        if "asset_issuer" in request:
+            asset_issuer = request["asset_issuer"]
+        
+        res = await payments.send_payment(network_passphrase=passphrase,destination=destination_account, 
+                                          amount=amount, asset_code=asset_code, asset_issuer=asset_issuer,
+                                          memo_type=memo_type, memo=memo)
+        if res is not None:
+            return quart.Response(response=res, status=200)
+        raise Exception("an unknown error occured while preparing the payment")
+    except Exception as e:
+        return quart.Response(response=str(e), status=400)
+
 @app.get("/transaction/details")
 async def transaction_details():
     try:
