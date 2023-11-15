@@ -74,6 +74,7 @@
       required:
         - network
         - destination_account
+        - asset_code
         - amount
       properties:
         network:
@@ -85,9 +86,12 @@
         destination_account:
           type: string
           description: The account id of the stellar destination account that will receive the payment.
-        asset:
+        asset_code:
           type: string
-          description: The asset to be sent. Can be 'nativie' if stellar lumens else in canonical form (separated by ':'). e.g. 'USDC:GAUNPP2NQKCWIJ3LDOFSZPQZ33YFB37IXF3LBT3S7UQAOTTK3H7BOQ6J'. If not set, it will use stellar lumens.
+          description: The code of the asset to be used for the payment. 'native' if the user wants to send stellar lumens. 
+        asset_issuer:
+          type: string
+          description: The account id of the asset issuer for the asset to be used for the payment. Only needed if the asset is not stellar lumens.
         amount:
           type: string
           description: Amount to be sent. (e.g. 10.01)

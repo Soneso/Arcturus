@@ -1,4 +1,5 @@
-
+from stellar_sdk import Memo, NoneMemo, TextMemo, IdMemo, HashMemo, ReturnHashMemo,  Asset
+from stellar_sdk.exceptions import AssetCodeInvalidError, AssetIssuerInvalidError
 from typing import (Union, Dict, Any, List)
 
 ASSET_TYPE_KEY = 'asset_type'
@@ -43,3 +44,42 @@ def canonic_asset(dic:Dict[str, Any], key:str):
             del entry[ASSET_TYPE_KEY]
 
         dic[key] = value
+
+def memo_from(memo:Union[str, None], memo_type:Union[str, None]) -> Memo :
+    new_memo = NoneMemo()
+    if memo is not None:
+        if memo_type is not None and memo_type == 'id':
+            try:
+                new_memo = IdMemo(int(memo))
+            except Exception:
+                raise ValueError("invalid memo for memo type id: must be a 64 bit unsigned integer") 
+        elif memo_type is not None and memo_type == 'hash':
+            try:
+                new_memo = HashMemo(memo)
+            except Exception:
+                raise ValueError("invalid memo for memo type hash: must be a 32 byte hex encoded string")
+        elif memo_type is not None and memo_type == 'return':
+            try:
+                new_memo = ReturnHashMemo(memo)
+            except Exception:
+                raise ValueError("invalid memo for memo type return: must be a 32 byte hex encoded string")
+        else:
+            text = bytes(memo, encoding="utf-8")
+            if len(text) > 28:
+                raise ValueError("invalid memo for memo type text: memo to long. must be <= 28 bytes")
+            new_memo = TextMemo(memo)
+    return new_memo
+
+def asset_from(asset_code:Union[str, None], asset_issuer:Union[str, None]) -> Asset :
+    new_asset = Asset.native()
+    if asset_code is not None and asset_code != 'native' and asset_code != 'XLM':
+        if asset_issuer is not None:
+            try:
+                new_asset = Asset(asset_code, asset_issuer)
+            except AssetCodeInvalidError:
+                raise ValueError("invalid asset code")
+            except AssetIssuerInvalidError:
+                raise ValueError("invalid asset issuer")
+        else:
+            raise ValueError("invalid asset: missing asset issuer")
+    return new_asset

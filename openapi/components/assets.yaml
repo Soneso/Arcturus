@@ -105,3 +105,37 @@
             href:
             type: string
             description: Contains the link target (url) to the stellar info file holding off-chain metadata about the asset and it's issuer.
+    TrustAssetRequest:
+      type: object
+      required:
+        - network
+        - source_account
+        - asset_code
+        - asset_issuer
+      properties:
+        network:
+          type: string
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
+        source_account:
+          type: string
+          description: The account id of the stellar source account that should trust the asset.
+        asset_code:
+          type: string
+          description: The code of the asset to be trusted. Can not be 'XLM'. Stellar lumens can not be trusted.
+        asset_issuer:
+          type: string
+          description: The account id of the issuer of the asset to be trusted.
+        limit:
+          type: number
+          format: float
+          description: The trust limit.
+        base_fee:
+          type: number
+          format: integer
+          description: Base fee for the transaction in stroop. A stroop is equivalent to 0.000001 XLM. Optional, if not given by the user it will be set to 100.
+        memo_type:
+          type: string
+          description: If a memo is used, than the memo type should be specified here. Can be 'text', 'id', 'hash' or 'return'.
+        memo:
+          type: string
+          description: If a memo is used, than the memo value should be specified here.

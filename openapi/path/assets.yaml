@@ -69,3 +69,27 @@
             text/plain:
               schema:
                 type: string
+  /asset/trust: 
+    post:
+      operationId: trustAsset
+      summary: Composes a link that the user can use to sign the trust asset transaction and submit it to the stellar network. 
+      description: Composes a link that the user can use to sign the trust asset transaction and submit it to the stellar network. When pressed the link should be opened in a new browser tab.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrustAssetRequest"
+        required: true
+      responses:
+        "200":
+          description: An link where the user can sign and submit the trust asset transaction.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: An error occured and the trust asset transaction link could not be build.
+          content:
+            text/plain:
+              schema:
+                type: string

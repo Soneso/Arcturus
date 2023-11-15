@@ -1,6 +1,10 @@
-from stellar_sdk import Server
-from arcturus.utils import add_paging, delete_keys_except
+from stellar_sdk import Server, StrKey, TransactionBuilder
+from stellar_sdk.transaction_envelope import TransactionEnvelope
+from stellar_sdk.exceptions import NotFoundError
+from stellar_sdk.sep.stellar_uri import TransactionStellarUri
+from arcturus.utils import asset_from, memo_from
 from typing import Union
+from decimal import Decimal
 
 ASSET_CODE = 'asset_code'
 ASSET_ISSUER = 'asset_issuer'
@@ -30,3 +34,42 @@ async def get_details(horizon_url:str, asset_issuer_id:str, asset_code:str):
     for x in records:
         del x['_links']
     return records
+
+async def trust_asset(horizon_url:str,
+                      network_passphrase: str, 
+                      source: str,
+                      asset_code: str, 
+                      asset_issuer: str,
+                      limit: Union[Decimal, None],
+                      memo_type: Union[str, None],
+                      memo: Union[str, None],
+                      base_fee: Union[int, None]) :
+    
+    asset = asset_from(asset_code=asset_code, asset_issuer=asset_issuer)
+    memo = memo_from(memo=memo, memo_type=memo_type)
+    if not StrKey.is_valid_ed25519_public_key(source):
+        raise ValueError("Invalid source account Id")
+
+    server = Server(horizon_url=horizon_url)
+    source_account = None
+    try:
+        source_account = server.load_account(account_id=source)
+    except NotFoundError:
+        raise ValueError("Source account not found on the stellar network")
+    except Exception:
+        raise ValueError("An error occured while trying to load data for the source account from stellar network")
+    
+    tx_base_fee = 100
+    if base_fee is not None:
+        tx_base_fee = base_fee
+        
+    tx = TransactionBuilder(source_account=source_account, network_passphrase=network_passphrase, 
+                            base_fee=tx_base_fee).append_change_trust_op(asset=asset, limit=limit).set_timeout(30).build()
+    
+    tx_envelope = TransactionEnvelope.from_xdr(tx.to_xdr(), network_passphrase= network_passphrase)
+    xdr = tx_envelope.to_xdr()
+    print(xdr)
+    tx_uri_builder = TransactionStellarUri(transaction_envelope = tx_envelope, network_passphrase = network_passphrase)
+    spe7_tx_uri = tx_uri_builder.to_uri()
+    tx_link = spe7_tx_uri.replace("web+stellar:", "https://stellargate.com/sep7/")
+    return tx_link

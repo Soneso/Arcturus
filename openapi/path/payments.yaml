@@ -124,7 +124,7 @@
               schema:
                 type: string
         "400":
-          description: An error occured and the transaction could not be sent.
+          description: An error occured and the send payment transaction link could not be build.
           content:
             text/plain:
               schema:

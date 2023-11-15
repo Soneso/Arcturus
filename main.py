@@ -115,6 +115,48 @@ async def asset_details():
         return quart.Response(response=ASSET_NOT_FOUND, status=404)
     else:
         return quart.Response(response=json.dumps(records), status=200)
+
+@app.post("/asset/trust")
+async def trust_asset():
+    try:
+        request = await quart.request.get_json(force=True)
+        if "network" not in request:
+            raise Exception("missing network parameter")
+        if "source_account" not in request:
+            raise Exception("missing source_account parameter")
+        if "asset_code" not in request:
+            raise Exception("missing asset_code parameter")
+        if "asset_issuer" not in request:
+            raise Exception("missing asset_issuer parameter")
+        
+        network = request["network"]
+        horizon_url = horizon_url_for_network(network=network)
+        passphrase = passphrase_for_network(network=network)
+        source_account = request["source_account"]
+        asset_code = request["asset_code"]
+        asset_issuer = request["asset_issuer"]
+            
+        memo_type = None
+        if "memo_type" in request:
+            memo_type = request["memo_type"]
+        memo = None
+        if "memo" in request:
+            memo = request["memo"]
+            
+        limit = None
+        if "limit" in request:
+            limit = request["limit"]
+            
+        base_fee = None
+        if "base_fee" in request:
+            base_fee = request["base_fee"]
+        
+        res = await assets.trust_asset(horizon_url=horizon_url, network_passphrase=passphrase, source=source_account, asset_code=asset_code, asset_issuer=asset_issuer, limit=limit, memo_type=memo_type, memo=memo, base_fee=base_fee)
+        if res is not None:
+            return quart.Response(response=res, status=200)
+        raise Exception("an unknown error occured while preparing the trust asset transaction")
+    except Exception as e:
+        return quart.Response(response=str(e), status=400)
     
 @app.get("/claimable_balances")
 async def get_claimable_balances():
