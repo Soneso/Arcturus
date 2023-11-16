@@ -9,11 +9,11 @@
     },
     "api": {
       "type": "openapi",
-      "url": "https://stellargate.com/openapi.yaml",
+      "url": "https://arcturus-gpt.com/openapi.yaml",
       "is_user_authenticated": false
     },
-    "logo_url": "https://stellargate.com/logo.png",
-    "contact_email": "info@soneso.com",
-    "legal_info_url": "https://stellargate.com/arcturus-pp.html"
+    "logo_url": "https://arcturus-gpt.com/logo.png",
+    "contact_email": "admin@arcturus-gpt.com",
+    "legal_info_url": "https://arcturus-gpt.com/arcturus-pp.html"
   }
   

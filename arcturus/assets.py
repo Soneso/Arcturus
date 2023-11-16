@@ -2,7 +2,7 @@ from stellar_sdk import Server, StrKey, TransactionBuilder
 from stellar_sdk.transaction_envelope import TransactionEnvelope
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.stellar_uri import TransactionStellarUri
-from arcturus.utils import asset_from, memo_from
+from arcturus.utils import asset_from, memo_from, APP_URL
 from typing import Union
 from decimal import Decimal
 
@@ -67,9 +67,9 @@ async def trust_asset(horizon_url:str,
                             base_fee=tx_base_fee).append_change_trust_op(asset=asset, limit=limit).set_timeout(30).build()
     
     tx_envelope = TransactionEnvelope.from_xdr(tx.to_xdr(), network_passphrase= network_passphrase)
-    xdr = tx_envelope.to_xdr()
-    print(xdr)
+    # xdr = tx_envelope.to_xdr()
+    # print(xdr)
     tx_uri_builder = TransactionStellarUri(transaction_envelope = tx_envelope, network_passphrase = network_passphrase)
     spe7_tx_uri = tx_uri_builder.to_uri()
-    tx_link = spe7_tx_uri.replace("web+stellar:", "https://stellargate.com/sep7/")
+    tx_link = spe7_tx_uri.replace("web+stellar:", APP_URL + "/")
     return tx_link

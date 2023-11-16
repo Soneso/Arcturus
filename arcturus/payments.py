@@ -1,6 +1,6 @@
 from stellar_sdk import Server
 from stellar_sdk.sep.stellar_uri import PayStellarUri
-from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from
+from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, APP_URL
 from typing import (Union, Dict, Any, List)
 
 ID_KEY = 'id'
@@ -185,5 +185,5 @@ async def send_payment(network_passphrase: str,
                                     origin_domain = None, signature = None)
     
     spe7_pay_uri = pay_uri_builder.to_uri()
-    pay_link = spe7_pay_uri.replace("web+stellar:", "https://stellargate.com/sep7/")
+    pay_link = spe7_pay_uri.replace("web+stellar:", APP_URL + "/")
     return pay_link

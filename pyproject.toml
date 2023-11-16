@@ -8,7 +8,7 @@ license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Werkzeug= "==2.2.x"
+Werkzeug= "==2.2.2"
 quart = "^0.18.4"
 quart-cors = "^0.6.0"
 stellar-sdk = "^9.0.0b0"

@@ -5,6 +5,7 @@ from typing import (Union, Dict, Any, List)
 ASSET_TYPE_KEY = 'asset_type'
 ASSET_CODE_KEY = 'asset_code'
 ASSET_ISSUER_KEY = 'asset_issuer'
+APP_URL = 'https://arcturus-gpt.com' #'http://localhost:5003'
 
 def add_paging(builder, cursor:Union[int, str], order:str, limit:int):
     if cursor is not None:

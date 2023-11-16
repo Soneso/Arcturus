@@ -16,6 +16,7 @@ import arcturus.trades as trades
 import arcturus.domains as domains
 import arcturus.scval as scval
 import arcturus.soroban as soroban
+import arcturus.signing as signing
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
@@ -328,7 +329,7 @@ async def submit_tx_xdr():
         raise Exception("an unknown error occured while submitting the transaction")
     except Exception as e:
         return quart.Response(response=str(e), status=400)
-
+    
 @app.get("/operations")
 async def get_operations():
     try:
@@ -601,7 +602,15 @@ async def get_soroban_transaction_status():
     network = request.args.get('network')
     result = await soroban.transaction_status(soroban_rpc_url_for_network(network), transaction_hash=transaction_hash)
     return quart.Response(response=result, status=200)
-    
+
+@app.get("/pay")
+async def signing_pay():
+    return await signing.pay(request=request)
+
+@app.get("/tx")
+async def signing_tx():
+    return await signing.tx(request=request)
+        
 @app.get("/logo.png")
 async def plugin_logo():
     filename = 'logo.png'
@@ -614,14 +623,12 @@ async def arcturus_pp():
 
 @app.get("/.well-known/ai-plugin.json")
 async def plugin_manifest():
-    host = request.headers['Host']
     with open("./.well-known/ai-plugin.json") as f:
         text = f.read()
         return quart.Response(text, mimetype="text/json")
 
 @app.get("/openapi.yaml")
 async def openapi_spec():
-    host = request.headers['Host']
     file_list = ['openapi/info.yaml', 
                  'openapi/path/accounts.yaml',
                  'openapi/path/assets.yaml',
