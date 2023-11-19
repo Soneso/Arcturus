@@ -1,11 +1,12 @@
 from stellar_sdk import Memo, NoneMemo, TextMemo, IdMemo, HashMemo, ReturnHashMemo,  Asset
 from stellar_sdk.exceptions import AssetCodeInvalidError, AssetIssuerInvalidError
 from typing import (Union, Dict, Any, List)
+from arcturus.constants import APP_URL
 
 ASSET_TYPE_KEY = 'asset_type'
 ASSET_CODE_KEY = 'asset_code'
 ASSET_ISSUER_KEY = 'asset_issuer'
-APP_URL = 'https://arcturus-gpt.com' #'http://localhost:5003'
+
 
 def add_paging(builder, cursor:Union[int, str], order:str, limit:int):
     if cursor is not None:

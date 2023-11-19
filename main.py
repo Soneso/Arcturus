@@ -20,17 +20,10 @@ import arcturus.signing as signing
 import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
+from arcturus.constants import *
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
-HORIZON_PUBLIC_URL = "https://horizon.stellar.org"
-PUBLIC_NETWORK_PASSPHRASE: str = "Public Global Stellar Network ; September 2015"
-HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org"
-TESTNET_NETWORK_PASSPHRASE: str = "Test SDF Network ; September 2015"
-HORIZON_FUTURENET_URL = "https://horizon-futurenet.stellar.org"
-FUTURENET_NETWORK_PASSPHRASE: str = "Test SDF Future Network ; October 2022"
-SOROBAN_RPC_FUTURENET_URL = "https://soroban-futurenet.stellar.org"
-SOROBAN_RPC_TESTNET_URL = "https://soroban-testnet.stellar.org"
 ACCOUNT_NOT_FOUND = "Account not found"
 ASSET_NOT_FOUND = "Asset not found"
 TRANSACTION_NOT_FOUND = "Transaction not found"
@@ -620,6 +613,11 @@ async def plugin_logo():
 async def arcturus_pp():
     filename = 'arcturus-pp.html'
     return await quart.send_file(filename, mimetype='text/html')
+
+@app.get("/favicon.ico")
+async def favicon():
+    filename = 'favicon.ico'
+    return await quart.send_file(filename, mimetype='image/x-icon')
 
 @app.get("/.well-known/ai-plugin.json")
 async def plugin_manifest():
