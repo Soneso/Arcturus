@@ -1,8 +1,8 @@
 # Arcturus
 
-Arcturus is a so called [GPT](https://openai.com/blog/introducing-gpts) for ChatGPT. It is able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By using the Arcturus GPT, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban by prompting it. 
+Arcturus is a so called [GPT](https://openai.com/blog/introducing-gpts) for ChatGPT. It is able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By prompting Arcturus GPT, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban. 
 
-Arcturus was initially planned to be a ChatGPT Plugin. But plugins stopped working locally at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins. It can still be used as a plugin, should they be reactivated. Another problem with plugins is that they had a very limited context window at the time of testing. This had bad consequences to the answers given by ChatGPT, because ChatGPT forgot parts of the Plugin spec and tried to find the requested answers without using the Plugin.
+Arcturus was initially planned to be a ChatGPT Plugin. But plugins stopped working locally at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins. It can still be used as a plugin, should they be reactivated. Another problem with plugins is that they had a very limited context window at the time of testing. This had bad consequences to the answers given by ChatGPT, because ChatGPT forgot parts of the plugin spec and tried to find the requested answers without using the plugin.
 
 The main goal of Arcturus is the improvement of usability, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It will also allow users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
 
@@ -13,7 +13,6 @@ Currently the plugin can fetch and interpret Stellar Blockchain data related to:
 ### Accounts
 - account details (such as balances, thresholds, signers, etc.)
 - directory info from stellar expert (off-chain data)
-- Arcturus can also encode and decode muxed accounts
 
 ### Assets
 - list assets for issuer and/or asset code
@@ -39,12 +38,12 @@ Currently the plugin can fetch and interpret Stellar Blockchain data related to:
 - list liquidity pools for account and reserves
 - liquidity pool details 
 
-### SDX Offers
+### SDEX Offers
 - list offers from given accounts
 - list offers by selling asset, buying asset, sponsor seller, etc.
 - offer details
 
-### SDX Orderbook
+### SDEX Orderbook
 - list entries by selling and buying asset
 
 ### Trades
