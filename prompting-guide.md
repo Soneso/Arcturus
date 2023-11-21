@@ -220,7 +220,9 @@ Get latest ledger sequence:
 
 Encode and decode smart contract values (SCVal):
 
+`Can you please encode the string "friend" to a scval?`
 
+`Decode this scval: AAAADgAAAAZmcmllbmQAAA==`
 
 
 
