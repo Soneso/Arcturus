@@ -8,7 +8,7 @@ The main goal of Arcturus is the improvement of usability, allowing users and de
 
 ## Implementation status
 
-Currently the plugin can fetch and interpret Stellar Blockchain data related to:
+Currently Arcturus can fetch and interpret Stellar Blockchain data related to:
 
 ### Accounts
 - account details (such as balances, thresholds, signers, etc.)
@@ -75,3 +75,5 @@ Furthermore it can perform following actions:
 - encode and decode muxed accounts
 - prepare trust asset transaction and link to be signed with freighter on the Arcturus webpage
 - prepare payment transaction and link to be signed with freighter on the Arcturus webpage 
+
+You can find a prompting guide with prompting examples [here](https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md). 
