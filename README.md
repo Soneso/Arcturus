@@ -1,92 +1,78 @@
 # Arcturus
 
-Arcturus will be a ChatGPT plugin that will be able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. Once the user activates the plugin from the ChatGPT store, he can request and receive text-based, real-time information from the Stellar Blockchain and Soroban by prompting ChatGPT. 
+Arcturus is a so called [GPT](https://openai.com/blog/introducing-gpts) for ChatGPT. It is able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By using the Arcturus GPT, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban by prompting it. 
 
-The main advantage of the plugin is the improvement of usability, which will allow users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It will also allow users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
+Arcturus was initially planned to be a ChatGPT Plugin. But plugins stopped working locally at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins. It can still be used as a plugin, should they be reactivated. Another problem with plugins is that they had a very limited context window at the time of testing. This had bad consequences to the answers given by ChatGPT, because ChatGPT forgot parts of the Plugin spec and tried to find the requested answers without using the Plugin.
 
-In this first step I want to implement the core functionality, so that the Arcturus Stellar ChatGPT Plugin can request and interpret data from Stellar Horizon and Soroban RPC. To do so, the Arcturus API needs to be implemented and the specifications and examples for the AI Model need to be prepared and extensively tested. 
-
-Furthermore, the Arcturus Plugin will be capable of composing transactions and after external signing, able to send them to Stellar Horizon and Soroban RPC via the Arcturus API. External signing will be implemented via WalletConnect.
-
-Over time, the system will evolve by implementing different SEPs and using additional services like for example Stellar Expert and Soroban Assistant AI.
-
-## Setup locally
-To run the plugin you need to have developer access to ChatGPT plugin development. If you do not already have plugin developer access, please [join the waitlist](https://openai.com/waitlist/plugins).
-
-You can install the current version of the plugin from source code.
-
-```bash
-git clone https://github.com/Soneso/Arcturus.git
-cd Arcturus
-pip install .
-```
-
-To run the plugin, enter the following command:
-
-```bash
-python main.py
-```
-
-Once the local server is running:
-
-1. Navigate to https://chat.openai.com. 
-2. In the Model drop down, select "Plugins" (note, if you don't see it there, you don't have access yet).
-3. Select "Plugin store"
-4. Select "Develop your own plugin"
-5. Enter in `localhost:5003` since this is the URL the server is running on locally, then select "Find manifest file".
-
-The plugin should now be installed and enabled! You can start with a question like "Please display the account details of this Stellar account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55"
+The main goal of Arcturus is the improvement of usability, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It will also allow users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
 
 ## Implementation status
 
-Currently the plugin can fetch data related to 
-- Stellar accounts and their payments.
-- Transactions and operations
+Currently the plugin can fetch and interpret Stellar Blockchain data related to:
 
-Please see this [example conversation](https://github.com/Soneso/Arcturus/blob/main/example.md).
+### Accounts
+- account details (such as balances, thresholds, signers, etc.)
+- directory info from stellar expert (off-chain data)
+- Arcturus can also encode and decode muxed accounts
 
-### Account data
+### Assets
+- list assets for issuer and/or asset code
+- asset details (such as issuer, number of trustlines, etc.)
 
-The plugin can load, understand and display:
-- On-chain account details of the account, such as balances, sequence number, home domain, thresholds, flags, data values, signers, etc.
-- On-chain data about the assets issued by the account
-- On-chain info about claimable balances for the account as a claimant or sponsor (uses paging)
-- Off-chain directory info about an account loaded from stellar expert
-- Off-chain stellar (toml) data associated with the account's home domain
-- encode and decode muxed accounts
-- decode data values
+### Claimable Balances
+- list claimable balances for claimant id and/or sponsor id
+- claimable balance details (such as the claiming conditions)
 
-**Limitations**
-
-Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 2 claimable balances at a time. Therefore, paging is limited to 2 entries per request. 
-
-### Payments 
-
-The plugin can load, understand and display:
-- List of payments for a given account, a given transaction or a given ledger
-- Payment details for all types of payments such as create_account, merge_account, payment, path_payment (uses paging)
-- Transaction data associated with the payment, e.g, to be able to show the memo
-
-**Limitations**
-
-Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 5 payments at a time. Therefore, paging is limited to 5 entries per request.
+### Payments
+- list payments for account, transaction, ledger
+- payment details
 
 ### Operations
-- List of operations for a given account, transaction, ledger, liquidity pool or claimable balance
-- Operation details of a given operation
-- Transaction data associated with the operation, e.g, to be able to show the memo
-
-**Limitations**
-
-Due to the currently limited size of the ChatGPT context window, the plugin can only display maximum 5 operations at a time. Therefore, paging is limited to 5 entries per request.
+- list all types of operations for account, transaction, ledger, liquidity pool, claimable balance
+- operation details for all types of Stellar operations
 
 ### Transactions
-- List of transactions for a given account, ledger, liquidity pool or claimable balance
-- Transaction details for a given transaction
+- list for account, ledger, claimable balance, liquidity pool
+- transaction details
 
-### SCVal
-- decode scval
+### Liquidity Pools
+- list liquidity pools for account and reserves
+- liquidity pool details 
+
+### SDX Offers
+- list offers from given accounts
+- list offers by selling asset, buying asset, sponsor seller, etc.
+- offer details
+
+### SDX Orderbook
+- list entries by selling and buying asset
+
+### Trades
+- list for account, liquidity pool, offers, base asset, counter asset, etc.
+
+### Domains
+- check if blocked by stellar expert (off-chain data)
+
+### Stellar Toml
+- Off-chain stellar (toml) data associated with the account's home domain
+
+### Soroban
+- list contract events
+- fetch contract data 
+- fetch contract code for wasm id and contract id
+- fetch contract metadata for contract id and wasm id
+- fetch the status of a given transaction
+- get latest ledger
+- encode and decode smart contract values (SCVal)
 
 ### Network
+Arcturus can switch networks for its requests as given by the prompt. It can use public net, testnet and futurenet. Default is public net.
 
-The plugin can switch networks for its requests as given by the prompt. It can use public net, testnet and futurenet. Default is public net.
+### Actions
+
+Furthermore it can perform following actions:
+
+- submit signed transactions (xdr) to the Stellar Network
+- encode and decode muxed accounts
+- prepare trust asset transaction and link to be signed with freighter on the Arcturus webpage
+- prepare payment transaction and link to be signed with freighter on the Arcturus webpage 
