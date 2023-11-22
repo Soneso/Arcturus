@@ -625,6 +625,11 @@ async def plugin_manifest():
         text = f.read()
         return quart.Response(text, mimetype="text/json")
 
+@app.get("/general/prompting_guide")
+async def get_prompting_guide():
+    return quart.Response(response="https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md", status=200)
+
+
 @app.get("/openapi.yaml")
 async def openapi_spec():
     file_list = ['openapi/info.yaml', 
@@ -655,7 +660,8 @@ async def openapi_spec():
                  'openapi/components/scval.yaml', 
                  'openapi/components/soroban.yaml',
                  'openapi/components/trades.yaml',
-                 'openapi/components/liquidity_pools.yaml']
+                 'openapi/components/liquidity_pools.yaml',
+                 'openapi/components/general.yaml']
     combined_text = combine_files(file_list)
     print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")

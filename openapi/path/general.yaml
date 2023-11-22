@@ -1,0 +1,12 @@
+  /general/prompting_guide: 
+    get:
+      operationId: getPromptingGuide
+      summary: Returns a link to the prompting guide that helps users to prompt Arcturus.
+      description: Returns a link to the prompting guide that helps users to prompt Arcturus.
+      responses:
+        "200":
+          description: An link to the prompting guide for Arcturus
+          content:
+            text/plain:
+              schema:
+                type: string
