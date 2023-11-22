@@ -645,6 +645,7 @@ async def openapi_spec():
                  'openapi/path/orderbook.yaml',
                  'openapi/path/scval.yaml',
                  'openapi/path/soroban.yaml',
+                 'openapi/path/general.yaml',
                  'openapi/path/trades.yaml',
                  'openapi/path/liquidity_pools.yaml',
                  'openapi/components/accounts.yaml',
@@ -660,8 +661,7 @@ async def openapi_spec():
                  'openapi/components/scval.yaml', 
                  'openapi/components/soroban.yaml',
                  'openapi/components/trades.yaml',
-                 'openapi/components/liquidity_pools.yaml',
-                 'openapi/components/general.yaml']
+                 'openapi/components/liquidity_pools.yaml']
     combined_text = combine_files(file_list)
     print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
