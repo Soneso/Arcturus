@@ -5,6 +5,7 @@ from stellar_sdk.sep.stellar_uri import TransactionStellarUri
 from arcturus.utils import asset_from, memo_from, APP_URL
 from typing import Union
 from decimal import Decimal
+import configparser
 
 ASSET_CODE = 'asset_code'
 ASSET_ISSUER = 'asset_issuer'
@@ -67,9 +68,11 @@ async def trust_asset(horizon_url:str,
                             base_fee=tx_base_fee).append_change_trust_op(asset=asset, limit=limit).build()
     
     tx_envelope = TransactionEnvelope.from_xdr(tx.to_xdr(), network_passphrase= network_passphrase)
-    # xdr = tx_envelope.to_xdr()
-    # print(xdr)
+    config = configparser.ConfigParser()
+    config.read('signing.ini')
+    secret = config['signing']['secret']
     tx_uri_builder = TransactionStellarUri(transaction_envelope = tx_envelope, network_passphrase = network_passphrase)
+    tx_uri_builder.sign(secret)
     spe7_tx_uri = tx_uri_builder.to_uri()
     tx_link = spe7_tx_uri.replace("web+stellar:", APP_URL + "/")
     return tx_link

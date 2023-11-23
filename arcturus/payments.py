@@ -2,6 +2,7 @@ from stellar_sdk import Server
 from stellar_sdk.sep.stellar_uri import PayStellarUri
 from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, APP_URL
 from typing import (Union, Dict, Any, List)
+import configparser
 
 ID_KEY = 'id'
 TYPE_KEY = 'type'
@@ -179,11 +180,16 @@ async def send_payment(network_passphrase: str,
     
     pay_asset = asset_from(asset_code=asset_code, asset_issuer=asset_issuer)
     pay_memo = memo_from(memo=memo, memo_type=memo_type)
-              
+     
+    config = configparser.ConfigParser()
+    config.read('signing.ini')
+    secret = config['signing']['secret']
+     
     pay_uri_builder = PayStellarUri(destination = destination, amount = amount, asset=pay_asset, memo = pay_memo,
                                     callback = None, message = None, network_passphrase = network_passphrase,
                                     origin_domain = None, signature = None)
     
+    pay_uri_builder.sign(secret)
     spe7_pay_uri = pay_uri_builder.to_uri()
     pay_link = spe7_pay_uri.replace("web+stellar:", APP_URL + "/")
     return pay_link

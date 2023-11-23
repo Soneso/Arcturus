@@ -1,15 +1,24 @@
 
 import quart
-from typing import Union
+from typing import Union, Dict
 from arcturus.constants import PUBLIC_NETWORK_PASSPHRASE, TESTNET_NETWORK_PASSPHRASE, FUTURENET_NETWORK_PASSPHRASE, HORIZON_PUBLIC_URL, HORIZON_TESTNET_URL, HORIZON_FUTURENET_URL
 from stellar_sdk.transaction_envelope import TransactionEnvelope
 from stellar_sdk.sep.txrep import to_txrep
+from stellar_sdk.keypair import Keypair
+from stellar_sdk.exceptions import BadSignatureError
+from urllib import parse
+import base64
+import configparser
 
 PUBLIC_NETWORK: str = 'PUBLIC'
 TESTNET_NETWORK: str = 'TESTNET'
 FUTURENET_NETWORK: str = 'FUTURENET'
 
 async def pay(request: quart.Request) -> quart.Response :
+    valid = valid_signature(request.url)
+    if not valid:
+        return await quart.render_template("signing_err.html", err_msg="Invalid signature.")
+    
     destination = request.args.get('destination')
     if destination is None:
         return await quart.render_template("signing_err.html", err_msg="Missing destination.")
@@ -38,6 +47,9 @@ async def pay(request: quart.Request) -> quart.Response :
                                        horizon_url=horizon_url)
 
 async def tx(request: quart.Request) -> quart.Response :
+    valid = valid_signature(request.url)
+    if not valid:
+        return await quart.render_template("signing_err.html", err_msg="Invalid signature.")
     xdr = request.args.get('xdr')
     network_passphrase = request.args.get('network_passphrase')
     network = network_for_passphrase(passphrase=network_passphrase)
@@ -98,3 +110,37 @@ def err_unsupported_passphrase(passphrase:Union[str, None]) -> str:
 
 def err_invalid_xdr(xdr:Union[str, None]) -> str:
     return f'Could not encode transaction xdr: "{xdr}"'
+
+def valid_signature(uri: str) -> bool:
+    parsed_uri = parse.urlparse(uri)
+    query = parsed_uri.query
+
+    query_dic = parse_uri_query(query)
+    signature = query_dic.pop("signature")
+
+    if signature is None:
+        return False
+
+    path = parsed_uri.path.replace('/', '')
+    data_query = f"web+stellar:{path}?{parse.urlencode(query_dic, quote_via=parse.quote)}" 
+    
+    payload_bytes = signature_payload(data_query)
+    signature_bytes = base64.b64decode(signature.encode())
+ 
+    config = configparser.ConfigParser()
+    config.read('signing.ini')
+    pk = config['signing']['account_id']
+    kp = Keypair.from_public_key(pk)
+    try:
+        kp.verify(data=payload_bytes, signature=signature_bytes)
+    except BadSignatureError:
+        return False
+    
+    return True
+
+def parse_uri_query(uri_query) -> Dict[str, str]:
+    return dict(parse.parse_qsl(uri_query))     
+
+def signature_payload(data_query) -> bytes:
+    sign_data = b"\0" * 35 + b"\4" + b"stellar.sep.7 - URI Scheme" + data_query.encode()
+    return sign_data
