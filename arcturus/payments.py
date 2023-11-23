@@ -1,6 +1,6 @@
 from stellar_sdk import Server
 from stellar_sdk.sep.stellar_uri import PayStellarUri
-from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, APP_URL
+from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, APP_URL, db_add_signing_request, db_get_signing_request
 from typing import (Union, Dict, Any, List)
 import configparser
 
@@ -190,6 +190,10 @@ async def send_payment(network_passphrase: str,
                                     origin_domain = None, signature = None)
     
     pay_uri_builder.sign(secret)
-    spe7_pay_uri = pay_uri_builder.to_uri()
-    pay_link = spe7_pay_uri.replace("web+stellar:", APP_URL + "/")
+    sep7_pay_uri = pay_uri_builder.to_uri()
+    #pay_link = sep7_pay_uri.replace("web+stellar:", APP_URL + "/")
+    
+    # this is a workaround because ChatGPT sometimes cuts off parts of the link
+    key = db_add_signing_request(sep7_pay_uri)
+    pay_link = f"{APP_URL}/sign_pay/{key}"
     return pay_link

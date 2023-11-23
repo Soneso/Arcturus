@@ -9,33 +9,41 @@ from stellar_sdk.exceptions import BadSignatureError
 from urllib import parse
 import base64
 import configparser
+from arcturus.utils import db_get_signing_request
 
 PUBLIC_NETWORK: str = 'PUBLIC'
 TESTNET_NETWORK: str = 'TESTNET'
 FUTURENET_NETWORK: str = 'FUTURENET'
 
-async def pay(request: quart.Request) -> quart.Response :
-    valid = valid_signature(request.url)
+async def pay(key:str) -> quart.Response :
+    url = db_get_signing_request(key)
+    if url is None:
+       return await quart.render_template("signing_err.html", err_msg="Invalid request: key not found.")
+    
+    valid = valid_signature(url)
     if not valid:
         return await quart.render_template("signing_err.html", err_msg="Invalid signature.")
     
-    destination = request.args.get('destination')
+    parsed_uri = parse.urlparse(url)
+    query_dic = parse_uri_query(parsed_uri.query)
+    
+    destination = query_dic.get('destination')
     if destination is None:
         return await quart.render_template("signing_err.html", err_msg="Missing destination.")
-    amount = request.args.get('amount')
+    amount = query_dic.get('amount')
     if amount is None:
         return await quart.render_template("signing_err.html", err_msg="Missing amount.")
     
-    asset_code = request.args.get('asset_code')
-    asset_issuer = request.args.get('asset_issuer')
-    memo = request.args.get('memo')
-    memo_type = js_sdk_memo_type(request.args.get('memo_type'))
-    callback = request.args.get('callback')
-    msg = request.args.get('msg')
-    origin_domain = request.args.get('origin_domain')
-    signature = request.args.get('signature')
+    asset_code = query_dic.get('asset_code')
+    asset_issuer = query_dic.get('asset_issuer')
+    memo = query_dic.get('memo')
+    memo_type = js_sdk_memo_type(query_dic.get('memo_type'))
+    callback = query_dic.get('callback')
+    msg = query_dic.get('msg')
+    origin_domain = query_dic.get('origin_domain')
+    signature = query_dic.get('signature')
     
-    network_passphrase = request.args.get('network_passphrase')
+    network_passphrase = query_dic.get('network_passphrase')
     network = network_for_passphrase(passphrase=network_passphrase)
     horizon_url = horizon_url_for_network(network=network)
     if not network_is_supported(network=network):
@@ -46,12 +54,20 @@ async def pay(request: quart.Request) -> quart.Response :
                                        origin_domain=origin_domain, signature=signature, network=network, network_passphrase=network_passphrase,
                                        horizon_url=horizon_url)
 
-async def tx(request: quart.Request) -> quart.Response :
-    valid = valid_signature(request.url)
+async def tx(key: str) -> quart.Response :
+    url = db_get_signing_request(key)
+    if url is None:
+        return await quart.render_template("signing_err.html", err_msg="Invalid request: key not found.")
+    
+    valid = valid_signature(url)
     if not valid:
         return await quart.render_template("signing_err.html", err_msg="Invalid signature.")
-    xdr = request.args.get('xdr')
-    network_passphrase = request.args.get('network_passphrase')
+    
+    parsed_uri = parse.urlparse(url)
+    query_dic = parse_uri_query(parsed_uri.query)
+    
+    xdr = query_dic.get('xdr')
+    network_passphrase = query_dic.get('network_passphrase')
     network = network_for_passphrase(passphrase=network_passphrase)
     if not network_is_supported(network=network):
         return await quart.render_template("signing_err.html", err_msg=err_unsupported_passphrase(passphrase=network_passphrase))
@@ -67,7 +83,7 @@ async def tx(request: quart.Request) -> quart.Response :
         tx_rep = xdr
         
     horizon_url = horizon_url_for_network(network=network)
-    return await quart.render_template("signing_tx.html", res=request.url, xdr=xdr, network=network, 
+    return await quart.render_template("signing_tx.html", xdr=xdr, network=network, 
                                        network_passphrase=network_passphrase, tx_rep=tx_rep,
                                        horizon_url=horizon_url)
 
@@ -111,8 +127,8 @@ def err_unsupported_passphrase(passphrase:Union[str, None]) -> str:
 def err_invalid_xdr(xdr:Union[str, None]) -> str:
     return f'Could not encode transaction xdr: "{xdr}"'
 
-def valid_signature(uri: str) -> bool:
-    parsed_uri = parse.urlparse(uri)
+def valid_signature(url: str) -> bool:
+    parsed_uri = parse.urlparse(url)
     query = parsed_uri.query
 
     query_dic = parse_uri_query(query)

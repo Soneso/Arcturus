@@ -21,6 +21,7 @@ import stellar_sdk.sep.stellar_toml as stellar_toml
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
 from arcturus.constants import *
+from sqlite3 import dbapi2 as sqlite3
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -596,13 +597,13 @@ async def get_soroban_transaction_status():
     result = await soroban.transaction_status(soroban_rpc_url_for_network(network), transaction_hash=transaction_hash)
     return quart.Response(response=result, status=200)
 
-@app.get("/pay")
-async def signing_pay():
-    return await signing.pay(request=request)
+@app.get("/sign_pay/<string:key>")
+async def signing_pay(key):
+    return await signing.pay(key=key)
 
-@app.get("/tx")
-async def signing_tx():
-    return await signing.tx(request=request)
+@app.get("/sign_tx/<string:key>")
+async def signing_tx(key):
+    return await signing.tx(key=key)
         
 @app.get("/logo.png")
 async def plugin_logo():
@@ -699,7 +700,19 @@ def combine_files(file_list):
     return combined_text
 
 def main():
+    init_db()
     app.run(debug=True, host="0.0.0.0", port=5003)
+
+def _connect_db():
+    engine = sqlite3.connect("arcturus.db")
+    engine.row_factory = sqlite3.Row
+    return engine
+
+def init_db():
+    db = _connect_db()
+    with open("db/schema.sql", mode="r") as file_:
+        db.cursor().executescript(file_.read())
+    db.commit()
 
 async def op_details(request):
     try:

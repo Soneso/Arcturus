@@ -2,6 +2,10 @@ from stellar_sdk import Memo, NoneMemo, TextMemo, IdMemo, HashMemo, ReturnHashMe
 from stellar_sdk.exceptions import AssetCodeInvalidError, AssetIssuerInvalidError
 from typing import (Union, Dict, Any, List)
 from arcturus.constants import APP_URL
+from sqlite3 import dbapi2 as sqlite3
+from quart import g
+import random
+import string
 
 ASSET_TYPE_KEY = 'asset_type'
 ASSET_CODE_KEY = 'asset_code'
@@ -85,3 +89,39 @@ def asset_from(asset_code:Union[str, None], asset_issuer:Union[str, None]) -> As
         else:
             raise ValueError("invalid asset: missing asset issuer")
     return new_asset
+
+def connect_db():
+    engine = sqlite3.connect("arcturus.db")
+    #engine.row_factory = sqlite3.Row
+    return engine
+
+def get_db():
+    if not hasattr(g, "sqlite_db"):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+
+def get_random_string(length):
+    return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length))
+
+def db_add_signing_request(value:str) -> str:
+   key = get_random_string(12)
+   old_val = db_get_signing_request(key=key)
+   if old_val is not None:
+       return db_add_signing_request(value=value)
+   db = get_db()
+   db.execute(
+       "INSERT INTO sign_requests (key, value) VALUES (?, ?)",
+       [key, value],)
+   db.commit()
+   return key
+
+def db_get_signing_request(key:str) -> Union[str, None]:
+   db = get_db()
+   cur = db.execute(
+       "SELECT value from sign_requests WHERE key = ?",
+       [key],)
+   res = cur.fetchone()
+   if res is None:
+       return None
+   
+   return res[0]      

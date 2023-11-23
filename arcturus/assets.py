@@ -2,7 +2,7 @@ from stellar_sdk import Server, StrKey, TransactionBuilder
 from stellar_sdk.transaction_envelope import TransactionEnvelope
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.stellar_uri import TransactionStellarUri
-from arcturus.utils import asset_from, memo_from, APP_URL
+from arcturus.utils import asset_from, memo_from, APP_URL, db_add_signing_request
 from typing import Union
 from decimal import Decimal
 import configparser
@@ -73,6 +73,10 @@ async def trust_asset(horizon_url:str,
     secret = config['signing']['secret']
     tx_uri_builder = TransactionStellarUri(transaction_envelope = tx_envelope, network_passphrase = network_passphrase)
     tx_uri_builder.sign(secret)
-    spe7_tx_uri = tx_uri_builder.to_uri()
-    tx_link = spe7_tx_uri.replace("web+stellar:", APP_URL + "/")
+    sep7_tx_uri = tx_uri_builder.to_uri()
+    #tx_link = sep7_tx_uri.replace("web+stellar:", APP_URL + "/")
+    
+    # this is a workaround because ChatGPT sometimes cuts off parts of the link
+    key = db_add_signing_request(sep7_tx_uri)
+    tx_link = f"{APP_URL}/sign_tx/{key}"
     return tx_link
