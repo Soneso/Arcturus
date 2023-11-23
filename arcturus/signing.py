@@ -10,7 +10,32 @@ TESTNET_NETWORK: str = 'TESTNET'
 FUTURENET_NETWORK: str = 'FUTURENET'
 
 async def pay(request: quart.Request) -> quart.Response :
-    return await quart.render_template("signing.html", res=request.url)
+    destination = request.args.get('destination')
+    if destination is None:
+        return await quart.render_template("signing_err.html", err_msg="Missing destination.")
+    amount = request.args.get('amount')
+    if amount is None:
+        return await quart.render_template("signing_err.html", err_msg="Missing amount.")
+    
+    asset_code = request.args.get('asset_code')
+    asset_issuer = request.args.get('asset_issuer')
+    memo = request.args.get('memo')
+    memo_type = request.args.get('memo_type')
+    callback = request.args.get('callback')
+    msg = request.args.get('msg')
+    origin_domain = request.args.get('origin_domain')
+    signature = request.args.get('signature')
+    
+    network_passphrase = request.args.get('network_passphrase')
+    network = network_for_passphrase(passphrase=network_passphrase)
+    horizon_url = horizon_url_for_network(network=network)
+    if not network_is_supported(network=network):
+        return await quart.render_template("signing_err.html", err_msg=err_unsupported_passphrase(passphrase=network_passphrase))
+    
+    return await quart.render_template("signing_pay.html", destination=destination, amount=amount, asset_code=asset_code,
+                                       asset_issuer=asset_issuer, memo=memo, memo_type=memo_type, callback=callback, msg=msg,
+                                       origin_domain=origin_domain, signature=signature, network=network, network_passphrase=network_passphrase,
+                                       horizon_url=horizon_url)
 
 async def tx(request: quart.Request) -> quart.Response :
     xdr = request.args.get('xdr')
@@ -30,7 +55,7 @@ async def tx(request: quart.Request) -> quart.Response :
         tx_rep = xdr
         
     horizon_url = horizon_url_for_network(network=network)
-    return await quart.render_template("signing.html", res=request.url, xdr=xdr, network=network, 
+    return await quart.render_template("signing_tx.html", res=request.url, xdr=xdr, network=network, 
                                        network_passphrase=network_passphrase, tx_rep=tx_rep,
                                        horizon_url=horizon_url)
 

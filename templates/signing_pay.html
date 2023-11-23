@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcturus Signing</title>
+    <style>
+        /* CSS for the Page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container, .signed_container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Media Query for Responsive Design */
+        @media (max-width: 600px) {
+            header {
+                font-size: 24px;
+            }
+        }
+
+        /* creating css loader */
+        #loading {
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #fff;
+            border-top: 2px solid #333;
+            border-radius: 100%;
+            margin: 0;
+            visibility: hidden;
+            animation: spin 1s infinite linear;
+        }
+        #loading.display {
+            visibility: visible;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-freighter-api/1.7.1/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/10.4.1/stellar-sdk.min.js"></script>
+    <script>
+        async function signWithFreighter() {
+            if (await window.freighterApi.isConnected()) {
+                if (!await window.freighterApi.isAllowed()) {
+                    if (!await window.freighterApi.setAllowed()) {
+                        alert("Error: Could not add Arcturus GPT to Freighter's Allow List");
+                        return
+                    }
+                }
+                try {
+                    let sourcePublicKey = await window.freighterApi.getPublicKey()
+                    let network_passphrase = "{{network_passphrase}}"
+                    let network = "{{network}}"
+                    let horizon_url = "{{horizon_url}}"
+                    let destination = "{{destination}}"
+                    let amount = "{{amount}}"
+                    let server = new StellarSdk.Server(horizon_url);
+                    let account = await server.loadAccount(sourcePublicKey);
+                    let fee = await server.fetchBaseFee();
+                    
+                    {% if asset_code and asset_issuer %}
+                    let asset = new StellarSdk.Asset(
+                        "{{asset_code}}",
+                        "{{asset_issuer}}",
+                        );
+                    {% else %}
+                    let asset = StellarSdk.Asset.native();
+                    {% endif %}
+
+                    {% if memo %}
+                        {% if memo_type %}
+                            let memo = new StellarSdk.Memo("{{memo_type}}", "{{memo}}")
+                        {% else %}
+                            let memo = StellarSdk.Memo.text("{{memo}}");
+                        {% endif %}
+                    {% else %}
+                        let memo = StellarSdk.Memo.none
+                    {% endif %}
+                    
+                    let transaction = new StellarSdk.TransactionBuilder(account, { fee, networkPassphrase:network_passphrase })
+                        .addOperation(StellarSdk.Operation.payment({
+                        destination: destination,
+                        asset: asset,
+                        amount: amount,
+                    })).setTimeout(3000).addMemo(memo).build();
+                    let xdr = transaction.toEnvelope().toXDR('base64');
+                    let signedTransaction = await window.freighterApi.signTransaction(xdr, {network,});
+                    displaySubmit(xdr)
+                } catch (e) {
+                    alert("Error: " + e)
+                }
+            } else {
+                alert("Error: Freighter browser extension could not be located")
+            }
+        }
+
+        async function submitTx(signedTransaction) {
+            try {
+                var submit_container = document.getElementById("submit_container");
+                submit_container.style.display = "none";
+                let network_passphrase = "{{network_passphrase}}"
+                let horizon_url = "{{horizon_url}}"
+
+                const transaction = new StellarSdk.Transaction(signedTransaction, network_passphrase);
+                let server = new StellarSdk.Server(horizon_url);
+                displayLoading()
+                const transactionResult = await server.submitTransaction(transaction);
+                console.log(transactionResult)
+                hideLoading()
+                if (transactionResult.successful) {
+                    displayResult("Success, transaction id: " +  transactionResult.hash)
+                } else {
+                    displayResult("Error, submission failed.")
+                }
+            } catch (err) {
+                hideLoading()
+                displayResult(err)
+            }
+        }
+
+        function displaySubmit(signedTransaction) {
+            var sign_container = document.getElementById("sign_container");
+            sign_container.style.display = "none";
+            var submit_container = document.getElementById("submit_container");
+            submit_container.style.display = "block";
+            var submitButton = document.getElementById("submit");
+            if (!submitButton ) {
+                submitButton = document.createElement('button');
+            }
+            submitButton.id = 'submit';
+            submitButton.textContent = 'Submit to Stellar';
+            console.log(signedTransaction)
+            submitButton.addEventListener("click", function() {
+                submitTx(signedTransaction);
+            });
+            submit_container.appendChild(submitButton);
+        }
+
+        function displayResult(msg) {
+            var result_container = document.getElementById("result_container");
+            result_container.style.display = "block";
+            var msgElement = document.createElement("p");
+            msgElement.textContent = msg;
+            result_container.appendChild(msgElement);
+        }
+
+        // showing loading
+        function displayLoading() {
+            const loader = document.querySelector("#loading");
+            loader.classList.add("display");
+            // to stop loading after some time
+            setTimeout(() => {
+                loader.classList.remove("display");
+            }, 5000);
+        }
+
+        // hiding loading 
+        function hideLoading() {
+            const loader = document.querySelector("#loading");
+            loader.classList.remove("display");
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Arcturus GPT</h1>
+    </header>
+    <div class="container">
+        <h2>Welcome to Arcturus GPT signing & submission!</h2>
+        
+        <div id="sign_container" style="display: block">
+            <p>You're requesting signing and submission for following payment:</p>
+            <p>Destination: {{destination}} </p>
+            <p>Amount: {{amount}} </p>
+            {% if asset_code and asset_issuer%}
+                <p>Asset: {{asset_code}} </p>
+                <p>Asset Issuer: {{asset_issuer}} </p>
+            {% else %}
+                <p>Asset: XLM (Stellar Lumens) </p>
+            {% endif %}
+            {% if memo %}
+                <p>Memo: {{memo}} </p>
+                {% if memo_type %}
+                    <p>Memo type: {{memo_type}} </p>
+                {% else %}
+                    <p>Memo type: TEXT </p>
+                {% endif %}
+            {% endif %}
+            <p>Network: {{network}} </p>
+            {% if msg %}
+                <p>Message: {{msg}} </p>
+            {% endif %}
+            <p>You can sign your payment with <a href="https://www.freighter.app" target="_blank">Freighter</a>, a secure browser extension provided by the <a href="https://stellar.org/foundation" target="_blank">Stellar Development Foundation</a>.</p>
+            <p><button onclick="signWithFreighter()">Sign with Freighter</button></p>
+        </div>
+        <div id="submit_container" style="display: none">
+            <p>Your payment has been signed. You can now submit it to the Stellar Network.</p>
+        </div>
+        <div id="result_container" style="display: none"></div>
+        <div id="loading"></div>
+    </div>
+</body>
+</html>
