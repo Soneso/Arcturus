@@ -94,7 +94,7 @@
                             let memo = StellarSdk.Memo.text("{{memo}}");
                         {% endif %}
                     {% else %}
-                        let memo = StellarSdk.Memo.none
+                        let memo = StellarSdk.Memo.none();
                     {% endif %}
                     
                     let transaction = new StellarSdk.TransactionBuilder(account, { fee, networkPassphrase:network_passphrase })
@@ -203,7 +203,7 @@
                 {% if memo_type %}
                     <p>Memo type: {{memo_type}} </p>
                 {% else %}
-                    <p>Memo type: TEXT </p>
+                    <p>Memo type: text </p>
                 {% endif %}
             {% endif %}
             <p>Network: {{network}} </p>

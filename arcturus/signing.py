@@ -20,7 +20,7 @@ async def pay(request: quart.Request) -> quart.Response :
     asset_code = request.args.get('asset_code')
     asset_issuer = request.args.get('asset_issuer')
     memo = request.args.get('memo')
-    memo_type = request.args.get('memo_type')
+    memo_type = js_sdk_memo_type(request.args.get('memo_type'))
     callback = request.args.get('callback')
     msg = request.args.get('msg')
     origin_domain = request.args.get('origin_domain')
@@ -81,6 +81,17 @@ def horizon_url_for_network(network:str):
     if FUTURENET_NETWORK == network:
         return HORIZON_FUTURENET_URL
     return network
+
+def js_sdk_memo_type(memo_type:Union[str, None]) -> Union[str, None] :
+    if "MEMO_TEXT" == memo_type:
+        return "text"
+    if "MEMO_ID" == memo_type:
+        return "id"
+    if "MEMO_HASH" == memo_type:
+        return "hash"
+    if "MEMO_RETURN" == memo_type:
+        return "return"
+    return memo_type
 
 def err_unsupported_passphrase(passphrase:Union[str, None]) -> str:
     return f'Unsupported network with passphrase "{passphrase}". \n\nSupported network passphrases are: \n{PUBLIC_NETWORK_PASSPHRASE}, \n{TESTNET_NETWORK_PASSPHRASE}, \n{FUTURENET_NETWORK_PASSPHRASE}.'
