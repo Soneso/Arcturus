@@ -93,7 +93,7 @@
                 console.log(transactionResult)
                 hideLoading()
                 if (transactionResult.successful) {
-                    displayResult("Success, transaction id: " +  transactionResult.hash)
+                    displayResult("Success, transaction id: ", transactionResult.hash)
                 } else {
                     displayResult("Error, submission failed.")
                 }
@@ -121,11 +121,17 @@
             submit_container.appendChild(submitButton);
         }
 
-        function displayResult(msg) {
+        function displayResult(msg, txHash) {
             var result_container = document.getElementById("result_container");
             result_container.style.display = "block";
             var msgElement = document.createElement("p");
             msgElement.textContent = msg;
+
+            if (txHash !== undefined) {
+                let network = "{{network}}"
+                let hash_link = "https://stellar.expert/explorer/" + network.toLowerCase() + "/tx/" + txHash
+                msgElement.innerHTML += '<a href="'+hash_link+'" target="_blank">'+txHash+'</a>'
+            }
             result_container.appendChild(msgElement);
         }
 
@@ -136,7 +142,7 @@
             // to stop loading after some time
             setTimeout(() => {
                 loader.classList.remove("display");
-            }, 5000);
+            }, 15000);
         }
 
         // hiding loading 
