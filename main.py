@@ -607,17 +607,27 @@ async def signing_tx(key):
         
 @app.get("/logo.png")
 async def plugin_logo():
-    filename = 'logo.png'
+    filename = 'web/logo.png'
     return await quart.send_file(filename, mimetype='image/png')
 
 @app.get("/arcturus-pp.html")
 async def arcturus_pp():
-    filename = 'arcturus-pp.html'
+    filename = 'web/arcturus-pp.html'
     return await quart.send_file(filename, mimetype='text/html')
+
+@app.get("/")
+async def arcturus_main():
+    filename = 'web/index.html'
+    return await quart.send_file(filename, mimetype='text/html')
+
+@app.get("/arcturus.css")
+async def arcturus_css():
+    filename = 'web/arcturus.css'
+    return await quart.send_file(filename, mimetype='text/css')
 
 @app.get("/favicon.ico")
 async def favicon():
-    filename = 'favicon.ico'
+    filename = 'web/favicon.ico'
     return await quart.send_file(filename, mimetype='image/x-icon')
 
 @app.get("/.well-known/ai-plugin.json")
