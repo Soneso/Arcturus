@@ -225,6 +225,19 @@ Encode and decode smart contract values (SCVal):
 `Decode this scval: AAAADgAAAAZmcmllbmQAAA==`
 
 
+# Actions
+
+Actions are currently in development. Available actions are `sendPayment` and `trustAsset`. Usage is only recommended on testnet, although they work on public net as well but do not displaying complete errors if any occur.
+
+You will need a Freighter Wallet (Browser extension) to be able to sign actions.
+
+Send payment:
+
+`I would like to send a payment of 10 lumens to this testnet account: GCIFNTTPECZ4M2PXR76FTRDJM4AV7P2Q7275FL24BNFB56XCWMO53474`
+
+Trust asset:
+
+`Can you make my testnet account: <your freighter wallet testnet account here> trust this asset: ADI:GCIFNTTPECZ4M2PXR76FTRDJM4AV7P2Q7275FL24BNFB56XCWMO53474 ?`
 
 
 
