@@ -9,7 +9,7 @@
     <title>Arcturus | Signing</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="http://localhost:5003/arcturus.css" rel="stylesheet">
+    <link href="https://arcturus-gpt.com/arcturus.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-freighter-api/1.7.1/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/10.4.1/stellar-sdk.min.js"></script>
     <script>
@@ -67,7 +67,7 @@
                 submitButton = document.createElement('button');
             }
             submitButton.id = 'submit';
-            btn.setAttribute("class", "btn btn-outline-primary");
+            submitButton.setAttribute("class", "btn btn-outline-primary");
             submitButton.textContent = 'Submit to Stellar';
             console.log(signedTransaction)
             submitButton.addEventListener("click", function() {
@@ -124,12 +124,12 @@
                     <p>You can sign your transaction with <a href="https://www.freighter.app" target="_blank">Freighter</a>, a secure browser extension provided by the <a href="https://stellar.org/foundation" target="_blank">Stellar Development Foundation</a>.</p>
                     <br/>
                     <p><button class="btn btn-outline-primary" type="button" onclick="signWithFreighter()">Sign with Freighter</button></p>
-                    <div id="submit_container" style="display: none">
-                        <p>Your transaction has been signed. You can now submit it to the Stellar Network.</p>
-                    </div>
-                    <div id="result_container" style="display: none"></div>
-                    <div id="loading"></div>
                 </div>
+                <div id="submit_container" style="display: none">
+                    <p>Your transaction has been signed. You can now submit it to the Stellar Network.</p>
+                </div>
+                <div id="result_container" style="display: none"></div>
+                <div id="loading"></div>
             </div>
         </div>
         <div class="text-center">

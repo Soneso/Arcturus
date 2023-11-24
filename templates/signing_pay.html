@@ -106,7 +106,7 @@
                 submitButton = document.createElement('button');
             }
             submitButton.id = 'submit';
-            btn.setAttribute("class", "btn btn-outline-primary");
+            submitButton.setAttribute("class", "btn btn-outline-primary");
             submitButton.textContent = 'Submit to Stellar';
             console.log(signedTransaction)
             submitButton.addEventListener("click", function() {
@@ -182,12 +182,12 @@
                     <p>You can sign your payment with <a href="https://www.freighter.app" target="_blank">Freighter</a>, a secure browser extension provided by the <a href="https://stellar.org/foundation" target="_blank">Stellar Development Foundation</a>.</p>
                     <br/>
                     <p><button class="btn btn-outline-primary" type="button" onclick="signWithFreighter()">Sign with Freighter</button></p>
-                    <div id="submit_container" style="display: none">
-                        <p>Your payment has been signed. You can now submit it to the Stellar Network.</p>
-                    </div>
-                    <div id="result_container" style="display: none"></div>
-                    <div id="loading"></div>
                 </div>
+                <div id="submit_container" style="display: none">
+                    <p>Your payment has been signed. You can now submit it to the Stellar Network.</p>
+                </div>
+                <div id="result_container" style="display: none"></div>
+                <div id="loading"></div>
             </div>
         </div>
         <div class="text-center">

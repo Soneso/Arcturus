@@ -49,6 +49,31 @@ body {
     margin-top: 28px;
   }
   
+  /* creating css loader */
+  #loading {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #fff;
+    border-top: 2px solid #ff7400;
+    border-radius: 100%;
+    margin: 0;
+    visibility: hidden;
+    animation: spin 1s infinite linear;
+  }
+  
+  #loading.display {
+    visibility: visible;
+  }
+  
+  @keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+  }
+
   /* Responsive: Portrait tablets and up */
   @media screen and (min-width: 768px) {
     /* Remove the padding we set earlier */
