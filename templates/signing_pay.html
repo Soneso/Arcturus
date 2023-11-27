@@ -82,14 +82,54 @@
                 const transaction = new StellarSdk.Transaction(signedTransaction, network_passphrase);
                 let server = new StellarSdk.Server(horizon_url);
                 displayLoading()
-                const transactionResult = await server.submitTransaction(transaction);
-                console.log(transactionResult)
+                const transactionResult = await server.submitTransaction(transaction).then(function (res) {
+                    if (res.successful) {
+                        displayResult("Success, transaction id: ", transactionResult.hash)
+                    } else {
+                        displayResult("Error, submission failed.")
+                    }
+                })
+                .catch(function (error) {
+                    let err_msg = error
+                    let resp = error.response
+                    if (resp && resp.status == 400 && resp.data.extras && resp.data.extras.result_codes.transaction) {
+                        let tx_res_code = resp.data.extras.result_codes.transaction
+                        err_msg = "Error: transaction failed! "
+                        if (tx_res_code == "tx_failed") {
+                            err_msg +=  "Reason: One of the operations failed!"
+                        } else if (tx_res_code == "tx_too_early") {
+                            err_msg += "Reason: Ledger closeTime before minTime value in the transaction!"
+                        } else if (tx_res_code == "tx_too_late") {
+                            err_msg += "Reason: Ledger closeTime after maxTime value in the transaction!"
+                        } else if (tx_res_code == "tx_missing_operation") {
+                            err_msg += "Reason: No operation was specified!"
+                        } else if (tx_res_code == "tx_bad_seq") {
+                            err_msg += "Reason: Sequence number does not match source account!"
+                        } else if (tx_res_code == "tx_bad_auth") {
+                            err_msg += "Reason: Too few valid signatures / wrong network!"
+                        } else if (tx_res_code == "tx_insufficient_balance") {
+                            err_msg += "Reason: Fee would bring account below minimum balance!"
+                        } else if (tx_res_code == "tx_no_source_account") {
+                            err_msg += "Reason: Source account not found!"
+                        } else if (tx_res_code == "tx_insufficient_fee") {
+                            err_msg += "Reason: Fee is too small!"
+                        } else if (tx_res_code == "tx_bad_auth_extra") {
+                            err_msg += "Reason: Unused signatures attached to transaction!"
+                        } else if (tx_res_code == "tx_internal_error") {
+                            err_msg += "Reason: An unknown error occurred!"
+                        } else if (tx_res_code == "tx_not_supported") {
+                            err_msg += "Reason: The transaction type is not supported!"
+                        } else if (tx_res_code == "tx_fee_bump_inner_failed") {
+                            err_msg += "Reason: The fee bump inner transaction failed!"
+                        } else if (tx_res_code == "tx_bad_sponsorship") {
+                            err_msg += "Reason: The sponsorship is not confirmed!"
+                        } else {
+                            err_msg = error
+                        }
+                    }
+                    displayResult(err_msg)
+                });
                 hideLoading()
-                if (transactionResult.successful) {
-                    displayResult("Success, transaction id: ", transactionResult.hash)
-                } else {
-                    displayResult("Error, submission failed.")
-                }
             } catch (err) {
                 hideLoading()
                 displayResult(err)
