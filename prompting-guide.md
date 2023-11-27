@@ -16,7 +16,7 @@ For example:
 
 You do not have to specify the account or other data in every prompt. Chat GPT remembers the conversation from previous prompts. For example, if you request some data for an account:
 
-`Is there any home domain associated with this account GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT?`
+`Is there any home domain associated with this account GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55?`
 > ChatGPT answer
 
 `Did the account issue any assets?`
@@ -43,29 +43,27 @@ Here are some example prompts:
 
 `Show me current sequence number of this account GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT`
 
-On-chain data associated with the account can be fetched, like for example assets, claimable balances, payments, operations, transactions, liquidity pools, offers and trades. 
+On-chain data associated with the account can be fetched, like for example assets, claimable balances, payments, operations, transactions, offers and trades. 
 
-`Did this account issue any assets? G...`
+`Did this account issue any assets? GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Does this account have any claimable balances? G...`
+`Does this account have any claimable balances? GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Show me the 3 most recent payments of this account: G...`
+`Show me the 3 most recent payments of this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Show me the 3 most recent operations of this account: G...`
+`Show me the 3 most recent operations of this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Show me the 3 most recent transactions for this account: G...`
+`Show me the 3 most recent transactions for this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Are there any liquidity pools associated with this account? G...` 
+`Are there any offers associated with this account: GAKC3P3LQKBRCPOQ3ACI6NHKDNHKTIPGTX7EPOC3SGCMLQK4K3WYICWK`
 
-`Are there any offers associated with this account: G...`
-
-`Show me the 3 most recent trades for this account: G...`
+`Show me the 3 most recent trades for this account: GAVH5JM5OKXGMQDS7YPRJ4MQCPXJUGH26LYQPQJ4SOMOJ4SXY472ZM7G`
 
 Off-chain:
 
 Also off-chain data such as directory info from stellar expert:
 
-`Display the directory info for this account: G...`
+`Display the directory info for this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 `Show me the stellar toml data for the domain associated with this account and check if the domain is blacklisted: GBUVRNH4RW4VLHP4C5MOF46RRIRZLAVHYGX45MVSTKA2F6TMR7E7L6NW`
 
@@ -76,13 +74,13 @@ Also off-chain data such as directory info from stellar expert:
 
 You can ask Arcturus for asset details and fetch lists of assets for an issuer and/or asset code:
 
-`Show me the details for the asset with code BOB and issuer GBUVRNH4RW4VLHP4C5MOF46RRIRZLAVHYGX45MVSTKA2F6TMR7E7L6NW`
+`Show me the details for the asset with code yXLM and issuer GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
-`Show me the details for this asset: BOB:GBUVRNH4RW4VLHP4C5MOF46RRIRZLAVHYGX45MVSTKA2F6TMR7E7L6NW`
+`Show me the details for this asset: yXLM:GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 `Show me the list of assets with this code: yXLM`
 
-`Did this account issue any assets? GBUVRNH4RW4VLHP4C5MOF46RRIRZLAVHYGX45MVSTKA2F6TMR7E7L6NW`
+`Did this account issue any assets? GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 # Claimable balances
 
@@ -90,17 +88,17 @@ You can ask Arcturus for claimable balances details and fetch lists of claimable
 
 `Show me the details for this claimable balance: 00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9`
 
-`Are there any claimable balances for this claimant? G...`
+`Are there any claimable balances for this claimant? GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 `Can any of them be claimed now?`
 
-`Did this account sponsor any claimable balances? GBUVRNH4RW4VLHP4C5MOF46RRIRZLAVHYGX45MVSTKA2F6TMR7E7L6NW`
+`Did this account sponsor any claimable balances? GDCJIHD3623OCYNH65UUQC3NLG2D6YCNCDPZULRLCLOA76TBQRL6A3TF`
 
 # Payments
 
 You can ask Arcturus for payment details and fetch lists of payments for accounts, transactions, ledger:
 
-`List the 2 most recent payments for this account and show me their details: G...`
+`List the 2 most recent payments for this account and show me their details: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 `List the 2 most recent payments for this transaction: 3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889`
 
@@ -114,7 +112,7 @@ You can ask Arcturus for operation details and fetch lists of operations for acc
 
 `List the operations for this transaction: 3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889`
 
-`Show me the 3 most recent operations for this account: G...`
+`Show me the 3 most recent operations for this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 `And now for the ledger 49122497`
 
@@ -126,7 +124,7 @@ You can ask Arcturus for transaction details and fetch lists of transactions for
 
 `Show me the details of the transaction 3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c8889`
 
-`Show me the 3 most recent transactions for this account: G...`
+`Show me the 3 most recent transactions for this account: GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55`
 
 You can also submit signed xdr transactions to the Stellar Network:
 
@@ -146,9 +144,9 @@ You can ask Arcturus for offer details and fetch lists of offers for accounts, s
 
 `Display the details of the offer with id: 1408264946`
 
-`Does this account have any active offers: G...`
+`Does this account have any active offers: GAKC3P3LQKBRCPOQ3ACI6NHKDNHKTIPGTX7EPOC3SGCMLQK4K3WYICWK`
 
-`Show me the 3 most recent offers of this seller: G...`
+`Show me the 3 most recent offers of this seller: GAKC3P3LQKBRCPOQ3ACI6NHKDNHKTIPGTX7EPOC3SGCMLQK4K3WYICWK`
 
 
 # Orderbook
@@ -163,9 +161,9 @@ You can ask Arcturus for lists of trades for accounts, liquidity pools, offers, 
 
 `Show me the 2 most recent trades for lumes as base asset and yXLM:GARDNV3Q7YGT4AKSDF25LT32YSCCW4EV22Y2TV3I2PU2MMXJTEDL5T55 as counter asset`
 
-`Show me the 2 most recent trades for this account: G...`
+`Show me the 2 most recent trades for this account: GA5V3TI6Q3YQXPIOBZYZT2EOZUSNS7FJQV4TDQESTRSG2JRYNOLYCBBH`
 
-`Show me the 2 most recent trades for the offer with id: ...`
+`Show me the 2 most recent trades for the offer with id: 4760985545562521601`
 
 # Domains
 
