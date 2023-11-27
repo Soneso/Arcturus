@@ -200,13 +200,9 @@ List contract events:
 
 `Did the contract with the id CD2VYCS6AT37NIBI3FJ2HPWUQQHDA44VGGB64FR5IYUHNQSKQ33ZX5KE publish any events on testnet within the last 1000 ledgers?`
 
-Fetch contract data:
-
-`Show me the contract data with the key "COUNTER" stored by this contract on testnet: CDROOMSAQBNXOL4TTPBDI3ONZNH5QNO4QTVQ3NPGT7FRX3KTGJKYBD6I - storage type: instance`
-
 Fetch contract code for wasm id and contract id (WebAssembly bytecode as base64):
 
-`Show me the contract coide for the contract with id: CDROOMSAQBNXOL4TTPBDI3ONZNH5QNO4QTVQ3NPGT7FRX3KTGJKYBD6I on testnet.`
+`Show me the contract code for the contract with id: CDROOMSAQBNXOL4TTPBDI3ONZNH5QNO4QTVQ3NPGT7FRX3KTGJKYBD6I on testnet.`
 
 Fetch the status of a given transaction:
 
@@ -222,10 +218,12 @@ Encode and decode smart contract values (SCVal):
 
 `Decode this scval: AAAADgAAAAZmcmllbmQAAA==`
 
+Fetch contract data:
+currently unavailable
 
 # Actions
 
-Actions are currently in development. Available actions are `sendPayment` and `trustAsset`. Usage is only recommended on testnet, although they work on public net as well but do not displaying complete errors if any occur.
+Actions are currently in development. Available actions are `sendPayment` and `trustAsset`.
 
 You will need a Freighter Wallet (Browser extension) to be able to sign actions.
 
