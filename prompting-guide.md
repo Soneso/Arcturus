@@ -219,7 +219,11 @@ Encode and decode smart contract values (SCVal):
 `Decode this scval: AAAADgAAAAZmcmllbmQAAA==`
 
 Fetch contract data:
-currently unavailable
+
+`Transform the symbol "COUNTER" to a scval`
+> ChatGPT answer: `The symbol "COUNTER" has been transformed into a SCVal, encoded as a base64 XDR string: AAAADwAAAAdDT1VOVEVSAA==`
+
+`Show me the contract data with the key AAAADwAAAAdDT1VOVEVSAA== stored by this contract on testnet: CDKUZSUGHCM755GZPPSVPE55AH7AHI5ODDVFIUAX4CNAUNDYRPKWXIQP - storage type: persistent`
 
 # Actions
 
