@@ -82,9 +82,9 @@
                 const transaction = new StellarSdk.Transaction(signedTransaction, network_passphrase);
                 let server = new StellarSdk.Server(horizon_url);
                 displayLoading()
-                const transactionResult = await server.submitTransaction(transaction).then(function (res) {
+                await server.submitTransaction(transaction).then(function (res) {
                     if (res.successful) {
-                        displayResult("Success, transaction id: ", transactionResult.hash)
+                        displayResult("Success, transaction id: ", res.hash)
                     } else {
                         displayResult("Error, submission failed.")
                     }
