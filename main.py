@@ -683,10 +683,9 @@ async def plugin_manifest():
 async def get_prompting_guide():
     return quart.Response(response="https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md", status=200)
 
-
-@app.get("/openapi.yaml")
-async def openapi_spec():
-    file_list = ['openapi/info.yaml', 
+@app.get("/openapi_stellar.yaml")
+async def openapi_stellar_spec():
+    file_list = ['openapi/info_stellar.yaml', 
                  'openapi/path/accounts.yaml',
                  'openapi/path/assets.yaml',
                  'openapi/path/stellar_toml.yaml',
@@ -697,8 +696,6 @@ async def openapi_spec():
                  'openapi/path/domains.yaml',
                  'openapi/path/offers.yaml',
                  'openapi/path/orderbook.yaml',
-                 'openapi/path/scval.yaml',
-                 'openapi/path/soroban.yaml',
                  'openapi/path/general.yaml',
                  'openapi/path/trades.yaml',
                  'openapi/path/liquidity_pools.yaml',
@@ -712,10 +709,21 @@ async def openapi_spec():
                  'openapi/components/domains.yaml',
                  'openapi/components/offers.yaml',
                  'openapi/components/orderbook.yaml',
-                 'openapi/components/scval.yaml', 
-                 'openapi/components/soroban.yaml',
                  'openapi/components/trades.yaml',
-                 'openapi/components/liquidity_pools.yaml']
+                 'openapi/components/liquidity_pools.yaml',
+                 'openapi/components/scval.yaml']
+    combined_text = combine_files(file_list)
+    print(combined_text)
+    return quart.Response(combined_text, mimetype="text/yaml")
+
+@app.get("/openapi_soroban.yaml")
+async def openapi_soroban_spec():
+    file_list = ['openapi/info_soroban.yaml',
+                 'openapi/path/scval.yaml',
+                 'openapi/path/soroban.yaml',
+                 'openapi/path/general.yaml',
+                 'openapi/components/scval.yaml', 
+                 'openapi/components/soroban.yaml']
     combined_text = combine_files(file_list)
     print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
