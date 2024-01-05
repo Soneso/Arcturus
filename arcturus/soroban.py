@@ -36,11 +36,9 @@ async def contract_data(rpc_url:str, contract_id:str, key:str, durability:str):
         key_val = stellar_xdr.SCVal.from_xdr(key)
         if not StrKey.is_valid_contract(contract_id):
             contract_id = StrKey.encode_contract(bytes.fromhex(contract_id))
-        
         result = SorobanServer(rpc_url).get_contract_data(contract_id, key_val, dur)
         if result == None:
             return result
-        
         ledger_entry_data = stellar_xdr.LedgerEntryData.from_xdr(result.xdr)
         return prepare_decoded_scval(ledger_entry_data.contract_data.val)
     except Exception as e:

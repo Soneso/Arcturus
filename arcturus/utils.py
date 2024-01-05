@@ -1,7 +1,6 @@
 from stellar_sdk import Memo, NoneMemo, TextMemo, IdMemo, HashMemo, ReturnHashMemo,  Asset
 from stellar_sdk.exceptions import AssetCodeInvalidError, AssetIssuerInvalidError
 from typing import (Union, Dict, Any, List)
-from arcturus.constants import APP_URL
 from sqlite3 import dbapi2 as sqlite3
 from quart import g
 import random

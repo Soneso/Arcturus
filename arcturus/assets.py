@@ -2,7 +2,8 @@ from stellar_sdk import Server, StrKey, TransactionBuilder
 from stellar_sdk.transaction_envelope import TransactionEnvelope
 from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.stellar_uri import TransactionStellarUri
-from arcturus.utils import asset_from, memo_from, APP_URL, db_add_signing_request
+from arcturus.utils import asset_from, memo_from, db_add_signing_request
+from arcturus.constants import APP_URL
 from typing import Union
 from decimal import Decimal
 import configparser

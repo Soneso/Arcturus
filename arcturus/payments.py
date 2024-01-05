@@ -1,6 +1,7 @@
 from stellar_sdk import Server
 from stellar_sdk.sep.stellar_uri import PayStellarUri
-from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, APP_URL, db_add_signing_request, db_get_signing_request
+from arcturus.utils import add_paging, delete_keys_except, replace_key, memo_from, asset_from, db_add_signing_request, db_get_signing_request
+from arcturus.constants import APP_URL
 from typing import (Union, Dict, Any, List)
 import configparser
 
