@@ -65,8 +65,13 @@ async def trust_asset(horizon_url:str,
     if base_fee is not None:
         tx_base_fee = base_fee
         
-    tx = TransactionBuilder(source_account=source_account, network_passphrase=network_passphrase, 
-                            base_fee=tx_base_fee).append_change_trust_op(asset=asset, limit=limit).build()
+    tx_builder = TransactionBuilder(source_account=source_account, network_passphrase=network_passphrase, 
+                            base_fee=tx_base_fee).append_change_trust_op(asset=asset, limit=limit)
+    
+    if memo is not None:
+        tx_builder.add_memo(memo)
+        
+    tx = tx_builder.build()
     
     tx_envelope = TransactionEnvelope.from_xdr(tx.to_xdr(), network_passphrase= network_passphrase)
     config = configparser.ConfigParser()

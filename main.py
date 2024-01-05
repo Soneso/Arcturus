@@ -186,6 +186,47 @@ async def claimable_balance():
     else:
         return quart.Response(response=json.dumps(details), status=200)
 
+@app.post("/claimable_balance/claim")
+async def claim_claimable_balance():
+    try:
+        request = await quart.request.get_json(force=True)
+        if "network" not in request:
+            raise Exception("missing network parameter")
+        if "source_account" not in request:
+            raise Exception("missing source_account parameter")
+        if "claimable_balance_id" not in request:
+            raise Exception("missing claimable balance parameter")
+        
+        network = request["network"]
+        source_account = request["source_account"]
+        claimable_balance_id = request["claimable_balance_id"]
+        passphrase = passphrase_for_network(network=network)
+        horizon_url = horizon_url_for_network(network=network)
+            
+        memo_type = None
+        if "memo_type" in request:
+            memo_type = request["memo_type"]
+        memo = None
+        if "memo" in request:
+            memo = request["memo"]
+        
+        base_fee = None
+        if "base_fee" in request:
+            base_fee = request["base_fee"]
+            
+        res = await claimable_balances.claim_claimable_balance(horizon_url= horizon_url,
+                                                               network_passphrase=passphrase,
+                                                               source=source_account,
+                                                               claimable_balance_id=claimable_balance_id,
+                                                               memo=memo,
+                                                               memo_type=memo_type,
+                                                               base_fee=base_fee)
+        if res is not None:
+            return quart.Response(response=res, status=200)
+        raise Exception("an unknown error occured while preparing the payment")
+    except Exception as e:
+        return quart.Response(response=str(e), status=400)
+
 @app.get("/stellar_toml/<string:domain>")
 async def get_stellar_toml(domain):
     try:
