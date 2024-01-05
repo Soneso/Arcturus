@@ -114,9 +114,10 @@ def decode_event_info(event_info: EventInfo):
     for val in event_info.topic:
        topic_vals.append(decode_scval(val))
     data['topic'] = topic_vals
-    data['value'] = decode_scval(event_info.value.xdr)
+    data['value'] = decode_scval(event_info.value)
     data['contract_id'] = event_info.contract_id
     data['ledger'] = event_info.ledger
+    data['in_successful_contract_call'] = event_info.in_successful_contract_call
     return data
 
 def meta_from_code(code:str):

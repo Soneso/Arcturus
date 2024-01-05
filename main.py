@@ -532,6 +532,8 @@ async def soroban_contract_events():
         network = request.args.get('network')
         cursor = request.args.get('cursor')
         limit = request.args.get('limit')
+        if limit is None:
+            limit = 10
         if int(limit) > 10:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await soroban.contract_events(soroban_rpc_url_for_network(network), start_ledger, contract_id, cursor, limit)
