@@ -1,3 +1,4 @@
+paths:
   /soroban/get_latest_ledger:
     get:
       operationId: getSorobanLatestLedger

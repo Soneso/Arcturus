@@ -1,3 +1,5 @@
+components:
+  schemas:
     SorobanLatestLedger:
       type: object
       description: Holds attributes about the latest known ledger for soroban requests.

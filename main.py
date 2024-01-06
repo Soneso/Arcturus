@@ -719,11 +719,11 @@ async def openapi_stellar_spec():
 @app.get("/openapi_soroban.yaml")
 async def openapi_soroban_spec():
     file_list = ['openapi/info_soroban.yaml',
-                 'openapi/path/scval.yaml',
                  'openapi/path/soroban.yaml',
+                 'openapi/path/scval.yaml',
                  'openapi/path/general.yaml',
-                 'openapi/components/scval.yaml', 
-                 'openapi/components/soroban.yaml']
+                 'openapi/components/soroban.yaml',
+                 'openapi/components/scval.yaml']
     combined_text = combine_files(file_list)
     print(combined_text)
     return quart.Response(combined_text, mimetype="text/yaml")
