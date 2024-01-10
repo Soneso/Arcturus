@@ -257,15 +257,10 @@ components:
           type: string
           description: The name of the function to invoke. 
         args:
-          type: array
+          typ: array
           description: The arguments for the function call.
           items:
-            type:
-              type: string
-              description: Argument type. Valid types are  'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'bool', 'duration' and 'timepoint'.
-            value:
-              type: string
-              description: Argument value.
+            $ref: "#/components/schemas/InvokeContractFnArg"
         base_fee:
           type: number
           format: integer
@@ -276,3 +271,12 @@ components:
         memo:
           type: string
           description: If a memo is used, than the memo value should be specified here.
+    InvokeContractFnArg:
+      type: object
+      properties:
+        typ:
+          type: string
+          description: Argument type. Valid types are  'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'bool', 'duration' and 'timepoint'.
+        value:
+          type: string
+          description: Argument value.

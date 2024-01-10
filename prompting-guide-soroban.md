@@ -12,7 +12,7 @@ By default, currently Arcturus uses the testnet by default. As soon as Soroban w
 
 Fetch contract metadata for contract id or wasm id:
 
-`From testnet, show me the contract metadata for the contract with this id: CDROOMSAQBNXOL4TTPBDI3ONZNH5QNO4QTVQ3NPGT7FRX3KTGJKYBD6I`
+`From testnet, show me the contract metadata for the contract with this id: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY`
 
 Get latest ledger sequence:
 
@@ -24,7 +24,7 @@ List contract events:
 
 Fetch contract code for wasm id and contract id (WebAssembly bytecode as base64):
 
-`Show me the contract code for the contract with id: CDROOMSAQBNXOL4TTPBDI3ONZNH5QNO4QTVQ3NPGT7FRX3KTGJKYBD6I on testnet.`
+`Show me the contract code for the contract with id: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY on testnet.`
 
 Fetch the status of a given transaction:
 
