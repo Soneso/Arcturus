@@ -273,10 +273,11 @@ components:
           description: If a memo is used, than the memo value should be specified here.
     InvokeContractFnArg:
       type: object
+      description: Holds the type and value of an argument. The value should NOT be encoded to SCVal XDR!
       properties:
-        typ:
+        type:
           type: string
-          description: Argument type. Valid types are  'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'bool', 'duration' and 'timepoint'.
+          description: Argument type. Valid types are  'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'bool', 'duration', 'address', 'timepoint'.
         value:
           type: string
-          description: Argument value.
+          description: Argument value exactly as provided by the user. Do NOT encode it to SCVal XDR!

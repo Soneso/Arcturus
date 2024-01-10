@@ -41,4 +41,10 @@ Fetch contract data:
 `Transform the symbol "COUNTER" to a scval`
 > ChatGPT answer: `The symbol "COUNTER" has been transformed into a SCVal, encoded as a base64 XDR string: AAAADwAAAAdDT1VOVEVSAA==`
 
-`Show me the contract data with the key AAAADwAAAAdDT1VOVEVSAA== stored by this contract on testnet: CDKUZSUGHCM755GZPPSVPE55AH7AHI5ODDVFIUAX4CNAUNDYRPKWXIQP - storage type: persistent`
+`Show me the contract data with the key AAAADwAAAAdDT1VOVEVSAA== stored by this contract on testnet: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY - storage type: persistent`
+
+Invoke contract function:
+
+`invoke the contract function 'increment' of this contract: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY using the account <your source account id here>`
+
+`invoke the contract function 'hello' with the argument 'friend' of type symbol of the contract CB6IWUN5WOUAB64QO7E23IMKGB3HBMDGOE3AASDSA22ECJ4MROG3RRF3 with the source account <your source account id here>`

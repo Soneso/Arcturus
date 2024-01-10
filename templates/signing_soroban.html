@@ -70,8 +70,13 @@
                             }
                             // Find the return value from the contract and return it
                             let transactionMeta = getResponse.resultMetaXdr;
-                            let returnValue = transactionMeta.v3().sorobanMeta().returnValue();
-                            displayResult(`Success, Transaction result: ${returnValue.value()} - transaction id: `, sendResponse.hash)
+                            try {
+                                let returnValue = format_return_value(transactionMeta.v3().sorobanMeta().returnValue().value());
+                                displayResult(`Success, Transaction result: ${returnValue} - transaction id: `, sendResponse.hash)
+                            }
+                            catch (err) {
+                                displayResult(`Success, Transaction id: `, sendResponse.hash)
+                            }
                         } else {
                             throw `Transaction failed: ${getResponse.resultXdr}`;
                         }
@@ -87,6 +92,73 @@
                 hideLoading()
                 displayResult(err)
             }
+        }
+
+        function format_return_value(value) {
+            // TODO: improve this (lo/hi, ScContractInstance)
+            if (!!value) {
+                if (isArrayOfClass(value, StellarSdk.xdr.ScVal)) {
+                    result = '['
+                    value.forEach(function(element) {
+                        result += format_return_value(element.value()) + `, `;
+                    });
+                    return result.slice(0, -2) + ']'
+                } else if (isArrayOfClass(value, StellarSdk.xdr.ScMapEntry)) {
+                    result = '{'
+                    value.forEach(function(element) {
+                        result += format_return_value(element.key()) + ` : `;
+                        result += format_return_value(element.val()) + `, `;
+                    });
+                    return result.slice(0, -2)  + '}'
+                } else if (value instanceof StellarSdk.xdr.ScAddress) {
+                    subVal = value.value()
+                    if (subVal instanceof StellarSdk.xdr.AccountId) {
+                        return StellarSdk.StrKey.encodeEd25519PublicKey(subVal.value())
+                    }
+                    return StellarSdk.StrKey.encodeContract(subVal)
+                } else if (value instanceof StellarSdk.xdr.ScVal) {
+                    return format_return_value(value.value())
+                } else if (value instanceof StellarSdk.xdr.ScError) {
+                    subVal = value.value()
+                    if (subVal instanceof StellarSdk.xdr.ScErrorCode) {
+                        return `${subVal.name} Error`
+                    } else {
+                        return `contractError #${subVal}`
+                    }
+                } else if (value instanceof StellarSdk.xdr.Uint64) {
+                    return `Uint64(high:${value.high}, low:${value.low})`
+                } else if (value instanceof StellarSdk.xdr.Int64) {
+                    return `Int64(high:${value.high}, low:${value.low})`
+                } else if (value instanceof StellarSdk.xdr.TimePoint) {
+                    return `TimePoint(high:${value.high}, low:${value.low})`
+                } else if (value instanceof StellarSdk.xdr.Duration) {
+                    return `Duration(high:${value.high}, low:${value.low})`
+                } else if (value instanceof StellarSdk.xdr.UInt128Parts) {
+                    return `UInt128Parts(hi:${format_return_value(value.hi)}, lo:${format_return_value(value.lo)})`
+                } else if (value instanceof StellarSdk.xdr.Int128Parts) {
+                    return `Int128Parts(hi:${format_return_value(value.hi)}, lo:${format_return_value(value.lo)})`
+                } else if (value instanceof StellarSdk.xdr.UInt256Parts) {
+                    return `UInt256Parts(hiHi:${format_return_value(value.hiHi)}, hiLo:${format_return_value(value.hiLo)}, loHi:${format_return_value(value.loHi)}, loLo:${format_return_value(value.loLo)})`
+                } else if (value instanceof StellarSdk.xdr.Int256Parts) {
+                    return `Int256Parts(hiHi:${format_return_value(value.hiHi)}, hiLo:${format_return_value(value.hiLo)}, loHi:${format_return_value(value.loHi)}, loLo:${format_return_value(value.loLo)})`
+                } else if (value instanceof StellarSdk.xdr.ScNonceKey) {
+                    return `ScNonceKey(${format_return_value(value.value)})`
+                } else {
+                    return value
+                }
+            } else {
+                return value
+            }
+        }
+
+        function isArrayOfClass(arr, desiredClass) {
+            if (!Array.isArray(arr)) {
+              return false;
+            }
+          
+            return arr.every(function(element) {
+              return element instanceof desiredClass;
+            });
         }
 
         function displaySubmit(signedTransaction) {
