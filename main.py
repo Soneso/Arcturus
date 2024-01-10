@@ -678,8 +678,6 @@ async def invoke_contract_fn():
             for item in request_args:
                 if "type" not in item or "value" not in item:
                     raise Exception("invalid argument for invoking contract function")
-                print("type " + item["type"])
-                print("value " + item["value"])
                 args.append(scval.val_for(item["type"], item["value"]))
                 
         res = await soroban.invoke_contract_function(rpc_server_url=rpc_url,

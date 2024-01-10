@@ -236,3 +236,43 @@ components:
               type: number
               title: Value
               description: The value of the case.
+    InvokeContractFnRequest:
+      type: object
+      required:
+        - network
+        - source_account
+        - contract_id
+        - function_name
+      properties:
+        network:
+          type: string
+          description: Stellar Network to be used. Can be 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+        source_account:
+          type: string
+          description: The account id of the stellar source account that invokes the contract function.
+        contract_id:
+          type: string
+          description: The id of the contract whose function is to be invoked.
+        function_name:
+          type: string
+          description: The name of the function to invoke. 
+        args:
+          type: array
+          description: The arguments for the function call.
+          items:
+            type:
+              type: string
+              description: Argument type. Valid types are  'symbol', 'string', 'u32', 'i32', 'u64', 'i64', 'u128', 'i128', 'u256', 'i256', 'bool', 'duration' and 'timepoint'.
+            value:
+              type: string
+              description: Argument value.
+        base_fee:
+          type: number
+          format: integer
+          description: Base fee for the transaction in stroop. A stroop is equivalent to 0.000001 XLM. Optional, if not given by the user it will be set to 100.
+        memo_type:
+          type: string
+          description: If a memo is used, than the memo type should be specified here. Can be 'text', 'id', 'hash' or 'return'.
+        memo:
+          type: string
+          description: If a memo is used, than the memo value should be specified here.
