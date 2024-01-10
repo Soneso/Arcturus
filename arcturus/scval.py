@@ -179,34 +179,38 @@ def prepare_decoded_scerr(err_val):
     return error
 
 def xdr_for(scval_type:str, data: str):
+    value = val_for(scval_type=scval_type, data=data)
+    return value.to_xdr()
+
+def val_for(scval_type:str, data: str):
     if scval_type == 'address':
-        return sdk_scval.to_address(data).to_xdr()
+        return sdk_scval.to_address(data)
     elif scval_type == 'symbol':
-        return sdk_scval.to_symbol(data).to_xdr()
+        return sdk_scval.to_symbol(data)
     elif scval_type == 'string':
-        return sdk_scval.to_string(data).to_xdr()
+        return sdk_scval.to_string(data)
     elif scval_type == 'u32':
-        return sdk_scval.to_uint32(int(data)).to_xdr()
+        return sdk_scval.to_uint32(int(data))
     elif scval_type == 'i32':
-        return sdk_scval.to_int32(int(data)).to_xdr()
+        return sdk_scval.to_int32(int(data))
     elif scval_type == 'u64':
-        return sdk_scval.to_uint64(int(data)).to_xdr()
+        return sdk_scval.to_uint64(int(data))
     elif scval_type == 'i64':
-        return sdk_scval.to_int64(int(data)).to_xdr()
+        return sdk_scval.to_int64(int(data))
     elif scval_type == 'u128':
-        return sdk_scval.to_uint128(int(data)).to_xdr()
+        return sdk_scval.to_uint128(int(data))
     elif scval_type == 'i128':
-        return sdk_scval.to_int128(int(data)).to_xdr()
+        return sdk_scval.to_int128(int(data))
     elif scval_type == 'u256':
-        return sdk_scval.to_uint256(int(data)).to_xdr()
+        return sdk_scval.to_uint256(int(data))
     elif scval_type == 'i256':
-        return sdk_scval.to_int256(int(data)).to_xdr()
+        return sdk_scval.to_int256(int(data))
     elif scval_type == 'bool':
-        return sdk_scval.to_bool(bool(data)).to_xdr()
+        return sdk_scval.to_bool(bool(data))
     elif scval_type == 'duration':
-        return sdk_scval.to_duration(int(data)).to_xdr()
+        return sdk_scval.to_duration(int(data))
     elif scval_type == 'timepoint':
-        return sdk_scval.to_timepoint(int(data)).to_xdr()
+        return sdk_scval.to_timepoint(int(data))
     else:
         raise ValueError("Invalid type")
     

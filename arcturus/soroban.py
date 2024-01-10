@@ -1,12 +1,18 @@
 from stellar_sdk.soroban_server import (SorobanServer, Durability)
 from stellar_sdk.soroban_rpc import (EventFilter, EventFilterType, EventInfo)
 from stellar_sdk import xdr as stellar_xdr
-from stellar_sdk import StrKey
+from stellar_sdk import StrKey, TransactionBuilder, TransactionEnvelope
 from stellar_sdk.address import Address
+from stellar_sdk.exceptions import AccountNotFoundException
+from stellar_sdk.sep.stellar_uri import TransactionStellarUri
 from arcturus.scval import decode_scval, prepare_decoded_scval, format_spec_entry, format_bytes_2_str
+from arcturus.utils import memo_from, db_add_signing_request
+from arcturus.constants import APP_URL
+from typing import Union, Sequence
 import base64
 import re
 import traceback
+import configparser
     
 async def get_latest_ledger(rpc_url:str):
     response = SorobanServer(rpc_url).get_latest_ledger()
@@ -220,3 +226,51 @@ def xdr_meta_entries(meta_type: str, contract_code:str):
         break
   
    return xdr_entries
+
+async def invoke_contract_function(rpc_server_url: str, 
+                                   network_passphrase: str,
+                                   source_account_id: str,
+                                   contract_id: str,
+                                   function_name: str,
+                                   arguments: Sequence[stellar_xdr.SCVal] = None,
+                                   memo: Union[str, None] = None,
+                                   memo_type: Union[str, None] = None,
+                                   base_fee: Union[int, None] = None)-> str :
+   
+    soroban_server = SorobanServer(rpc_server_url)
+    source_account = None
+    try:
+        source_account = soroban_server.load_account(source_account_id)
+    except AccountNotFoundException:
+        raise ValueError("Source account not found")
+    except Exception:
+        raise ValueError("An error occured while trying to load data for the source account from stellar network")
+    
+    tx_base_fee = 100
+    if base_fee is not None:
+        tx_base_fee = base_fee
+        
+    tx_builder = TransactionBuilder(source_account, network_passphrase, base_fee=tx_base_fee).add_time_bounds(0, 0).append_invoke_contract_function_op(
+        contract_id=contract_id,
+        function_name=function_name,
+        parameters=arguments,
+    )
+
+    memo = memo_from(memo=memo, memo_type=memo_type)
+    if memo is not None:
+        tx_builder.add_memo(memo)
+   
+    tx = tx_builder.build()
+    tx_envelope = TransactionEnvelope.from_xdr(tx.to_xdr(), network_passphrase=network_passphrase)
+    
+    config = configparser.ConfigParser()
+    config.read('signing.ini')
+    secret = config['signing']['secret']
+    tx_uri_builder = TransactionStellarUri(transaction_envelope = tx_envelope, network_passphrase = network_passphrase)
+    tx_uri_builder.sign(secret)
+    sep7_tx_uri = tx_uri_builder.to_uri()
+    print(sep7_tx_uri)
+    key = db_add_signing_request(sep7_tx_uri)
+    tx_link = f"{APP_URL}/sign_tx/{key}"
+    return tx_link
+    

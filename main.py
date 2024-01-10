@@ -223,7 +223,7 @@ async def claim_claimable_balance():
                                                                base_fee=base_fee)
         if res is not None:
             return quart.Response(response=res, status=200)
-        raise Exception("an unknown error occured while preparing the payment")
+        raise Exception("an unknown error occured while preparing the claiming of the claimable balance")
     except Exception as e:
         return quart.Response(response=str(e), status=400)
 
@@ -639,6 +639,63 @@ async def get_soroban_transaction_status():
     network = request.args.get('network')
     result = await soroban.transaction_status(soroban_rpc_url_for_network(network), transaction_hash=transaction_hash)
     return quart.Response(response=result, status=200)
+
+@app.post("/soroban/invoke_contract_fn")
+async def invoke_contract_fn():
+    try:
+        request = await quart.request.get_json(force=True)
+        if "network" not in request:
+            raise Exception("missing network parameter")
+        if "source_account" not in request:
+            raise Exception("missing source_account parameter")
+        if "contract_id" not in request:
+            raise Exception("missing contract id parameter")
+        if "function_name" not in request:
+            raise Exception("missing function name parameter")
+        
+        network = request["network"]
+        source_account = request["source_account"]
+        contract_id = request["contract_id"]
+        function_name = request["function_name"]
+        passphrase = passphrase_for_network(network=network)
+        rpc_url = soroban_rpc_url_for_network(network=network)
+            
+        memo_type = None
+        if "memo_type" in request:
+            memo_type = request["memo_type"]
+        memo = None
+        if "memo" in request:
+            memo = request["memo"]
+        
+        base_fee = None
+        if "base_fee" in request:
+            base_fee = request["base_fee"]
+        
+        args = None
+        if "args" in request:
+            request_args = request["args"]
+            args = []
+            for item in request_args:
+                if "type" not in item or "value" not in item:
+                    raise Exception("invalid argument for invoking contract function")
+                print("type " + item["type"])
+                print("value " + item["value"])
+                args.append(scval.val_for(item["type"], item["value"]))
+                
+        res = await soroban.invoke_contract_function(rpc_server_url=rpc_url,
+                                                     network_passphrase=passphrase,
+                                                     source_account_id=source_account,
+                                                     contract_id=contract_id,
+                                                     function_name=function_name,
+                                                     arguments=args,
+                                                     memo=memo,
+                                                     memo_type=memo_type,
+                                                     base_fee=base_fee)
+        if res is not None:
+            return quart.Response(response=res, status=200)
+        raise Exception("an unknown error occured while preparing the contract function invocation")
+    except Exception as e:
+        return quart.Response(response=str(e), status=400)
 
 @app.get("/sign_pay/<string:key>")
 async def signing_pay(key):

@@ -1,11 +1,13 @@
 
 import quart
 from typing import Union, Dict
-from arcturus.constants import PUBLIC_NETWORK_PASSPHRASE, TESTNET_NETWORK_PASSPHRASE, FUTURENET_NETWORK_PASSPHRASE, HORIZON_PUBLIC_URL, HORIZON_TESTNET_URL, HORIZON_FUTURENET_URL
+from arcturus.constants import PUBLIC_NETWORK_PASSPHRASE, TESTNET_NETWORK_PASSPHRASE, FUTURENET_NETWORK_PASSPHRASE, HORIZON_PUBLIC_URL, HORIZON_TESTNET_URL, HORIZON_FUTURENET_URL, SOROBAN_RPC_TESTNET_URL, SOROBAN_RPC_FUTURENET_URL
 from stellar_sdk.transaction_envelope import TransactionEnvelope
 from stellar_sdk.sep.txrep import to_txrep
 from stellar_sdk.keypair import Keypair
-from stellar_sdk.exceptions import BadSignatureError
+from stellar_sdk.exceptions import BadSignatureError, PrepareTransactionException
+from stellar_sdk import xdr as stellar_xdr
+from stellar_sdk.soroban_server import SorobanServer
 from urllib import parse
 import base64
 import configparser
@@ -69,23 +71,50 @@ async def tx(key: str) -> quart.Response :
     xdr = query_dic.get('xdr')
     network_passphrase = query_dic.get('network_passphrase')
     network = network_for_passphrase(passphrase=network_passphrase)
-    if not network_is_supported(network=network):
-        return await quart.render_template("signing_err.html", err_msg=err_unsupported_passphrase(passphrase=network_passphrase))
     tx_rep = None
     tx_envelope = None
     try:
         tx_envelope = TransactionEnvelope.from_xdr(xdr, network_passphrase= network_passphrase)
     except Exception:
         return await quart.render_template("signing_err.html", err_msg=err_invalid_xdr(xdr=xdr))
+
+
+    is_soroban_tx = False
+    for operation in tx_envelope.transaction.operations:
+        if operation._XDR_OPERATION_TYPE is stellar_xdr.OperationType.INVOKE_HOST_FUNCTION:
+            is_soroban_tx = True
+            break
+    
+    if not network_is_supported(network=network, is_soroban=is_soroban_tx):
+        return await quart.render_template("signing_err.html", err_msg=err_unsupported_passphrase(passphrase=network_passphrase))
+    
+    rpc_server_url = None
+    if is_soroban_tx:
+        # simulate first
+        rpc_server_url = rpc_url_for_network(network=network)
+        soroban_server = SorobanServer(rpc_server_url)
+        try:
+            tx_envelope = soroban_server.prepare_transaction(tx_envelope)
+            xdr = tx_envelope.to_xdr_object().to_xdr()
+        except PrepareTransactionException as e:
+            return await quart.render_template("signing_err.html", err_msg=f"Simulate Soroban transaction failure: {e.simulate_transaction_response}")
+        except Exception as e:
+            return await quart.render_template("signing_err.html", err_msg=f"An error occured while preparing the transaction for signing: {e}")
+        
     try:
         tx_rep = to_txrep(transaction_envelope=tx_envelope)
     except Exception:
         tx_rep = xdr
+    
+    if is_soroban_tx:
+        return await quart.render_template("signing_soroban.html", xdr=xdr, network=network, 
+                                        network_passphrase=network_passphrase, tx_rep=tx_rep,
+                                        rpc_server_url=rpc_server_url)
         
     horizon_url = horizon_url_for_network(network=network)
     return await quart.render_template("signing_tx.html", xdr=xdr, network=network, 
-                                       network_passphrase=network_passphrase, tx_rep=tx_rep,
-                                       horizon_url=horizon_url)
+                                        network_passphrase=network_passphrase, tx_rep=tx_rep,
+                                        horizon_url=horizon_url)
 
 def network_for_passphrase(passphrase:Union[str, None]) -> Union[str, None] : 
     if PUBLIC_NETWORK_PASSPHRASE == passphrase:
@@ -96,7 +125,9 @@ def network_for_passphrase(passphrase:Union[str, None]) -> Union[str, None] :
         return FUTURENET_NETWORK
     return None
 
-def network_is_supported(network:Union[str, None]) -> bool : 
+def network_is_supported(network:Union[str, None], is_soroban = False) -> bool : 
+    if is_soroban and (TESTNET_NETWORK == network or FUTURENET_NETWORK == network):
+        return True
     if PUBLIC_NETWORK == network or TESTNET_NETWORK == network or FUTURENET_NETWORK == network:
         return True
     return False
@@ -108,6 +139,13 @@ def horizon_url_for_network(network:str):
         return HORIZON_TESTNET_URL
     if FUTURENET_NETWORK == network:
         return HORIZON_FUTURENET_URL
+    return network
+
+def rpc_url_for_network(network:str):
+    if TESTNET_NETWORK == network:
+        return SOROBAN_RPC_TESTNET_URL
+    if FUTURENET_NETWORK == network:
+        return SOROBAN_RPC_FUTURENET_URL
     return network
 
 def js_sdk_memo_type(memo_type:Union[str, None]) -> Union[str, None] :
