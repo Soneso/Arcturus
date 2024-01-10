@@ -1,10 +1,10 @@
 # Arcturus
 
-Arcturus is a so called [GPT](https://openai.com/blog/introducing-gpts) for ChatGPT. It is able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By prompting Arcturus GPT, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban. 
+Arcturus provides two, so called [GPTs](https://openai.com/blog/introducing-gpts) for ChatGPT (Arcturus Stellar GPT and Arcturus Soroban GPT). They are able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By prompting the Arcturus GPTs, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban. 
 
-Arcturus was initially planned to be a ChatGPT Plugin. But plugins stopped working locally at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins. It can still be used as a plugin, should they be reactivated. Another problem with plugins is that they had a very limited context window at the time of testing. This had bad consequences to the answers given by ChatGPT, because ChatGPT forgot parts of the plugin spec and tried to find the requested answers without using the plugin.
+Arcturus was initially planned to be a ChatGPT Plugin. But plugins were abandoned at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins.
 
-The main goal of Arcturus is the improvement of usability, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It will also allow users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
+The main goal of Arcturus is the improvement of usability, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It also allows users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
 
 ## Implementation status
 
@@ -69,11 +69,19 @@ Arcturus can switch networks for its requests as given by the prompt. It can use
 
 ### Actions
 
-Furthermore it can perform following actions:
+Furthermore, it can perform following actions:
 
 - submit signed transactions (xdr) to the Stellar Network
 - encode and decode muxed accounts
-- prepare trust asset transaction and link to be signed with freighter on the Arcturus webpage
-- prepare payment transaction and link to be signed with freighter on the Arcturus webpage 
+- prepare trust asset transaction and link to be signed with freighter on the Arcturus webpage. From here it can be sent to the network.
+- prepare payment transaction and link to be signed with freighter on the Arcturus webpage. From here it can be sent to the network.
+- prepare claim claimable balance transaction and link to be signed with freighter on the Arcturus webpage. From here it can be sent to the network.
+- prepare invoke smart contract function transaction and link to be signed with freighter on the Arcturus webpage. From here it can be sent to the network.
 
-You can find a prompting guide with prompting examples [here](https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md). 
+## Prompting guides
+
+You can find a prompting guides with prompting examples [here](https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md).
+
+## Further readings
+
+- [Architecture Overview](https://github.com/Soneso/Arcturus/blob/main/docs/architecture.md).
