@@ -84,4 +84,5 @@ You can find a prompting guides with prompting examples [here](https://github.co
 
 ## Further readings
 
-- [Architecture Overview](https://github.com/Soneso/Arcturus/blob/main/docs/architecture.md).
+- [Architecture Overview](https://github.com/Soneso/Arcturus/blob/main/docs/architecture.md)
+- [Arcturus Website](https://arcturus-gpt.com/)

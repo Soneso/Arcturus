@@ -12,7 +12,7 @@ By default, currently Arcturus uses the testnet by default. As soon as Soroban w
 
 Fetch contract metadata for contract id or wasm id:
 
-`From testnet, show me the contract metadata for the contract with this id: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY`
+`From testnet, show me the contract metadata for the contract with this id: CBMIGP7IBD47JCSKYPHCFG2FQIFE66RMGNYTGGYK356U7WJ3XXXITLMM`
 
 Get latest ledger sequence:
 
@@ -45,6 +45,6 @@ Fetch contract data:
 
 Invoke contract function:
 
-`invoke the contract function 'increment' of this contract: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY using the account <your source account id here>`
+`invoke the contract function 'increment' of this contract: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY using the account <your source account id from the freighter wallet here>`
 
-`invoke the contract function 'hello' with the argument 'friend' of type symbol of the contract CB6IWUN5WOUAB64QO7E23IMKGB3HBMDGOE3AASDSA22ECJ4MROG3RRF3 with the source account <your source account id here>`
+`invoke the contract function 'hello' with the argument 'friend' of type symbol of the contract CB6IWUN5WOUAB64QO7E23IMKGB3HBMDGOE3AASDSA22ECJ4MROG3RRF3 with the source account <your source account id from the freighter wallet here>`
