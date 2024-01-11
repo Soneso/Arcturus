@@ -182,6 +182,9 @@ def xdr_for(scval_type:str, data: str):
     value = val_for(scval_type=scval_type, data=data)
     return value.to_xdr()
 
+def scval_from_xdr(xdr:str): 
+    return stellar_xdr.SCVal.from_xdr(xdr)
+
 def val_for(scval_type:str, data: str):
     if scval_type == 'address':
         return sdk_scval.to_address(data)

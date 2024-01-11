@@ -678,8 +678,15 @@ async def invoke_contract_fn():
             for item in request_args:
                 if "type" not in item or "value" not in item:
                     raise Exception("invalid argument for invoking contract function")
-                args.append(scval.val_for(item["type"], item["value"]))
                 
+                value = item["value"]
+                try:
+                    # patch, sometimes the GPT automatically converts the value to xdr
+                    value = scval.scval_from_xdr(value)
+                    args.append(value)
+                except Exception as e:
+                    args.append(scval.val_for(item["type"], item["value"]))
+                    
         res = await soroban.invoke_contract_function(rpc_server_url=rpc_url,
                                                      network_passphrase=passphrase,
                                                      source_account_id=source_account,
