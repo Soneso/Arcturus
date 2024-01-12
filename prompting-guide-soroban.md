@@ -20,11 +20,11 @@ Get latest ledger sequence:
 
 List contract events:
 
-`Did the contract with the id CD2VYCS6AT37NIBI3FJ2HPWUQQHDA44VGGB64FR5IYUHNQSKQ33ZX5KE publish any events on testnet within the last 1000 ledgers?`
+`Did the contract with the id CBMIGP7IBD47JCSKYPHCFG2FQIFE66RMGNYTGGYK356U7WJ3XXXITLMM publish any events on testnet within the last 1000 ledgers?`
 
 Fetch contract code for wasm id and contract id (WebAssembly bytecode as base64):
 
-`Show me the contract code for the contract with id: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY on testnet.`
+`Show me the contract code for the contract with id: CBMIGP7IBD47JCSKYPHCFG2FQIFE66RMGNYTGGYK356U7WJ3XXXITLMM on testnet.`
 
 Fetch the status of a given transaction:
 
@@ -41,10 +41,12 @@ Fetch contract data:
 `Transform the symbol "COUNTER" to a scval`
 > ChatGPT answer: `The symbol "COUNTER" has been transformed into a SCVal, encoded as a base64 XDR string: AAAADwAAAAdDT1VOVEVSAA==`
 
-`Show me the contract data with the key AAAADwAAAAdDT1VOVEVSAA== stored by this contract on testnet: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY - storage type: persistent`
+`Show me the contract data with the key AAAADwAAAAdDT1VOVEVSAA== stored by this contract on testnet: CBMIGP7IBD47JCSKYPHCFG2FQIFE66RMGNYTGGYK356U7WJ3XXXITLMM - storage type: persistent`
 
 Invoke contract function:
 
-`invoke the contract function 'increment' of this contract: CB7INA2ZOVWTIWD7W5FSNXY2XRPXKGNMJO7Q6SH7LWQB4KNHA3IZU4VY using the account <your source account id from the freighter wallet here>`
+When it comes to invoking a contract function, Arcturus will prepare the corresponding transaction. But you must sign it. To do so, use the Freighter Wallet. Make sure to enable "Experimental Mode" in "Settings->Preferences".
 
-`invoke the contract function 'hello' with the argument 'friend' of type symbol of the contract CB6IWUN5WOUAB64QO7E23IMKGB3HBMDGOE3AASDSA22ECJ4MROG3RRF3 with the source account <your source account id from the freighter wallet here>`
+`Invoke the function 'increment' of this contract: CBMIGP7IBD47JCSKYPHCFG2FQIFE66RMGNYTGGYK356U7WJ3XXXITLMM using the account <your source account id from the freighter wallet here>`
+
+`Invoke the function 'hello' with the argument 'friend' of type symbol of the contract CDGAOUYONVDFBVGQ2U5F7IJ5JJHKDNNO5775LARCLBHCSDT72PH7BUTY with the source account <your source account id from the freighter wallet here>`
