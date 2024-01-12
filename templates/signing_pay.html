@@ -32,7 +32,7 @@
                     displayLoading()
                     let server = new StellarSdk.Server(horizon_url);
                     let account = await server.loadAccount(sourcePublicKey);
-                    let fee = await server.fetchBaseFee();
+                    let fee = 500; //await server.fetchBaseFee()
 
                     {% if asset_code and asset_issuer %}
                     let asset = new StellarSdk.Asset(
@@ -176,7 +176,7 @@
             // to stop loading after some time
             setTimeout(() => {
                 loader.classList.remove("display");
-            }, 15000);
+            }, 150000);
         }
 
         // hiding loading 
