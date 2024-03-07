@@ -126,7 +126,7 @@ def network_for_passphrase(passphrase:Union[str, None]) -> Union[str, None] :
     return None
 
 def network_is_supported(network:Union[str, None], is_soroban = False) -> bool : 
-    if is_soroban and (TESTNET_NETWORK == network or FUTURENET_NETWORK == network):
+    if is_soroban and (TESTNET_NETWORK == network or FUTURENET_NETWORK == network or PUBLIC_NETWORK == network):
         return True
     if PUBLIC_NETWORK == network or TESTNET_NETWORK == network or FUTURENET_NETWORK == network:
         return True
@@ -146,7 +146,10 @@ def rpc_url_for_network(network:str):
         return SOROBAN_RPC_TESTNET_URL
     if FUTURENET_NETWORK == network:
         return SOROBAN_RPC_FUTURENET_URL
-    return network
+    
+    config = configparser.ConfigParser()
+    config.read('soroban.ini')
+    return config['rpc']['public']
 
 def js_sdk_memo_type(memo_type:Union[str, None]) -> Union[str, None] :
     if "MEMO_TEXT" == memo_type:

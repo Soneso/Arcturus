@@ -1,7 +1,7 @@
   /trades:
     get:
       operationId: getTrades
-      summary: Get a list of maximum 3 trades for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      summary: Get a list of maximum 5 trades for the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
       description: Returns the fetched list of the maximum 5 trades or the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 3 trades at a time.
       parameters:
         - name: account_id
@@ -75,7 +75,7 @@
           schema:
             type: string
           required: true
-          description: The number of records to be returned. Currently maximum 3. If the user asks for more please let him know that you can only load maximum 3 at a time.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more please let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of trades for the given parameters.

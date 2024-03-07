@@ -1,10 +1,10 @@
 # Arcturus
 
-Arcturus provides two, so called [GPTs](https://openai.com/blog/introducing-gpts) for ChatGPT (Arcturus Stellar GPT and Arcturus Soroban GPT). They are able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By prompting the Arcturus GPTs, you can request and receive text-based, real-time information from the Stellar Blockchain and Soroban. 
+Arcturus provides an API that can help an AI to access realtime Stellar and Soroban data. 
 
-Arcturus was initially planned to be a ChatGPT Plugin. But plugins were abandoned at some point in time and GPTs were announced by OpenAI as a successor to Chat GPT Plugins.
+As an example we implemented two [GPTs](https://openai.com/blog/introducing-gpts) for ChatGPT (Arcturus Stellar GPT and Arcturus Soroban GPT). They use the Arcturus API to be able to retrieve and combine real-time data from the Stellar Blockchain and Soroban. By prompting the Arcturus GPTs, users can request and receive text-based, real-time information from the Stellar Blockchain and Soroban. 
 
-The main goal of Arcturus is the improvement of usability, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It also allows users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
+The main goal of Arcturus is to provide an API that can easily be used by an AI that acts as an intelligent API caller, allowing users and developers to use natural language to obtain data from the Stellar Blockchain and Soroban. It also allows users to easily create transactions and send them to the Network by prompting the AI Model using natural language.
 
 ## Implementation status
 
@@ -80,7 +80,7 @@ Furthermore, it can perform following actions:
 
 ## Prompting guides
 
-You can find a prompting guides with prompting examples [here](https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md).
+You can find a prompting guides with prompting examples for the example GPTs [here](https://github.com/Soneso/Arcturus/blob/main/prompting-guide.md).
 
 ## Further readings
 

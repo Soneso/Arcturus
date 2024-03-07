@@ -22,6 +22,7 @@ from stellar_sdk.exceptions import NotFoundError
 from stellar_sdk.sep.exceptions import StellarTomlNotFoundError
 from arcturus.constants import *
 from sqlite3 import dbapi2 as sqlite3
+import configparser
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -164,9 +165,9 @@ async def get_claimable_balances():
         limit = request.args.get('limit')
         
         if limit is None:
-            limit = 2
+            limit = MAX_PAGING_LIMIT
         
-        if int(limit) > 2:
+        if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         records = await claimable_balances.get_claimable_balances(horizon_url_for_network(network), claimant_account_id, sponsor_account_id, cursor, order, limit)
             
@@ -413,8 +414,8 @@ async def get_offers():
         limit = request.args.get('limit')
         
         if limit is None:
-            limit = 3
-        if int(limit) > 3:
+            limit = MAX_PAGING_LIMIT
+        if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
         
         records = []
@@ -474,8 +475,8 @@ async def get_trades():
         limit = request.args.get('limit')
         
         if limit is None:
-            limit = 3
-        if int(limit) > 3:
+            limit = MAX_PAGING_LIMIT
+        if int(limit) > MAX_PAGING_LIMIT:
             return quart.Response(response=PAGING_LIMIT_EXCEEDED, status=400)
     
         if account_id is not None:
@@ -811,7 +812,12 @@ def passphrase_for_network(network:str):
 def soroban_rpc_url_for_network(network:str):
     if network == 'testnet':
         return SOROBAN_RPC_TESTNET_URL
-    return SOROBAN_RPC_FUTURENET_URL
+    if network == 'futurenet':
+        return SOROBAN_RPC_FUTURENET_URL
+    
+    config = configparser.ConfigParser()
+    config.read('soroban.ini')
+    return config['rpc']['public']
 
 def combine_files(file_list):
     combined_text = ''

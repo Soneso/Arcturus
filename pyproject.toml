@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "arcturus"
-version = "0.1.0"
-description = "Arcturus is a ChatGPT Plugin that can access Data from the Stellar Network."
+version = "0.2.0"
+description = "Arcturus is an API that can help an AI to access realtime Data from the Stellar Network."
 authors = ["Christian Rogobete <c.rogobete@soneso.com>"]
 readme = "README.md"
 license = "Apache License 2.0"
@@ -11,7 +11,7 @@ python = "^3.10"
 Werkzeug= "==2.2.2"
 quart = "^0.18.4"
 quart-cors = "^0.7.0"
-stellar-sdk = "^9.1.3"
+stellar-sdk = "^9.2.0"
 
 
 [build-system]

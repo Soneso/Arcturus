@@ -10,7 +10,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
       responses:
         "200":
           description: An object containing the latest known ladger data
@@ -47,7 +47,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
         - name: cursor
           in: query
           schema:
@@ -86,7 +86,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
         - name: contract_id
           in: query
           schema:
@@ -135,7 +135,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
         - name: contract_id
           in: query
           schema:
@@ -178,7 +178,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
         - name: contract_id
           in: query
           schema:
@@ -221,7 +221,7 @@ paths:
           schema:
             type: string
           required: true
-          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'testnet' as default. Allow the user to specify the network.
+          description: Stellar Network to be used. Can be 'public', 'testnet' or 'futurenet'. Use 'public' as default. Allow the user to specify the network.
         - name: transaction_id
           in: query
           schema:

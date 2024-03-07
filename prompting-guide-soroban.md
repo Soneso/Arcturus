@@ -6,7 +6,7 @@ This prompting guide provides general information and prompting examples for the
 
 ## Network
 
-By default, currently Arcturus uses the testnet by default. As soon as Soroban will be released to main net, it will use the main net by default. If you would like to obtain data or perform actions on futurenet, you need to specify the network in your prompt.
+Arcturus uses the public net by default. If you would like to obtain data or perform actions on testnet or futurenet, you need to specify the network in your prompt.
 
 # Soroban prompts
 

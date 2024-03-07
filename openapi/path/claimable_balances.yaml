@@ -1,8 +1,8 @@
   /claimable_balances:
     get:
       operationId: getClaimableBalances
-      summary: Get a list of maximum 2 claimable balances depending on the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
-      description: Returns the fetched list of the maximum 2 claimable balances depending on the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 2 claimable balances at a time.
+      summary: Get a list of maximum 5 claimable balances depending on the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'.
+      description: Returns the fetched list of the maximum 5 claimable balances depending on the given parameters and depending on the pagination parameters 'cursor, 'order' and 'limit'. It can only load a maximum of 2 claimable balances at a time.
       parameters:
         - name: claimant_account_id
           in: query
@@ -39,7 +39,7 @@
           schema:
             type: string
           required: true
-          description: The number of records to be returned. Currently maximum 2. If the user asks for more plese let him know that you can only load maximum 2 at a time.
+          description: The number of records to be returned. Currently maximum 5. If the user asks for more plese let him know that you can only load maximum 5 at a time.
       responses:
         "200":
           description: A complex object array response holding a list of fetched claimable balances for the given parameter values.

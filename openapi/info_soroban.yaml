@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: Arcturus Soroban GPT
+  title: Arcturus Soroban
   summary: A server to get access to Soroban Data. Soroban is a smart contracts platform build on the Stellar Blockchain. Soroban is provided by the Stellar Development Foundation.
   description: An API that allows the user to request information from soroban such as smart contract metadata, contract events, contract data and more.
-  version: 0.1.0
+  version: 0.2.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
